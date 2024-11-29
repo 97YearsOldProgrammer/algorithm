@@ -44,65 +44,52 @@ with gzip.open(arg.gff, 'rt') as fp:
                     'end': int(end)
                 })
 
-# List to hold all events
 events = []
-# Dictionary to hold feature details
 feature_details = {}
 
-# Build events and feature_details
-feature_counter = 0  # Unique ID for each feature
+idx = -1  
 for trxn in genes:
     for feature in genes[trxn]:
-        feature_id = feature_counter
-        feature_counter += 1
+        idx += 1
         feature['name'] = trxn
-        feature_details[feature_id] = feature
+        feature_details[id] = feature
         events.append({
             'position': feature['beg'],
-            'event_type': 0,  # 0 for start
-            'feature_id': feature_id
+            'event_type': 0, 
+            'id': id
         })
         events.append({
             'position': feature['end'],
-            'event_type': 1,  # 1 for end
-            'feature_id': feature_id
+            'event_type': 1, 
+            'id': id
         })
 
-# Sort the events
 events.sort(key=lambda x: (x['position'], x['event_type']))
 
-# Initialize variables for overlap detection
 active_features = {}  # key: feature_id, value: feature_details
 overlaps = []
 
-# Process events to find overlaps
 for event in events:
+    id = event['id']
     position = event['position']
-    feature_id = event['feature_id']
     event_type = event['event_type']
 
-    current_feature = feature_details[feature_id]
+    current_feature = feature_details[id]
 
-    if event_type == 0:  # Start of a feature
-        # Before adding the current feature, check for overlaps with active features
+    if event_type == 0:  
         for other_feature_id, other_feature in active_features.items():
-            # Check if current_feature overlaps with other_feature
             overlap_start = max(current_feature['beg'], other_feature['beg'])
             overlap_end = min(current_feature['end'], other_feature['end'])
             if overlap_start < overlap_end:
-                # There is an overlap
                 overlaps.append({
                     'overlap_start': overlap_start,
                     'overlap_end': overlap_end,
                     'features': [current_feature, other_feature]
                 })
-        # Add the current feature to active features
-        active_features[feature_id] = current_feature
-    else:  # End of a feature
-        # Remove the feature from active features
-        active_features.pop(feature_id, None)
+        active_features[id] = current_feature
+    else:  
+        active_features.pop(id, None)
 
-# Output the overlaps with feature details
 for overlap in overlaps:
     overlap_start = overlap['overlap_start']
     overlap_end = overlap['overlap_end']
