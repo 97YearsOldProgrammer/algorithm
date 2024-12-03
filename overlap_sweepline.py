@@ -87,6 +87,7 @@ for event in events:
         # append overlap 
         for olp in overlap:
             overlaps[olp].add( ( name, typ, beg, end ))
+            overlaps[index].add( olp )  # Also add existing features to overlaps of current feature
         # add overlap index
         overlap.add(index)
         # how we know component of different transcription
@@ -114,7 +115,7 @@ for transcripts in output:
         # final output
         for overlap in output[transcripts]:
             t1, b1, e1, t2, n2, b2, e2 = overlap
-            print(f'\t{t1}\t{b1}\t{e1}\toverlap with\t{t2} from {n2}\t{b2}\t{e2}')
+            print(f'\t{t1:<10}\t{b1:<10}\t{e1:<10}\t{t2:<10}\t{n2:<15}\t{b2:<10}\t{e2:<10}')
     # label those who don't have overlap
     else: no_overlap.append(transcripts)
 
