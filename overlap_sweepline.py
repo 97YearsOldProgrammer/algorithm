@@ -3,100 +3,123 @@ import gzip
 import optool
 from datetime import datetime
 
-# Argument parsing
 parser = argparse.ArgumentParser(description='Overlap finder for transcripts exons/introns')
 parser.add_argument('gff', type=str, help='GFF file (can be gzipped).')
 arg = parser.parse_args()
 
 start = datetime.now()
 
-# Specify feature types of interest
-feature_types = ['exon', 'intron']
-
-# Dictionary to store transcripts and their features
+feature = ['exon', 'intron']
 genes = {}
 
-# Read the GFF file and build the genes dictionary
 with gzip.open(arg.gff, 'rt') as fp:
     for line in fp:
-        x = line.strip().split('\t')
-        if len(x) < 9:
-            continue  # Skip malformed lines
+        line = line.strip()
+        x    = line.split('\t')
         src = x[1]
-        if src != 'WormBase': 
-            continue
+        if src != 'WormBase': continue
         typ = x[2]
-        if typ not in feature_types: 
-            continue
+        if typ not in feature: continue
         chm = x[0]
         beg = x[3]
         end = x[4]
         att = x[8]
-        if 'Parent=' in att:
-            name = optool.gene_namer(att, 'Parent')
-            if name.startswith("Transcript:"):
-                name = name.replace("Transcript:", "", 1)
-                if name not in genes:
-                    genes[name] = []
-                genes[name].append({
-                    'type': typ,
-                    'beg': int(beg),
-                    'end': int(end)
-                })
+        if ';' in att:
+            att = att.split(';')
+            att = att[0]
+        att = att.split(':')
+        name = att[1]
+        if name not in genes: genes[name] = []
+        genes[name].append({
+            'type': typ,
+            'beg': int(beg),
+            'end': int(end)
+            })
 
-events = []
-feature_details = {}
-
-idx = -1  
+# create events for algorithm
+events = [] 
 for trxn in genes:
     for feature in genes[trxn]:
-        idx += 1
-        feature['name'] = trxn
-        feature_details[id] = feature
         events.append({
             'position': feature['beg'],
-            'event_type': 0, 
-            'id': id
+            'priority': 0, 
+            'scope': (feature['beg'], feature['end']),
+            'type': feature['type'],
+            'name': trxn
         })
         events.append({
             'position': feature['end'],
-            'event_type': 1, 
-            'id': id
+            'priority': 1, 
+            'scope': (feature['beg'], feature['end']),
+            'type': feature['type'],
+            'name': trxn
         })
+events.sort(key=lambda x: ( x['position'], x['priority'] ) )
 
-events.sort(key=lambda x: (x['position'], x['event_type']))
+# this gonna be a complex data strcuture
+overlaps = {} 
+# key   ( trxn_name, typ, beg, end )
+# value ( trxn_name, typ, beg, end )
+# value is a set(make sure no depulicate) with what are overlapped
+overlap  = set()
+# there is how we know there are overlap
+alternative_splicing = {}
+# key   (trxn name)
+# value (type we have)
 
-active_features = {}  # key: feature_id, value: feature_details
-overlaps = []
-
+# algorithm start
 for event in events:
-    id = event['id']
+    # unpackle those values
     position = event['position']
-    event_type = event['event_type']
+    priority = event['priority']
+    name     = event['name']
+    scope    = event['scope']
+    typ      = event['type']
+    beg, end = scope
+    # this is how we are gonna know component of overall structure
+    if name not in alternative_splicing: alternative_splicing[name] = set()
+    # this is what would be value 
+    index    = ( name, typ, beg, end )
+    # so that we can know how different introns and exons overlap with each other
+    if index not in overlaps: overlaps[index] = set()
+    # start the algorithm
+    if priority == 0:
+        # append overlap 
+        for olp in overlap:
+            overlaps[olp].add( ( name, typ, beg, end ))
+        # add overlap index
+        overlap.add(index)
+        # how we know component of different transcription
+        alternative_splicing[name].add( ( typ, beg, end ) )
+    elif priority == 1:
+        overlap.remove(index)
 
-    current_feature = feature_details[id]
+output = {}
+# n as name, t as type, b as beg, e as end
+for tuple1 in overlaps:
+    n1, t1, b1, e1 = tuple1
+    if n1 not in output: output[n1] = []
+    for tuple2 in overlaps[tuple1]:
+        n2, t2, b2, e2 = tuple2
+        output[n1].append( (t1, b1, e1, t2, n2, b2, e2) )
 
-    if event_type == 0:  
-        for other_feature_id, other_feature in active_features.items():
-            overlap_start = max(current_feature['beg'], other_feature['beg'])
-            overlap_end = min(current_feature['end'], other_feature['end'])
-            if overlap_start < overlap_end:
-                overlaps.append({
-                    'overlap_start': overlap_start,
-                    'overlap_end': overlap_end,
-                    'features': [current_feature, other_feature]
-                })
-        active_features[id] = current_feature
-    else:  
-        active_features.pop(id, None)
+# list for no those don't have output
+no_overlap = []
 
-for overlap in overlaps:
-    overlap_start = overlap['overlap_start']
-    overlap_end = overlap['overlap_end']
-    f1, f2 = overlap['features']
-    print(f"{f1['name']} {f1['type']}  {f1['beg']} {f1['end']} overlaps with "
-          f"{f2['name']} {f2['type']}  {f2['beg']} {f2['end']} ")
+for transcripts in output:
+    # sorting output if there do have overlap
+    if output[transcripts]:
+        output[transcripts].sort(key=lambda x: (x[1],x[2],x[5],x[6]) )
+        print(f'{transcripts}')
+        # final output
+        for overlap in output[transcripts]:
+            t1, b1, e1, t2, n2, b2, e2 = overlap
+            print(f'\t{t1}\t{b1}\t{e1}\toverlap with\t{t2} from {n2}\t{b2}\t{e2}')
+    # label those who don't have overlap
+    else: no_overlap.append(transcripts)
 
+for transcript in no_overlap:
+    print(f'{transcript}\tThere is no overlap')
 
 end = datetime.now()
 print(f"Total processing time: {end - start}")
