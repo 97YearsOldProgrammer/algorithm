@@ -8,115 +8,114 @@ arg = parser.parse_args()
 
 start = datetime.now()
 
-feature = ['exon', 'intron']
+feature_types = ['exon', 'intron']
 genes = {}
 
+# Read the GFF file and parse features
 with gzip.open(arg.gff, 'rt') as fp:
     for line in fp:
         line = line.strip()
-        x    = line.split('\t')
+        if line.startswith('#') or not line:
+            continue  # Skip header and empty lines
+        x = line.split('\t')
+        if len(x) < 9:
+            continue  # Skip invalid lines
         src = x[1]
-        if src != 'WormBase': continue
+        if src != 'WormBase':
+            continue
         typ = x[2]
-        if typ not in feature: continue
+        if typ not in feature_types:
+            continue
         chm = x[0]
-        beg = x[3]
-        end = x[4]
+        beg = int(x[3])
+        end = int(x[4])
         att = x[8]
+        # Extract gene/transcript name
         if ';' in att:
-            att = att.split(';')
-            att = att[0]
-        att = att.split(':')
-        name = att[1]
-        if name not in genes: genes[name] = []
+            att = att.split(';')[0]
+        if ':' in att:
+            att = att.split(':')[1]
+        name = att.strip()
+        if name not in genes:
+            genes[name] = []
         genes[name].append({
             'type': typ,
-            'beg': int(beg),
-            'end': int(end)
-            })
+            'beg': beg,
+            'end': end
+        })
 
-# create events for algorithm
-events = [] 
+# Create events for the sweep line algorithm
+events = []
 for trxn in genes:
     for feature in genes[trxn]:
         events.append({
             'position': feature['beg'],
-            'priority': 0, 
+            'priority': 0,
             'scope': (feature['beg'], feature['end']),
             'type': feature['type'],
             'name': trxn
         })
         events.append({
             'position': feature['end'],
-            'priority': 1, 
+            'priority': 1,
             'scope': (feature['beg'], feature['end']),
             'type': feature['type'],
             'name': trxn
         })
-events.sort(key=lambda x: ( x['position'], x['priority'] ) )
+events.sort(key=lambda x: (x['position'], x['priority']))
 
-# this gonna be a complex data strcuture
-overlaps = {} 
-# key   ( trxn_name, typ, beg, end )
-# value ( trxn_name, typ, beg, end )
-# value is a set(make sure no depulicate) with what are overlapped
-overlap  = set()
-# there is how we know there are overlap
-alternative_splicing = {}
-# key   (trxn name)
-# value (type we have)
+# Initialize data structures
+overlaps = {}  # Key: (name, beg, end), Value: set of overlapping features
+active_features = set()
 
-# algorithm start
+# Process events to find overlaps
 for event in events:
-    # unpackle those values
     position = event['position']
     priority = event['priority']
-    name     = event['name']
-    scope    = event['scope']
-    typ      = event['type']
-    beg, end = scope
-    # this is how we are gonna know component of overall structure
-    if name not in alternative_splicing: alternative_splicing[name] = set()
-    # this is what would be value 
-    index    = ( name, typ, beg, end )
-    # so that we can know how different introns and exons overlap with each other
-    if index not in overlaps: overlaps[index] = set()
-    # start the algorithm
+    name = event['name']
+    typ = event['type']
+    beg, end = event['scope']
+    index = (name, beg, end)
+    if index not in overlaps:
+        overlaps[index] = set()
     if priority == 0:
-        # append overlap 
-        for olp in overlap:
-            overlaps[olp].add( ( name, typ, beg, end ))
-            overlaps[index].add( olp )  # Also add existing features to overlaps of current feature
-        # add overlap index
-        overlap.add(index)
-        # how we know component of different transcription
-        alternative_splicing[name].add( ( typ, beg, end ) )
+        # Feature starts; check for overlaps with active features
+        for active in active_features:
+            overlaps[active].add(index)
+            overlaps[index].add(active)
+        active_features.add(index)
     elif priority == 1:
-        overlap.remove(index)
+        # Feature ends; remove from active features
+        active_features.remove(index)
 
-output = {}
-# n as name, t as type, b as beg, e as end
-for tuple1 in overlaps:
-    n1, t1, b1, e1 = tuple1
-    if n1 not in output: output[n1] = []
-    for tuple2 in overlaps[tuple1]:
-        n2, t2, b2, e2 = tuple2
-        output[n1].append( (t1, b1, e1, t2, n2, b2, e2) )
+# Prepare and print the output
+output_entries = {}
+for feature_key, overlap_set in overlaps.items():
+    name1, beg1, end1 = feature_key
+    if feature_key not in output_entries:
+        output_entries[feature_key] = set()
+    for overlap_feature in overlap_set:
+        name2, beg2, end2 = overlap_feature
+        if (name1, beg1, end1) != (name2, beg2, end2):
+            output_entries[feature_key].add((name2, beg2, end2))
 
-# list for no those don't have output
-no_overlap = []
+# Sort the features for consistent output
+sorted_features = sorted(output_entries.keys(), key=lambda x: (x[0], x[1], x[2]))
 
-for transcripts in output:
-    # sorting output if there do have overlap
-    if output[transcripts]:
-        output[transcripts].sort(key=lambda x: (x[1],x[2],x[5],x[6]) )
-        # final output
-        for overlap in output[transcripts]:
-            t1, b1, e1, t2, n2, b2, e2 = overlap
-            print(f'\t{t1:<10}\t{b1:<10}\t{e1:<10}\t{t2:<10}\t{n2:<15}\t{b2:<10}\t{e2:<10}')
-    # label those who don't have overlap
-    elif not output[transcripts]:
-        print(f'{transcripts} does not have overlap')
+for feature in sorted_features:
+    name1, beg1, end1 = feature
+    overlaps_list = output_entries[feature]
+    if overlaps_list:
+        print(f'{name1} {beg1} {end1}')
+        # Sort overlaps for consistent output
+        sorted_overlaps = sorted(overlaps_list, key=lambda x: (x[0], x[1], x[2]))
+        for overlap_feature in sorted_overlaps:
+            name2, beg2, end2 = overlap_feature
+            print(f'\t{name2} {beg2} {end2}')
+        print()
+    else:
+        print(f'In {name1} {beg1} {end1} there is no overlap.\n')
 
 end = datetime.now()
 print(f"Total processing time: {end - start}")
+

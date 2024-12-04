@@ -1,9 +1,12 @@
 import argparse
+from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Overlap gene reporter')
 parser.add_argument('gff1', type=str, help='GFF1 file')
 parser.add_argument('--gff2', type=str, help='GFF2 file')
 arg = parser.parse_args()
+
+start = datetime.now()
 
 gff = {}
 with open(arg.gff1, 'r') as fp:
@@ -97,3 +100,6 @@ for tuple1 in output_key:
         print()
     else:
         print(f'In {name1} {beg1} {end1} there is no overlap.\n')
+
+end = datetime.now()
+print(f"Total processing time: {end - start}")
