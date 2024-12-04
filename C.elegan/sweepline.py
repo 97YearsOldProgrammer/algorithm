@@ -1,6 +1,5 @@
 import argparse
 import gzip
-import optool
 from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Overlap finder for transcripts exons/introns')
@@ -111,16 +110,13 @@ for transcripts in output:
     # sorting output if there do have overlap
     if output[transcripts]:
         output[transcripts].sort(key=lambda x: (x[1],x[2],x[5],x[6]) )
-        print(f'{transcripts}')
         # final output
         for overlap in output[transcripts]:
             t1, b1, e1, t2, n2, b2, e2 = overlap
             print(f'\t{t1:<10}\t{b1:<10}\t{e1:<10}\t{t2:<10}\t{n2:<15}\t{b2:<10}\t{e2:<10}')
     # label those who don't have overlap
-    else: no_overlap.append(transcripts)
-
-for transcript in no_overlap:
-    print(f'{transcript}\tThere is no overlap')
+    elif not output[transcripts]:
+        print(f'{transcripts} does not have overlap')
 
 end = datetime.now()
 print(f"Total processing time: {end - start}")

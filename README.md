@@ -1,6 +1,7 @@
 # overlap #
 
-Sweep line algorithm for overlap gene.      
-
-My brain cell's are dead right now. Not ready for this Readme yet.  
-Just look [sweep line](overlap_sweepline.py) and it's corresponding output [output](overlap_sweepline)
+Hi, welcome.
++ [basic algorithm idea](sweep_test.py)   
+    + [output](f1_overlap)   
++ [algorithm on C.elegan](C.elegan/sweepline.py)   
+    + [output](C.elegan/sweepline)

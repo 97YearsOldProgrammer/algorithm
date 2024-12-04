@@ -1,16 +1,17 @@
-Y74C9A.2a.3
+Y74C9A.6 does not have overlap
+Y74C9A.3.1 does not have overlap
 	exon      	11495     	11561     	exon      	Y74C9A.2a.1    	11495     	11561     
 	intron    	11562     	11617     	intron    	Y74C9A.2a.1    	11562     	11617     
 	exon      	11618     	11689     	exon      	Y74C9A.2a.2    	11618     	11689     
 	exon      	11618     	11689     	exon      	Y74C9A.2a.1    	11618     	11689     
-	intron    	11690     	14950     	intron    	Y74C9A.2a.2    	11690     	14950     
 	intron    	11690     	14950     	intron    	Y74C9A.2a.1    	11690     	14950     
+	intron    	11690     	14950     	intron    	Y74C9A.2a.2    	11690     	14950     
 	exon      	14951     	15160     	exon      	Y74C9A.2a.2    	14951     	15160     
 	exon      	14951     	15160     	exon      	Y74C9A.2a.1    	14951     	15160     
 	exon      	14951     	15160     	exon      	Y74C9A.2b.1    	15103     	15160     
+	intron    	15161     	16472     	intron    	Y74C9A.2a.2    	15161     	16472     
 	intron    	15161     	16472     	intron    	Y74C9A.2a.1    	15161     	16472     
 	intron    	15161     	16472     	intron    	Y74C9A.2b.1    	15161     	16472     
-	intron    	15161     	16472     	intron    	Y74C9A.2a.2    	15161     	16472     
 	exon      	16473     	16585     	exon      	Y74C9A.2b.1    	16473     	16585     
 	exon      	16473     	16585     	exon      	Y74C9A.2a.2    	16473     	16833     
 	exon      	16473     	16585     	exon      	Y74C9A.2a.1    	16473     	16837     
@@ -18,31 +19,29 @@ Y74C9A.2a.3
 	intron    	16586     	16701     	exon      	Y74C9A.2a.1    	16473     	16837     
 	exon      	16702     	16793     	exon      	Y74C9A.2a.2    	16473     	16833     
 	exon      	16702     	16793     	exon      	Y74C9A.2a.1    	16473     	16837     
-Y74C9A.2a.1
 	exon      	11495     	11561     	exon      	Y74C9A.2a.3    	11495     	11561     
 	intron    	11562     	11617     	intron    	Y74C9A.2a.3    	11562     	11617     
-	exon      	11618     	11689     	exon      	Y74C9A.2a.3    	11618     	11689     
 	exon      	11618     	11689     	exon      	Y74C9A.2a.2    	11618     	11689     
-	intron    	11690     	14950     	intron    	Y74C9A.2a.2    	11690     	14950     
+	exon      	11618     	11689     	exon      	Y74C9A.2a.3    	11618     	11689     
 	intron    	11690     	14950     	intron    	Y74C9A.2a.3    	11690     	14950     
-	exon      	14951     	15160     	exon      	Y74C9A.2a.3    	14951     	15160     
+	intron    	11690     	14950     	intron    	Y74C9A.2a.2    	11690     	14950     
 	exon      	14951     	15160     	exon      	Y74C9A.2a.2    	14951     	15160     
+	exon      	14951     	15160     	exon      	Y74C9A.2a.3    	14951     	15160     
 	exon      	14951     	15160     	exon      	Y74C9A.2b.1    	15103     	15160     
+	intron    	15161     	16472     	intron    	Y74C9A.2a.2    	15161     	16472     
 	intron    	15161     	16472     	intron    	Y74C9A.2b.1    	15161     	16472     
 	intron    	15161     	16472     	intron    	Y74C9A.2a.3    	15161     	16472     
-	intron    	15161     	16472     	intron    	Y74C9A.2a.2    	15161     	16472     
 	exon      	16473     	16837     	exon      	Y74C9A.2a.3    	16473     	16585     
 	exon      	16473     	16837     	exon      	Y74C9A.2b.1    	16473     	16585     
 	exon      	16473     	16837     	exon      	Y74C9A.2a.2    	16473     	16833     
 	exon      	16473     	16837     	intron    	Y74C9A.2a.3    	16586     	16701     
 	exon      	16473     	16837     	exon      	Y74C9A.2a.3    	16702     	16793     
-Y74C9A.2a.2
-	exon      	11618     	11689     	exon      	Y74C9A.2a.3    	11618     	11689     
 	exon      	11618     	11689     	exon      	Y74C9A.2a.1    	11618     	11689     
-	intron    	11690     	14950     	intron    	Y74C9A.2a.3    	11690     	14950     
+	exon      	11618     	11689     	exon      	Y74C9A.2a.3    	11618     	11689     
 	intron    	11690     	14950     	intron    	Y74C9A.2a.1    	11690     	14950     
-	exon      	14951     	15160     	exon      	Y74C9A.2a.3    	14951     	15160     
+	intron    	11690     	14950     	intron    	Y74C9A.2a.3    	11690     	14950     
 	exon      	14951     	15160     	exon      	Y74C9A.2a.1    	14951     	15160     
+	exon      	14951     	15160     	exon      	Y74C9A.2a.3    	14951     	15160     
 	exon      	14951     	15160     	exon      	Y74C9A.2b.1    	15103     	15160     
 	intron    	15161     	16472     	intron    	Y74C9A.2a.1    	15161     	16472     
 	intron    	15161     	16472     	intron    	Y74C9A.2b.1    	15161     	16472     
@@ -52,52 +51,50 @@ Y74C9A.2a.2
 	exon      	16473     	16833     	exon      	Y74C9A.2a.1    	16473     	16837     
 	exon      	16473     	16833     	intron    	Y74C9A.2a.3    	16586     	16701     
 	exon      	16473     	16833     	exon      	Y74C9A.2a.3    	16702     	16793     
-Y74C9A.2b.1
-	exon      	15103     	15160     	exon      	Y74C9A.2a.3    	14951     	15160     
-	exon      	15103     	15160     	exon      	Y74C9A.2a.1    	14951     	15160     
 	exon      	15103     	15160     	exon      	Y74C9A.2a.2    	14951     	15160     
+	exon      	15103     	15160     	exon      	Y74C9A.2a.1    	14951     	15160     
+	exon      	15103     	15160     	exon      	Y74C9A.2a.3    	14951     	15160     
+	intron    	15161     	16472     	intron    	Y74C9A.2a.2    	15161     	16472     
 	intron    	15161     	16472     	intron    	Y74C9A.2a.1    	15161     	16472     
 	intron    	15161     	16472     	intron    	Y74C9A.2a.3    	15161     	16472     
-	intron    	15161     	16472     	intron    	Y74C9A.2a.2    	15161     	16472     
 	exon      	16473     	16585     	exon      	Y74C9A.2a.3    	16473     	16585     
 	exon      	16473     	16585     	exon      	Y74C9A.2a.2    	16473     	16833     
 	exon      	16473     	16585     	exon      	Y74C9A.2a.1    	16473     	16837     
-Y74C9A.4a.1
 	exon      	17484     	17958     	exon      	Y74C9A.4b.1    	17487     	17958     
-	exon      	17484     	17958     	exon      	Y74C9A.4c.1    	17911     	17958     
 	exon      	17484     	17958     	exon      	Y74C9A.4d.1    	17911     	17958     
-	intron    	17959     	18005     	intron    	Y74C9A.4b.1    	17959     	18005     
+	exon      	17484     	17958     	exon      	Y74C9A.4c.1    	17911     	17958     
 	intron    	17959     	18005     	intron    	Y74C9A.4d.1    	17959     	18005     
 	intron    	17959     	18005     	intron    	Y74C9A.4c.1    	17959     	18005     
+	intron    	17959     	18005     	intron    	Y74C9A.4b.1    	17959     	18005     
 	exon      	18006     	18115     	exon      	Y74C9A.4d.1    	18006     	18115     
 	exon      	18006     	18115     	exon      	Y74C9A.4b.1    	18006     	18115     
 	exon      	18006     	18115     	exon      	Y74C9A.4c.1    	18006     	18115     
+	intron    	18116     	19014     	intron    	Y74C9A.4d.1    	18116     	19014     
 	intron    	18116     	19014     	intron    	Y74C9A.4c.1    	18116     	19014     
 	intron    	18116     	19014     	intron    	Y74C9A.4b.1    	18116     	19014     
-	intron    	18116     	19014     	intron    	Y74C9A.4d.1    	18116     	19014     
-	exon      	19015     	19241     	exon      	Y74C9A.4d.1    	19015     	19241     
 	exon      	19015     	19241     	exon      	Y74C9A.4b.1    	19015     	19241     
 	exon      	19015     	19241     	exon      	Y74C9A.4c.1    	19015     	19241     
+	exon      	19015     	19241     	exon      	Y74C9A.4d.1    	19015     	19241     
+	intron    	19242     	20270     	intron    	Y74C9A.4d.1    	19242     	20270     
 	intron    	19242     	20270     	intron    	Y74C9A.4c.1    	19242     	20270     
 	intron    	19242     	20270     	intron    	Y74C9A.4b.1    	19242     	20270     
-	intron    	19242     	20270     	intron    	Y74C9A.4d.1    	19242     	20270     
 	exon      	20271     	20478     	exon      	Y74C9A.4b.1    	20271     	20478     
 	exon      	20271     	20478     	exon      	Y74C9A.4c.1    	20271     	20478     
 	exon      	20271     	20478     	exon      	Y74C9A.4d.1    	20271     	20478     
-	intron    	20479     	20847     	intron    	Y74C9A.4c.1    	20479     	20847     
 	intron    	20479     	20847     	intron    	Y74C9A.4b.1    	20479     	20847     
 	intron    	20479     	20847     	intron    	Y74C9A.4d.1    	20479     	20847     
+	intron    	20479     	20847     	intron    	Y74C9A.4c.1    	20479     	20847     
 	exon      	20848     	20964     	exon      	Y74C9A.4b.1    	20848     	20964     
-	exon      	20848     	20964     	exon      	Y74C9A.4c.1    	20848     	20964     
 	exon      	20848     	20964     	exon      	Y74C9A.4d.1    	20848     	20964     
-	intron    	20965     	21012     	intron    	Y74C9A.4b.1    	20965     	21012     
-	intron    	20965     	21012     	intron    	Y74C9A.4d.1    	20965     	21012     
+	exon      	20848     	20964     	exon      	Y74C9A.4c.1    	20848     	20964     
 	intron    	20965     	21012     	intron    	Y74C9A.4c.1    	20965     	21012     
+	intron    	20965     	21012     	intron    	Y74C9A.4d.1    	20965     	21012     
+	intron    	20965     	21012     	intron    	Y74C9A.4b.1    	20965     	21012     
 	exon      	21013     	21139     	exon      	Y74C9A.4d.1    	21013     	21127     
-	exon      	21013     	21139     	exon      	Y74C9A.4b.1    	21013     	21139     
 	exon      	21013     	21139     	exon      	Y74C9A.4c.1    	21013     	21139     
-	intron    	21140     	24650     	intron    	Y74C9A.4b.1    	21140     	24650     
+	exon      	21013     	21139     	exon      	Y74C9A.4b.1    	21013     	21139     
 	intron    	21140     	24650     	intron    	Y74C9A.4c.1    	21140     	24650     
+	intron    	21140     	24650     	intron    	Y74C9A.4b.1    	21140     	24650     
 	intron    	21140     	24650     	exon      	Y74C9A.9       	22882     	23600     
 	exon      	24651     	24845     	exon      	Y74C9A.4b.1    	24651     	24845     
 	exon      	24651     	24845     	exon      	Y74C9A.4c.1    	24651     	24845     
@@ -105,152 +102,149 @@ Y74C9A.4a.1
 	intron    	24846     	24928     	intron    	Y74C9A.4c.1    	24846     	24928     
 	exon      	24929     	25090     	exon      	Y74C9A.4b.1    	24929     	25090     
 	exon      	24929     	25090     	exon      	Y74C9A.4c.1    	24929     	25090     
-	intron    	25091     	25272     	intron    	Y74C9A.4b.1    	25091     	25272     
 	intron    	25091     	25272     	intron    	Y74C9A.4c.1    	25091     	25272     
+	intron    	25091     	25272     	intron    	Y74C9A.4b.1    	25091     	25272     
 	exon      	25273     	25472     	exon      	Y74C9A.4b.1    	25273     	25472     
 	exon      	25273     	25472     	exon      	Y74C9A.4c.1    	25273     	25472     
-	intron    	25473     	26370     	intron    	Y74C9A.4b.1    	25473     	26370     
 	intron    	25473     	26370     	intron    	Y74C9A.4c.1    	25473     	26370     
-	exon      	26371     	26524     	exon      	Y74C9A.4b.1    	26371     	26524     
+	intron    	25473     	26370     	intron    	Y74C9A.4b.1    	25473     	26370     
 	exon      	26371     	26524     	exon      	Y74C9A.4c.1    	26371     	26524     
-	intron    	26525     	26589     	intron    	Y74C9A.4c.1    	26525     	26589     
+	exon      	26371     	26524     	exon      	Y74C9A.4b.1    	26371     	26524     
 	intron    	26525     	26589     	intron    	Y74C9A.4b.1    	26525     	26589     
+	intron    	26525     	26589     	intron    	Y74C9A.4c.1    	26525     	26589     
 	exon      	26590     	26681     	exon      	Y74C9A.4c.1    	26590     	26643     
 	exon      	26590     	26681     	exon      	Y74C9A.4b.1    	26590     	26690     
 	intron    	26682     	26732     	exon      	Y74C9A.4b.1    	26590     	26690     
 	intron    	26682     	26732     	intron    	Y74C9A.4b.1    	26691     	26732     
 	exon      	26733     	26781     	exon      	Y74C9A.4b.1    	26733     	26781     
-Y74C9A.4b.1
 	exon      	17487     	17958     	exon      	Y74C9A.4a.1    	17484     	17958     
-	exon      	17487     	17958     	exon      	Y74C9A.4c.1    	17911     	17958     
 	exon      	17487     	17958     	exon      	Y74C9A.4d.1    	17911     	17958     
+	exon      	17487     	17958     	exon      	Y74C9A.4c.1    	17911     	17958     
+	intron    	17959     	18005     	intron    	Y74C9A.4c.1    	17959     	18005     
 	intron    	17959     	18005     	intron    	Y74C9A.4a.1    	17959     	18005     
 	intron    	17959     	18005     	intron    	Y74C9A.4d.1    	17959     	18005     
-	intron    	17959     	18005     	intron    	Y74C9A.4c.1    	17959     	18005     
 	exon      	18006     	18115     	exon      	Y74C9A.4a.1    	18006     	18115     
 	exon      	18006     	18115     	exon      	Y74C9A.4d.1    	18006     	18115     
 	exon      	18006     	18115     	exon      	Y74C9A.4c.1    	18006     	18115     
-	intron    	18116     	19014     	intron    	Y74C9A.4c.1    	18116     	19014     
 	intron    	18116     	19014     	intron    	Y74C9A.4a.1    	18116     	19014     
+	intron    	18116     	19014     	intron    	Y74C9A.4c.1    	18116     	19014     
 	intron    	18116     	19014     	intron    	Y74C9A.4d.1    	18116     	19014     
-	exon      	19015     	19241     	exon      	Y74C9A.4d.1    	19015     	19241     
-	exon      	19015     	19241     	exon      	Y74C9A.4c.1    	19015     	19241     
 	exon      	19015     	19241     	exon      	Y74C9A.4a.1    	19015     	19241     
+	exon      	19015     	19241     	exon      	Y74C9A.4c.1    	19015     	19241     
+	exon      	19015     	19241     	exon      	Y74C9A.4d.1    	19015     	19241     
+	intron    	19242     	20270     	intron    	Y74C9A.4d.1    	19242     	20270     
 	intron    	19242     	20270     	intron    	Y74C9A.4c.1    	19242     	20270     
 	intron    	19242     	20270     	intron    	Y74C9A.4a.1    	19242     	20270     
-	intron    	19242     	20270     	intron    	Y74C9A.4d.1    	19242     	20270     
 	exon      	20271     	20478     	exon      	Y74C9A.4c.1    	20271     	20478     
-	exon      	20271     	20478     	exon      	Y74C9A.4a.1    	20271     	20478     
 	exon      	20271     	20478     	exon      	Y74C9A.4d.1    	20271     	20478     
-	intron    	20479     	20847     	intron    	Y74C9A.4c.1    	20479     	20847     
-	intron    	20479     	20847     	intron    	Y74C9A.4a.1    	20479     	20847     
+	exon      	20271     	20478     	exon      	Y74C9A.4a.1    	20271     	20478     
 	intron    	20479     	20847     	intron    	Y74C9A.4d.1    	20479     	20847     
+	intron    	20479     	20847     	intron    	Y74C9A.4a.1    	20479     	20847     
+	intron    	20479     	20847     	intron    	Y74C9A.4c.1    	20479     	20847     
 	exon      	20848     	20964     	exon      	Y74C9A.4c.1    	20848     	20964     
-	exon      	20848     	20964     	exon      	Y74C9A.4a.1    	20848     	20964     
 	exon      	20848     	20964     	exon      	Y74C9A.4d.1    	20848     	20964     
-	intron    	20965     	21012     	intron    	Y74C9A.4a.1    	20965     	21012     
-	intron    	20965     	21012     	intron    	Y74C9A.4d.1    	20965     	21012     
+	exon      	20848     	20964     	exon      	Y74C9A.4a.1    	20848     	20964     
 	intron    	20965     	21012     	intron    	Y74C9A.4c.1    	20965     	21012     
+	intron    	20965     	21012     	intron    	Y74C9A.4d.1    	20965     	21012     
+	intron    	20965     	21012     	intron    	Y74C9A.4a.1    	20965     	21012     
 	exon      	21013     	21139     	exon      	Y74C9A.4d.1    	21013     	21127     
-	exon      	21013     	21139     	exon      	Y74C9A.4c.1    	21013     	21139     
 	exon      	21013     	21139     	exon      	Y74C9A.4a.1    	21013     	21139     
-	intron    	21140     	24650     	intron    	Y74C9A.4a.1    	21140     	24650     
+	exon      	21013     	21139     	exon      	Y74C9A.4c.1    	21013     	21139     
 	intron    	21140     	24650     	intron    	Y74C9A.4c.1    	21140     	24650     
+	intron    	21140     	24650     	intron    	Y74C9A.4a.1    	21140     	24650     
 	intron    	21140     	24650     	exon      	Y74C9A.9       	22882     	23600     
-	exon      	24651     	24845     	exon      	Y74C9A.4c.1    	24651     	24845     
 	exon      	24651     	24845     	exon      	Y74C9A.4a.1    	24651     	24845     
-	intron    	24846     	24928     	intron    	Y74C9A.4c.1    	24846     	24928     
+	exon      	24651     	24845     	exon      	Y74C9A.4c.1    	24651     	24845     
 	intron    	24846     	24928     	intron    	Y74C9A.4a.1    	24846     	24928     
+	intron    	24846     	24928     	intron    	Y74C9A.4c.1    	24846     	24928     
 	exon      	24929     	25090     	exon      	Y74C9A.4a.1    	24929     	25090     
 	exon      	24929     	25090     	exon      	Y74C9A.4c.1    	24929     	25090     
-	intron    	25091     	25272     	intron    	Y74C9A.4a.1    	25091     	25272     
 	intron    	25091     	25272     	intron    	Y74C9A.4c.1    	25091     	25272     
+	intron    	25091     	25272     	intron    	Y74C9A.4a.1    	25091     	25272     
 	exon      	25273     	25472     	exon      	Y74C9A.4c.1    	25273     	25472     
 	exon      	25273     	25472     	exon      	Y74C9A.4a.1    	25273     	25472     
-	intron    	25473     	26370     	intron    	Y74C9A.4a.1    	25473     	26370     
 	intron    	25473     	26370     	intron    	Y74C9A.4c.1    	25473     	26370     
-	exon      	26371     	26524     	exon      	Y74C9A.4c.1    	26371     	26524     
+	intron    	25473     	26370     	intron    	Y74C9A.4a.1    	25473     	26370     
 	exon      	26371     	26524     	exon      	Y74C9A.4a.1    	26371     	26524     
-	intron    	26525     	26589     	intron    	Y74C9A.4c.1    	26525     	26589     
+	exon      	26371     	26524     	exon      	Y74C9A.4c.1    	26371     	26524     
 	intron    	26525     	26589     	intron    	Y74C9A.4a.1    	26525     	26589     
+	intron    	26525     	26589     	intron    	Y74C9A.4c.1    	26525     	26589     
 	exon      	26590     	26690     	exon      	Y74C9A.4c.1    	26590     	26643     
 	exon      	26590     	26690     	exon      	Y74C9A.4a.1    	26590     	26681     
 	exon      	26590     	26690     	intron    	Y74C9A.4a.1    	26682     	26732     
 	intron    	26691     	26732     	intron    	Y74C9A.4a.1    	26682     	26732     
 	exon      	26733     	26781     	exon      	Y74C9A.4a.1    	26733     	26781     
-Y74C9A.4d.1
 	exon      	17911     	17958     	exon      	Y74C9A.4a.1    	17484     	17958     
 	exon      	17911     	17958     	exon      	Y74C9A.4b.1    	17487     	17958     
 	exon      	17911     	17958     	exon      	Y74C9A.4c.1    	17911     	17958     
+	intron    	17959     	18005     	intron    	Y74C9A.4c.1    	17959     	18005     
 	intron    	17959     	18005     	intron    	Y74C9A.4a.1    	17959     	18005     
 	intron    	17959     	18005     	intron    	Y74C9A.4b.1    	17959     	18005     
-	intron    	17959     	18005     	intron    	Y74C9A.4c.1    	17959     	18005     
 	exon      	18006     	18115     	exon      	Y74C9A.4a.1    	18006     	18115     
 	exon      	18006     	18115     	exon      	Y74C9A.4b.1    	18006     	18115     
 	exon      	18006     	18115     	exon      	Y74C9A.4c.1    	18006     	18115     
+	intron    	18116     	19014     	intron    	Y74C9A.4a.1    	18116     	19014     
 	intron    	18116     	19014     	intron    	Y74C9A.4c.1    	18116     	19014     
 	intron    	18116     	19014     	intron    	Y74C9A.4b.1    	18116     	19014     
-	intron    	18116     	19014     	intron    	Y74C9A.4a.1    	18116     	19014     
+	exon      	19015     	19241     	exon      	Y74C9A.4a.1    	19015     	19241     
 	exon      	19015     	19241     	exon      	Y74C9A.4b.1    	19015     	19241     
 	exon      	19015     	19241     	exon      	Y74C9A.4c.1    	19015     	19241     
-	exon      	19015     	19241     	exon      	Y74C9A.4a.1    	19015     	19241     
-	intron    	19242     	20270     	intron    	Y74C9A.4a.1    	19242     	20270     
-	intron    	19242     	20270     	intron    	Y74C9A.4b.1    	19242     	20270     
 	intron    	19242     	20270     	intron    	Y74C9A.4c.1    	19242     	20270     
+	intron    	19242     	20270     	intron    	Y74C9A.4b.1    	19242     	20270     
+	intron    	19242     	20270     	intron    	Y74C9A.4a.1    	19242     	20270     
 	exon      	20271     	20478     	exon      	Y74C9A.4b.1    	20271     	20478     
 	exon      	20271     	20478     	exon      	Y74C9A.4c.1    	20271     	20478     
 	exon      	20271     	20478     	exon      	Y74C9A.4a.1    	20271     	20478     
-	intron    	20479     	20847     	intron    	Y74C9A.4c.1    	20479     	20847     
 	intron    	20479     	20847     	intron    	Y74C9A.4b.1    	20479     	20847     
 	intron    	20479     	20847     	intron    	Y74C9A.4a.1    	20479     	20847     
+	intron    	20479     	20847     	intron    	Y74C9A.4c.1    	20479     	20847     
 	exon      	20848     	20964     	exon      	Y74C9A.4b.1    	20848     	20964     
 	exon      	20848     	20964     	exon      	Y74C9A.4a.1    	20848     	20964     
 	exon      	20848     	20964     	exon      	Y74C9A.4c.1    	20848     	20964     
-	intron    	20965     	21012     	intron    	Y74C9A.4a.1    	20965     	21012     
-	intron    	20965     	21012     	intron    	Y74C9A.4b.1    	20965     	21012     
 	intron    	20965     	21012     	intron    	Y74C9A.4c.1    	20965     	21012     
-	exon      	21013     	21127     	exon      	Y74C9A.4b.1    	21013     	21139     
-	exon      	21013     	21127     	exon      	Y74C9A.4c.1    	21013     	21139     
+	intron    	20965     	21012     	intron    	Y74C9A.4b.1    	20965     	21012     
+	intron    	20965     	21012     	intron    	Y74C9A.4a.1    	20965     	21012     
 	exon      	21013     	21127     	exon      	Y74C9A.4a.1    	21013     	21139     
-Y74C9A.4c.1
+	exon      	21013     	21127     	exon      	Y74C9A.4c.1    	21013     	21139     
+	exon      	21013     	21127     	exon      	Y74C9A.4b.1    	21013     	21139     
 	exon      	17911     	17958     	exon      	Y74C9A.4a.1    	17484     	17958     
 	exon      	17911     	17958     	exon      	Y74C9A.4b.1    	17487     	17958     
 	exon      	17911     	17958     	exon      	Y74C9A.4d.1    	17911     	17958     
-	intron    	17959     	18005     	intron    	Y74C9A.4a.1    	17959     	18005     
 	intron    	17959     	18005     	intron    	Y74C9A.4b.1    	17959     	18005     
+	intron    	17959     	18005     	intron    	Y74C9A.4a.1    	17959     	18005     
 	intron    	17959     	18005     	intron    	Y74C9A.4d.1    	17959     	18005     
 	exon      	18006     	18115     	exon      	Y74C9A.4a.1    	18006     	18115     
 	exon      	18006     	18115     	exon      	Y74C9A.4d.1    	18006     	18115     
 	exon      	18006     	18115     	exon      	Y74C9A.4b.1    	18006     	18115     
-	intron    	18116     	19014     	intron    	Y74C9A.4b.1    	18116     	19014     
-	intron    	18116     	19014     	intron    	Y74C9A.4d.1    	18116     	19014     
 	intron    	18116     	19014     	intron    	Y74C9A.4a.1    	18116     	19014     
-	exon      	19015     	19241     	exon      	Y74C9A.4d.1    	19015     	19241     
-	exon      	19015     	19241     	exon      	Y74C9A.4b.1    	19015     	19241     
+	intron    	18116     	19014     	intron    	Y74C9A.4d.1    	18116     	19014     
+	intron    	18116     	19014     	intron    	Y74C9A.4b.1    	18116     	19014     
 	exon      	19015     	19241     	exon      	Y74C9A.4a.1    	19015     	19241     
-	intron    	19242     	20270     	intron    	Y74C9A.4a.1    	19242     	20270     
-	intron    	19242     	20270     	intron    	Y74C9A.4b.1    	19242     	20270     
+	exon      	19015     	19241     	exon      	Y74C9A.4b.1    	19015     	19241     
+	exon      	19015     	19241     	exon      	Y74C9A.4d.1    	19015     	19241     
 	intron    	19242     	20270     	intron    	Y74C9A.4d.1    	19242     	20270     
+	intron    	19242     	20270     	intron    	Y74C9A.4b.1    	19242     	20270     
+	intron    	19242     	20270     	intron    	Y74C9A.4a.1    	19242     	20270     
 	exon      	20271     	20478     	exon      	Y74C9A.4b.1    	20271     	20478     
-	exon      	20271     	20478     	exon      	Y74C9A.4a.1    	20271     	20478     
 	exon      	20271     	20478     	exon      	Y74C9A.4d.1    	20271     	20478     
-	intron    	20479     	20847     	intron    	Y74C9A.4b.1    	20479     	20847     
-	intron    	20479     	20847     	intron    	Y74C9A.4a.1    	20479     	20847     
+	exon      	20271     	20478     	exon      	Y74C9A.4a.1    	20271     	20478     
 	intron    	20479     	20847     	intron    	Y74C9A.4d.1    	20479     	20847     
+	intron    	20479     	20847     	intron    	Y74C9A.4a.1    	20479     	20847     
+	intron    	20479     	20847     	intron    	Y74C9A.4b.1    	20479     	20847     
 	exon      	20848     	20964     	exon      	Y74C9A.4b.1    	20848     	20964     
-	exon      	20848     	20964     	exon      	Y74C9A.4a.1    	20848     	20964     
 	exon      	20848     	20964     	exon      	Y74C9A.4d.1    	20848     	20964     
-	intron    	20965     	21012     	intron    	Y74C9A.4a.1    	20965     	21012     
+	exon      	20848     	20964     	exon      	Y74C9A.4a.1    	20848     	20964     
 	intron    	20965     	21012     	intron    	Y74C9A.4b.1    	20965     	21012     
 	intron    	20965     	21012     	intron    	Y74C9A.4d.1    	20965     	21012     
+	intron    	20965     	21012     	intron    	Y74C9A.4a.1    	20965     	21012     
 	exon      	21013     	21139     	exon      	Y74C9A.4d.1    	21013     	21127     
-	exon      	21013     	21139     	exon      	Y74C9A.4b.1    	21013     	21139     
 	exon      	21013     	21139     	exon      	Y74C9A.4a.1    	21013     	21139     
-	intron    	21140     	24650     	intron    	Y74C9A.4a.1    	21140     	24650     
+	exon      	21013     	21139     	exon      	Y74C9A.4b.1    	21013     	21139     
 	intron    	21140     	24650     	intron    	Y74C9A.4b.1    	21140     	24650     
+	intron    	21140     	24650     	intron    	Y74C9A.4a.1    	21140     	24650     
 	intron    	21140     	24650     	exon      	Y74C9A.9       	22882     	23600     
-	exon      	24651     	24845     	exon      	Y74C9A.4b.1    	24651     	24845     
 	exon      	24651     	24845     	exon      	Y74C9A.4a.1    	24651     	24845     
+	exon      	24651     	24845     	exon      	Y74C9A.4b.1    	24651     	24845     
 	intron    	24846     	24928     	intron    	Y74C9A.4b.1    	24846     	24928     
 	intron    	24846     	24928     	intron    	Y74C9A.4a.1    	24846     	24928     
 	exon      	24929     	25090     	exon      	Y74C9A.4a.1    	24929     	25090     
@@ -259,19 +253,17 @@ Y74C9A.4c.1
 	intron    	25091     	25272     	intron    	Y74C9A.4b.1    	25091     	25272     
 	exon      	25273     	25472     	exon      	Y74C9A.4b.1    	25273     	25472     
 	exon      	25273     	25472     	exon      	Y74C9A.4a.1    	25273     	25472     
-	intron    	25473     	26370     	intron    	Y74C9A.4a.1    	25473     	26370     
 	intron    	25473     	26370     	intron    	Y74C9A.4b.1    	25473     	26370     
-	exon      	26371     	26524     	exon      	Y74C9A.4b.1    	26371     	26524     
+	intron    	25473     	26370     	intron    	Y74C9A.4a.1    	25473     	26370     
 	exon      	26371     	26524     	exon      	Y74C9A.4a.1    	26371     	26524     
+	exon      	26371     	26524     	exon      	Y74C9A.4b.1    	26371     	26524     
 	intron    	26525     	26589     	intron    	Y74C9A.4a.1    	26525     	26589     
 	intron    	26525     	26589     	intron    	Y74C9A.4b.1    	26525     	26589     
 	exon      	26590     	26643     	exon      	Y74C9A.4a.1    	26590     	26681     
 	exon      	26590     	26643     	exon      	Y74C9A.4b.1    	26590     	26690     
-Y74C9A.9
-	exon      	22882     	23600     	intron    	Y74C9A.4a.1    	21140     	24650     
-	exon      	22882     	23600     	intron    	Y74C9A.4b.1    	21140     	24650     
 	exon      	22882     	23600     	intron    	Y74C9A.4c.1    	21140     	24650     
-Y74C9A.5.2
+	exon      	22882     	23600     	intron    	Y74C9A.4b.1    	21140     	24650     
+	exon      	22882     	23600     	intron    	Y74C9A.4a.1    	21140     	24650     
 	exon      	27589     	28405     	exon      	Y74C9A.5.1     	27591     	28405     
 	intron    	28406     	29099     	intron    	Y74C9A.5.1     	28406     	29099     
 	exon      	29100     	29367     	exon      	Y74C9A.5.1     	29100     	29367     
@@ -284,7 +276,6 @@ Y74C9A.5.2
 	exon      	32412     	32542     	exon      	Y74C9A.5.1     	32412     	32548     
 	exon      	32412     	32542     	exon      	Y74C9A.8       	32415     	32435     
 	intron    	32543     	33036     	exon      	Y74C9A.5.1     	32412     	32548     
-Y74C9A.5.1
 	exon      	27591     	28405     	exon      	Y74C9A.5.2     	27589     	28405     
 	intron    	28406     	29099     	intron    	Y74C9A.5.2     	28406     	29099     
 	exon      	29100     	29367     	exon      	Y74C9A.5.2     	29100     	29367     
@@ -297,13 +288,12 @@ Y74C9A.5.1
 	exon      	32412     	32548     	exon      	Y74C9A.5.2     	32412     	32542     
 	exon      	32412     	32548     	exon      	Y74C9A.8       	32415     	32435     
 	exon      	32412     	32548     	intron    	Y74C9A.5.2     	32543     	33036     
-Y74C9A.7
-	exon      	31523     	31543     	intron    	Y74C9A.5.1     	30425     	31768     
 	exon      	31523     	31543     	intron    	Y74C9A.5.2     	30425     	31768     
-Y74C9A.8
+	exon      	31523     	31543     	intron    	Y74C9A.5.1     	30425     	31768     
 	exon      	32415     	32435     	exon      	Y74C9A.5.2     	32412     	32542     
 	exon      	32415     	32435     	exon      	Y74C9A.5.1     	32412     	32548     
-Y48G1C.4a.1
+Y74C9A.1.1 does not have overlap
+Y48G1C.12.1 does not have overlap
 	exon      	52283     	52410     	exon      	Y48G1C.4b.1    	52370     	52410     
 	intron    	52411     	52465     	intron    	Y48G1C.4b.1    	52411     	52465     
 	exon      	52466     	52572     	exon      	Y48G1C.4b.1    	52466     	52572     
@@ -313,7 +303,6 @@ Y48G1C.4a.1
 	exon      	53391     	53695     	exon      	Y48G1C.4b.1    	53391     	53695     
 	intron    	53696     	53943     	intron    	Y48G1C.4b.1    	53696     	53943     
 	exon      	53944     	54426     	exon      	Y48G1C.4b.1    	53944     	54360     
-Y48G1C.4b.1
 	exon      	52370     	52410     	exon      	Y48G1C.4a.1    	52283     	52410     
 	intron    	52411     	52465     	intron    	Y48G1C.4a.1    	52411     	52465     
 	exon      	52466     	52572     	exon      	Y48G1C.4a.1    	52466     	52572     
@@ -323,325 +312,316 @@ Y48G1C.4b.1
 	exon      	53391     	53695     	exon      	Y48G1C.4a.1    	53391     	53695     
 	intron    	53696     	53943     	intron    	Y48G1C.4a.1    	53696     	53943     
 	exon      	53944     	54360     	exon      	Y48G1C.4a.1    	53944     	54426     
-Y48G1C.5.1
 	intron    	55451     	55889     	exon      	Y48G1C.15      	55889     	56293     
 	exon      	55890     	56047     	exon      	Y48G1C.15      	55889     	56293     
 	intron    	56048     	56123     	exon      	Y48G1C.15      	55889     	56293     
 	exon      	56124     	56293     	exon      	Y48G1C.15      	55889     	56293     
 	intron    	57626     	59044     	exon      	Y48G1C.14      	59044     	60236     
 	exon      	59045     	60236     	exon      	Y48G1C.14      	59044     	60236     
-Y48G1C.15
 	exon      	55889     	56293     	intron    	Y48G1C.5.1     	55451     	55889     
 	exon      	55889     	56293     	exon      	Y48G1C.5.1     	55890     	56047     
 	exon      	55889     	56293     	intron    	Y48G1C.5.1     	56048     	56123     
 	exon      	55889     	56293     	exon      	Y48G1C.5.1     	56124     	56293     
-Y48G1C.14
 	exon      	59044     	60236     	intron    	Y48G1C.5.1     	57626     	59044     
 	exon      	59044     	60236     	exon      	Y48G1C.5.1     	59045     	60236     
-Y48G1C.2b.1
 	intron    	71512     	71846     	exon      	Y48G1C.2a.2    	71845     	71932     
 	exon      	71847     	71932     	exon      	Y48G1C.2a.2    	71845     	71932     
 	exon      	71847     	71932     	exon      	Y48G1C.2a.3    	71862     	71932     
-	intron    	71933     	72510     	intron    	Y48G1C.2a.3    	71933     	72510     
 	intron    	71933     	72510     	intron    	Y48G1C.2a.2    	71933     	72510     
-	exon      	72511     	72590     	exon      	Y48G1C.2a.1    	72511     	72590     
+	intron    	71933     	72510     	intron    	Y48G1C.2a.3    	71933     	72510     
 	exon      	72511     	72590     	exon      	Y48G1C.2a.2    	72511     	72590     
 	exon      	72511     	72590     	exon      	Y48G1C.2a.3    	72511     	72590     
-	intron    	72591     	72646     	intron    	Y48G1C.2a.2    	72591     	72646     
+	exon      	72511     	72590     	exon      	Y48G1C.2a.1    	72511     	72590     
 	intron    	72591     	72646     	intron    	Y48G1C.2a.3    	72591     	72646     
 	intron    	72591     	72646     	intron    	Y48G1C.2a.1    	72591     	72646     
+	intron    	72591     	72646     	intron    	Y48G1C.2a.2    	72591     	72646     
+	exon      	72647     	72897     	exon      	Y48G1C.2a.1    	72647     	72897     
 	exon      	72647     	72897     	exon      	Y48G1C.2a.2    	72647     	72897     
 	exon      	72647     	72897     	exon      	Y48G1C.2a.3    	72647     	72897     
-	exon      	72647     	72897     	exon      	Y48G1C.2a.1    	72647     	72897     
-	intron    	72898     	72940     	intron    	Y48G1C.2a.3    	72898     	72940     
-	intron    	72898     	72940     	intron    	Y48G1C.2a.2    	72898     	72940     
 	intron    	72898     	72940     	intron    	Y48G1C.2a.1    	72898     	72940     
+	intron    	72898     	72940     	intron    	Y48G1C.2a.2    	72898     	72940     
+	intron    	72898     	72940     	intron    	Y48G1C.2a.3    	72898     	72940     
+	exon      	72941     	73017     	exon      	Y48G1C.2a.2    	72941     	73017     
 	exon      	72941     	73017     	exon      	Y48G1C.2a.3    	72941     	73017     
 	exon      	72941     	73017     	exon      	Y48G1C.2a.1    	72941     	73017     
-	exon      	72941     	73017     	exon      	Y48G1C.2a.2    	72941     	73017     
 	intron    	73018     	73604     	intron    	Y48G1C.2a.1    	73018     	73604     
-	intron    	73018     	73604     	intron    	Y48G1C.2a.3    	73018     	73604     
 	intron    	73018     	73604     	intron    	Y48G1C.2a.2    	73018     	73604     
-	exon      	73605     	73766     	exon      	Y48G1C.2a.1    	73605     	73766     
+	intron    	73018     	73604     	intron    	Y48G1C.2a.3    	73018     	73604     
 	exon      	73605     	73766     	exon      	Y48G1C.2a.2    	73605     	73766     
 	exon      	73605     	73766     	exon      	Y48G1C.2a.3    	73605     	73766     
-	intron    	73767     	74624     	intron    	Y48G1C.2a.3    	73767     	74624     
+	exon      	73605     	73766     	exon      	Y48G1C.2a.1    	73605     	73766     
 	intron    	73767     	74624     	intron    	Y48G1C.2a.1    	73767     	74624     
+	intron    	73767     	74624     	intron    	Y48G1C.2a.3    	73767     	74624     
 	intron    	73767     	74624     	intron    	Y48G1C.2a.2    	73767     	74624     
+	exon      	74625     	74808     	exon      	Y48G1C.2a.3    	74625     	74808     
 	exon      	74625     	74808     	exon      	Y48G1C.2a.1    	74625     	74808     
 	exon      	74625     	74808     	exon      	Y48G1C.2a.2    	74625     	74808     
-	exon      	74625     	74808     	exon      	Y48G1C.2a.3    	74625     	74808     
 	intron    	74809     	75170     	intron    	Y48G1C.2a.1    	74809     	75170     
-	intron    	74809     	75170     	intron    	Y48G1C.2a.3    	74809     	75170     
 	intron    	74809     	75170     	intron    	Y48G1C.2a.2    	74809     	75170     
-	exon      	75171     	75490     	exon      	Y48G1C.2a.3    	75171     	75490     
+	intron    	74809     	75170     	intron    	Y48G1C.2a.3    	74809     	75170     
 	exon      	75171     	75490     	exon      	Y48G1C.2a.1    	75171     	75490     
 	exon      	75171     	75490     	exon      	Y48G1C.2a.2    	75171     	75490     
-	intron    	75491     	75950     	intron    	Y48G1C.2a.3    	75491     	75950     
-	intron    	75491     	75950     	intron    	Y48G1C.2a.1    	75491     	75950     
+	exon      	75171     	75490     	exon      	Y48G1C.2a.3    	75171     	75490     
 	intron    	75491     	75950     	intron    	Y48G1C.2a.2    	75491     	75950     
-	exon      	75951     	76112     	exon      	Y48G1C.2a.2    	75951     	76112     
+	intron    	75491     	75950     	intron    	Y48G1C.2a.1    	75491     	75950     
+	intron    	75491     	75950     	intron    	Y48G1C.2a.3    	75491     	75950     
 	exon      	75951     	76112     	exon      	Y48G1C.2a.1    	75951     	76112     
 	exon      	75951     	76112     	exon      	Y48G1C.2a.3    	75951     	76112     
+	exon      	75951     	76112     	exon      	Y48G1C.2a.2    	75951     	76112     
+	intron    	76113     	76948     	intron    	Y48G1C.2a.1    	76113     	76948     
 	intron    	76113     	76948     	intron    	Y48G1C.2a.2    	76113     	76948     
 	intron    	76113     	76948     	intron    	Y48G1C.2a.3    	76113     	76948     
-	intron    	76113     	76948     	intron    	Y48G1C.2a.1    	76113     	76948     
-	exon      	76949     	77153     	exon      	Y48G1C.2a.3    	76949     	77153     
 	exon      	76949     	77153     	exon      	Y48G1C.2a.2    	76949     	77153     
 	exon      	76949     	77153     	exon      	Y48G1C.2a.1    	76949     	77153     
+	exon      	76949     	77153     	exon      	Y48G1C.2a.3    	76949     	77153     
 	intron    	77154     	77712     	intron    	Y48G1C.2a.3    	77154     	77712     
-	intron    	77154     	77712     	intron    	Y48G1C.2a.1    	77154     	77712     
 	intron    	77154     	77712     	intron    	Y48G1C.2a.2    	77154     	77712     
+	intron    	77154     	77712     	intron    	Y48G1C.2a.1    	77154     	77712     
 	exon      	77713     	77799     	exon      	Y48G1C.2a.3    	77713     	77799     
-	exon      	77713     	77799     	exon      	Y48G1C.2a.1    	77713     	77799     
 	exon      	77713     	77799     	exon      	Y48G1C.2a.2    	77713     	77799     
+	exon      	77713     	77799     	exon      	Y48G1C.2a.1    	77713     	77799     
 	intron    	77800     	79312     	intron    	Y48G1C.2a.1    	77800     	79312     
-	intron    	77800     	79312     	intron    	Y48G1C.2a.3    	77800     	79312     
 	intron    	77800     	79312     	intron    	Y48G1C.2a.2    	77800     	79312     
-	exon      	79313     	79447     	exon      	Y48G1C.2a.2    	79313     	79447     
+	intron    	77800     	79312     	intron    	Y48G1C.2a.3    	77800     	79312     
 	exon      	79313     	79447     	exon      	Y48G1C.2a.1    	79313     	79447     
+	exon      	79313     	79447     	exon      	Y48G1C.2a.2    	79313     	79447     
 	exon      	79313     	79447     	exon      	Y48G1C.2a.3    	79313     	79447     
 	exon      	79313     	79447     	exon      	Y48G1C.2c.1    	79355     	79447     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.1    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.3    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.2    	79448     	80305     
 	intron    	79448     	80305     	intron    	Y48G1C.2c.1    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.2    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.3    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.1    	79448     	80305     
 	exon      	80306     	80344     	exon      	Y48G1C.2c.1    	80306     	80344     
 	exon      	80306     	80344     	exon      	Y48G1C.2a.3    	80306     	80561     
 	exon      	80306     	80344     	exon      	Y48G1C.2a.1    	80306     	81061     
 	exon      	80306     	80344     	exon      	Y48G1C.2a.2    	80306     	81156     
-Y48G1C.2a.2
 	exon      	71845     	71932     	intron    	Y48G1C.2b.1    	71512     	71846     
 	exon      	71845     	71932     	exon      	Y48G1C.2b.1    	71847     	71932     
 	exon      	71845     	71932     	exon      	Y48G1C.2a.3    	71862     	71932     
-	intron    	71933     	72510     	intron    	Y48G1C.2a.3    	71933     	72510     
 	intron    	71933     	72510     	intron    	Y48G1C.2b.1    	71933     	72510     
-	exon      	72511     	72590     	exon      	Y48G1C.2a.1    	72511     	72590     
+	intron    	71933     	72510     	intron    	Y48G1C.2a.3    	71933     	72510     
 	exon      	72511     	72590     	exon      	Y48G1C.2a.3    	72511     	72590     
+	exon      	72511     	72590     	exon      	Y48G1C.2a.1    	72511     	72590     
 	exon      	72511     	72590     	exon      	Y48G1C.2b.1    	72511     	72590     
-	intron    	72591     	72646     	intron    	Y48G1C.2b.1    	72591     	72646     
 	intron    	72591     	72646     	intron    	Y48G1C.2a.3    	72591     	72646     
 	intron    	72591     	72646     	intron    	Y48G1C.2a.1    	72591     	72646     
-	exon      	72647     	72897     	exon      	Y48G1C.2a.3    	72647     	72897     
-	exon      	72647     	72897     	exon      	Y48G1C.2b.1    	72647     	72897     
+	intron    	72591     	72646     	intron    	Y48G1C.2b.1    	72591     	72646     
 	exon      	72647     	72897     	exon      	Y48G1C.2a.1    	72647     	72897     
-	intron    	72898     	72940     	intron    	Y48G1C.2a.3    	72898     	72940     
-	intron    	72898     	72940     	intron    	Y48G1C.2a.1    	72898     	72940     
+	exon      	72647     	72897     	exon      	Y48G1C.2b.1    	72647     	72897     
+	exon      	72647     	72897     	exon      	Y48G1C.2a.3    	72647     	72897     
 	intron    	72898     	72940     	intron    	Y48G1C.2b.1    	72898     	72940     
-	exon      	72941     	73017     	exon      	Y48G1C.2a.3    	72941     	73017     
+	intron    	72898     	72940     	intron    	Y48G1C.2a.1    	72898     	72940     
+	intron    	72898     	72940     	intron    	Y48G1C.2a.3    	72898     	72940     
 	exon      	72941     	73017     	exon      	Y48G1C.2b.1    	72941     	73017     
+	exon      	72941     	73017     	exon      	Y48G1C.2a.3    	72941     	73017     
 	exon      	72941     	73017     	exon      	Y48G1C.2a.1    	72941     	73017     
+	intron    	73018     	73604     	intron    	Y48G1C.2b.1    	73018     	73604     
 	intron    	73018     	73604     	intron    	Y48G1C.2a.1    	73018     	73604     
 	intron    	73018     	73604     	intron    	Y48G1C.2a.3    	73018     	73604     
-	intron    	73018     	73604     	intron    	Y48G1C.2b.1    	73018     	73604     
-	exon      	73605     	73766     	exon      	Y48G1C.2a.1    	73605     	73766     
 	exon      	73605     	73766     	exon      	Y48G1C.2a.3    	73605     	73766     
+	exon      	73605     	73766     	exon      	Y48G1C.2a.1    	73605     	73766     
 	exon      	73605     	73766     	exon      	Y48G1C.2b.1    	73605     	73766     
 	intron    	73767     	74624     	intron    	Y48G1C.2b.1    	73767     	74624     
 	intron    	73767     	74624     	intron    	Y48G1C.2a.3    	73767     	74624     
 	intron    	73767     	74624     	intron    	Y48G1C.2a.1    	73767     	74624     
-	exon      	74625     	74808     	exon      	Y48G1C.2a.1    	74625     	74808     
 	exon      	74625     	74808     	exon      	Y48G1C.2a.3    	74625     	74808     
+	exon      	74625     	74808     	exon      	Y48G1C.2a.1    	74625     	74808     
 	exon      	74625     	74808     	exon      	Y48G1C.2b.1    	74625     	74808     
 	intron    	74809     	75170     	intron    	Y48G1C.2a.1    	74809     	75170     
-	intron    	74809     	75170     	intron    	Y48G1C.2a.3    	74809     	75170     
 	intron    	74809     	75170     	intron    	Y48G1C.2b.1    	74809     	75170     
+	intron    	74809     	75170     	intron    	Y48G1C.2a.3    	74809     	75170     
 	exon      	75171     	75490     	exon      	Y48G1C.2a.1    	75171     	75490     
 	exon      	75171     	75490     	exon      	Y48G1C.2b.1    	75171     	75490     
 	exon      	75171     	75490     	exon      	Y48G1C.2a.3    	75171     	75490     
-	intron    	75491     	75950     	intron    	Y48G1C.2a.3    	75491     	75950     
-	intron    	75491     	75950     	intron    	Y48G1C.2a.1    	75491     	75950     
 	intron    	75491     	75950     	intron    	Y48G1C.2b.1    	75491     	75950     
+	intron    	75491     	75950     	intron    	Y48G1C.2a.1    	75491     	75950     
+	intron    	75491     	75950     	intron    	Y48G1C.2a.3    	75491     	75950     
 	exon      	75951     	76112     	exon      	Y48G1C.2b.1    	75951     	76112     
-	exon      	75951     	76112     	exon      	Y48G1C.2a.1    	75951     	76112     
 	exon      	75951     	76112     	exon      	Y48G1C.2a.3    	75951     	76112     
-	intron    	76113     	76948     	intron    	Y48G1C.2b.1    	76113     	76948     
-	intron    	76113     	76948     	intron    	Y48G1C.2a.3    	76113     	76948     
+	exon      	75951     	76112     	exon      	Y48G1C.2a.1    	75951     	76112     
 	intron    	76113     	76948     	intron    	Y48G1C.2a.1    	76113     	76948     
-	exon      	76949     	77153     	exon      	Y48G1C.2a.1    	76949     	77153     
+	intron    	76113     	76948     	intron    	Y48G1C.2a.3    	76113     	76948     
+	intron    	76113     	76948     	intron    	Y48G1C.2b.1    	76113     	76948     
 	exon      	76949     	77153     	exon      	Y48G1C.2a.3    	76949     	77153     
+	exon      	76949     	77153     	exon      	Y48G1C.2a.1    	76949     	77153     
 	exon      	76949     	77153     	exon      	Y48G1C.2b.1    	76949     	77153     
+	intron    	77154     	77712     	intron    	Y48G1C.2b.1    	77154     	77712     
 	intron    	77154     	77712     	intron    	Y48G1C.2a.3    	77154     	77712     
 	intron    	77154     	77712     	intron    	Y48G1C.2a.1    	77154     	77712     
-	intron    	77154     	77712     	intron    	Y48G1C.2b.1    	77154     	77712     
 	exon      	77713     	77799     	exon      	Y48G1C.2a.3    	77713     	77799     
-	exon      	77713     	77799     	exon      	Y48G1C.2b.1    	77713     	77799     
 	exon      	77713     	77799     	exon      	Y48G1C.2a.1    	77713     	77799     
+	exon      	77713     	77799     	exon      	Y48G1C.2b.1    	77713     	77799     
 	intron    	77800     	79312     	intron    	Y48G1C.2b.1    	77800     	79312     
 	intron    	77800     	79312     	intron    	Y48G1C.2a.1    	77800     	79312     
 	intron    	77800     	79312     	intron    	Y48G1C.2a.3    	77800     	79312     
-	exon      	79313     	79447     	exon      	Y48G1C.2a.3    	79313     	79447     
-	exon      	79313     	79447     	exon      	Y48G1C.2b.1    	79313     	79447     
 	exon      	79313     	79447     	exon      	Y48G1C.2a.1    	79313     	79447     
+	exon      	79313     	79447     	exon      	Y48G1C.2b.1    	79313     	79447     
+	exon      	79313     	79447     	exon      	Y48G1C.2a.3    	79313     	79447     
 	exon      	79313     	79447     	exon      	Y48G1C.2c.1    	79355     	79447     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.1    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.3    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2b.1    	79448     	80305     
 	intron    	79448     	80305     	intron    	Y48G1C.2c.1    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2b.1    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.3    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.1    	79448     	80305     
 	exon      	80306     	81156     	exon      	Y48G1C.2b.1    	80306     	80344     
 	exon      	80306     	81156     	exon      	Y48G1C.2c.1    	80306     	80344     
 	exon      	80306     	81156     	exon      	Y48G1C.2a.3    	80306     	80561     
 	exon      	80306     	81156     	exon      	Y48G1C.2a.1    	80306     	81061     
 	exon      	80306     	81156     	intron    	Y48G1C.2a.3    	80562     	80813     
 	exon      	80306     	81156     	exon      	Y48G1C.2a.3    	80814     	81063     
-Y48G1C.2a.3
 	exon      	71862     	71932     	exon      	Y48G1C.2a.2    	71845     	71932     
 	exon      	71862     	71932     	exon      	Y48G1C.2b.1    	71847     	71932     
-	intron    	71933     	72510     	intron    	Y48G1C.2a.2    	71933     	72510     
 	intron    	71933     	72510     	intron    	Y48G1C.2b.1    	71933     	72510     
-	exon      	72511     	72590     	exon      	Y48G1C.2a.1    	72511     	72590     
+	intron    	71933     	72510     	intron    	Y48G1C.2a.2    	71933     	72510     
 	exon      	72511     	72590     	exon      	Y48G1C.2a.2    	72511     	72590     
+	exon      	72511     	72590     	exon      	Y48G1C.2a.1    	72511     	72590     
 	exon      	72511     	72590     	exon      	Y48G1C.2b.1    	72511     	72590     
-	intron    	72591     	72646     	intron    	Y48G1C.2a.2    	72591     	72646     
-	intron    	72591     	72646     	intron    	Y48G1C.2b.1    	72591     	72646     
 	intron    	72591     	72646     	intron    	Y48G1C.2a.1    	72591     	72646     
-	exon      	72647     	72897     	exon      	Y48G1C.2a.2    	72647     	72897     
-	exon      	72647     	72897     	exon      	Y48G1C.2b.1    	72647     	72897     
+	intron    	72591     	72646     	intron    	Y48G1C.2b.1    	72591     	72646     
+	intron    	72591     	72646     	intron    	Y48G1C.2a.2    	72591     	72646     
 	exon      	72647     	72897     	exon      	Y48G1C.2a.1    	72647     	72897     
-	intron    	72898     	72940     	intron    	Y48G1C.2a.1    	72898     	72940     
-	intron    	72898     	72940     	intron    	Y48G1C.2a.2    	72898     	72940     
+	exon      	72647     	72897     	exon      	Y48G1C.2b.1    	72647     	72897     
+	exon      	72647     	72897     	exon      	Y48G1C.2a.2    	72647     	72897     
 	intron    	72898     	72940     	intron    	Y48G1C.2b.1    	72898     	72940     
+	intron    	72898     	72940     	intron    	Y48G1C.2a.2    	72898     	72940     
+	intron    	72898     	72940     	intron    	Y48G1C.2a.1    	72898     	72940     
 	exon      	72941     	73017     	exon      	Y48G1C.2b.1    	72941     	73017     
-	exon      	72941     	73017     	exon      	Y48G1C.2a.1    	72941     	73017     
 	exon      	72941     	73017     	exon      	Y48G1C.2a.2    	72941     	73017     
+	exon      	72941     	73017     	exon      	Y48G1C.2a.1    	72941     	73017     
 	intron    	73018     	73604     	intron    	Y48G1C.2a.1    	73018     	73604     
-	intron    	73018     	73604     	intron    	Y48G1C.2a.2    	73018     	73604     
 	intron    	73018     	73604     	intron    	Y48G1C.2b.1    	73018     	73604     
-	exon      	73605     	73766     	exon      	Y48G1C.2a.1    	73605     	73766     
+	intron    	73018     	73604     	intron    	Y48G1C.2a.2    	73018     	73604     
 	exon      	73605     	73766     	exon      	Y48G1C.2a.2    	73605     	73766     
+	exon      	73605     	73766     	exon      	Y48G1C.2a.1    	73605     	73766     
 	exon      	73605     	73766     	exon      	Y48G1C.2b.1    	73605     	73766     
 	intron    	73767     	74624     	intron    	Y48G1C.2b.1    	73767     	74624     
 	intron    	73767     	74624     	intron    	Y48G1C.2a.1    	73767     	74624     
 	intron    	73767     	74624     	intron    	Y48G1C.2a.2    	73767     	74624     
+	exon      	74625     	74808     	exon      	Y48G1C.2b.1    	74625     	74808     
 	exon      	74625     	74808     	exon      	Y48G1C.2a.1    	74625     	74808     
 	exon      	74625     	74808     	exon      	Y48G1C.2a.2    	74625     	74808     
-	exon      	74625     	74808     	exon      	Y48G1C.2b.1    	74625     	74808     
-	intron    	74809     	75170     	intron    	Y48G1C.2a.1    	74809     	75170     
 	intron    	74809     	75170     	intron    	Y48G1C.2b.1    	74809     	75170     
 	intron    	74809     	75170     	intron    	Y48G1C.2a.2    	74809     	75170     
-	exon      	75171     	75490     	exon      	Y48G1C.2b.1    	75171     	75490     
+	intron    	74809     	75170     	intron    	Y48G1C.2a.1    	74809     	75170     
 	exon      	75171     	75490     	exon      	Y48G1C.2a.1    	75171     	75490     
+	exon      	75171     	75490     	exon      	Y48G1C.2b.1    	75171     	75490     
 	exon      	75171     	75490     	exon      	Y48G1C.2a.2    	75171     	75490     
-	intron    	75491     	75950     	intron    	Y48G1C.2a.1    	75491     	75950     
-	intron    	75491     	75950     	intron    	Y48G1C.2a.2    	75491     	75950     
 	intron    	75491     	75950     	intron    	Y48G1C.2b.1    	75491     	75950     
-	exon      	75951     	76112     	exon      	Y48G1C.2a.2    	75951     	76112     
+	intron    	75491     	75950     	intron    	Y48G1C.2a.2    	75491     	75950     
+	intron    	75491     	75950     	intron    	Y48G1C.2a.1    	75491     	75950     
 	exon      	75951     	76112     	exon      	Y48G1C.2b.1    	75951     	76112     
+	exon      	75951     	76112     	exon      	Y48G1C.2a.2    	75951     	76112     
 	exon      	75951     	76112     	exon      	Y48G1C.2a.1    	75951     	76112     
+	intron    	76113     	76948     	intron    	Y48G1C.2a.1    	76113     	76948     
 	intron    	76113     	76948     	intron    	Y48G1C.2a.2    	76113     	76948     
 	intron    	76113     	76948     	intron    	Y48G1C.2b.1    	76113     	76948     
-	intron    	76113     	76948     	intron    	Y48G1C.2a.1    	76113     	76948     
-	exon      	76949     	77153     	exon      	Y48G1C.2a.1    	76949     	77153     
 	exon      	76949     	77153     	exon      	Y48G1C.2a.2    	76949     	77153     
+	exon      	76949     	77153     	exon      	Y48G1C.2a.1    	76949     	77153     
 	exon      	76949     	77153     	exon      	Y48G1C.2b.1    	76949     	77153     
-	intron    	77154     	77712     	intron    	Y48G1C.2a.1    	77154     	77712     
-	intron    	77154     	77712     	intron    	Y48G1C.2a.2    	77154     	77712     
 	intron    	77154     	77712     	intron    	Y48G1C.2b.1    	77154     	77712     
-	exon      	77713     	77799     	exon      	Y48G1C.2b.1    	77713     	77799     
-	exon      	77713     	77799     	exon      	Y48G1C.2a.1    	77713     	77799     
+	intron    	77154     	77712     	intron    	Y48G1C.2a.2    	77154     	77712     
+	intron    	77154     	77712     	intron    	Y48G1C.2a.1    	77154     	77712     
 	exon      	77713     	77799     	exon      	Y48G1C.2a.2    	77713     	77799     
+	exon      	77713     	77799     	exon      	Y48G1C.2a.1    	77713     	77799     
+	exon      	77713     	77799     	exon      	Y48G1C.2b.1    	77713     	77799     
 	intron    	77800     	79312     	intron    	Y48G1C.2b.1    	77800     	79312     
-	intron    	77800     	79312     	intron    	Y48G1C.2a.1    	77800     	79312     
 	intron    	77800     	79312     	intron    	Y48G1C.2a.2    	77800     	79312     
-	exon      	79313     	79447     	exon      	Y48G1C.2a.2    	79313     	79447     
-	exon      	79313     	79447     	exon      	Y48G1C.2b.1    	79313     	79447     
+	intron    	77800     	79312     	intron    	Y48G1C.2a.1    	77800     	79312     
 	exon      	79313     	79447     	exon      	Y48G1C.2a.1    	79313     	79447     
+	exon      	79313     	79447     	exon      	Y48G1C.2b.1    	79313     	79447     
+	exon      	79313     	79447     	exon      	Y48G1C.2a.2    	79313     	79447     
 	exon      	79313     	79447     	exon      	Y48G1C.2c.1    	79355     	79447     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.1    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.2    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2b.1    	79448     	80305     
 	intron    	79448     	80305     	intron    	Y48G1C.2c.1    	79448     	80305     
-	exon      	80306     	80561     	exon      	Y48G1C.2c.1    	80306     	80344     
+	intron    	79448     	80305     	intron    	Y48G1C.2b.1    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.2    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.1    	79448     	80305     
 	exon      	80306     	80561     	exon      	Y48G1C.2b.1    	80306     	80344     
+	exon      	80306     	80561     	exon      	Y48G1C.2c.1    	80306     	80344     
 	exon      	80306     	80561     	exon      	Y48G1C.2a.1    	80306     	81061     
 	exon      	80306     	80561     	exon      	Y48G1C.2a.2    	80306     	81156     
 	intron    	80562     	80813     	exon      	Y48G1C.2a.1    	80306     	81061     
 	intron    	80562     	80813     	exon      	Y48G1C.2a.2    	80306     	81156     
 	exon      	80814     	81063     	exon      	Y48G1C.2a.1    	80306     	81061     
 	exon      	80814     	81063     	exon      	Y48G1C.2a.2    	80306     	81156     
-Y48G1C.2a.1
 	exon      	72511     	72590     	exon      	Y48G1C.2a.2    	72511     	72590     
 	exon      	72511     	72590     	exon      	Y48G1C.2a.3    	72511     	72590     
 	exon      	72511     	72590     	exon      	Y48G1C.2b.1    	72511     	72590     
-	intron    	72591     	72646     	intron    	Y48G1C.2a.2    	72591     	72646     
-	intron    	72591     	72646     	intron    	Y48G1C.2b.1    	72591     	72646     
 	intron    	72591     	72646     	intron    	Y48G1C.2a.3    	72591     	72646     
+	intron    	72591     	72646     	intron    	Y48G1C.2b.1    	72591     	72646     
+	intron    	72591     	72646     	intron    	Y48G1C.2a.2    	72591     	72646     
+	exon      	72647     	72897     	exon      	Y48G1C.2b.1    	72647     	72897     
 	exon      	72647     	72897     	exon      	Y48G1C.2a.2    	72647     	72897     
 	exon      	72647     	72897     	exon      	Y48G1C.2a.3    	72647     	72897     
-	exon      	72647     	72897     	exon      	Y48G1C.2b.1    	72647     	72897     
-	intron    	72898     	72940     	intron    	Y48G1C.2a.3    	72898     	72940     
-	intron    	72898     	72940     	intron    	Y48G1C.2a.2    	72898     	72940     
 	intron    	72898     	72940     	intron    	Y48G1C.2b.1    	72898     	72940     
-	exon      	72941     	73017     	exon      	Y48G1C.2a.3    	72941     	73017     
+	intron    	72898     	72940     	intron    	Y48G1C.2a.2    	72898     	72940     
+	intron    	72898     	72940     	intron    	Y48G1C.2a.3    	72898     	72940     
 	exon      	72941     	73017     	exon      	Y48G1C.2b.1    	72941     	73017     
 	exon      	72941     	73017     	exon      	Y48G1C.2a.2    	72941     	73017     
-	intron    	73018     	73604     	intron    	Y48G1C.2a.3    	73018     	73604     
-	intron    	73018     	73604     	intron    	Y48G1C.2a.2    	73018     	73604     
+	exon      	72941     	73017     	exon      	Y48G1C.2a.3    	72941     	73017     
 	intron    	73018     	73604     	intron    	Y48G1C.2b.1    	73018     	73604     
+	intron    	73018     	73604     	intron    	Y48G1C.2a.2    	73018     	73604     
+	intron    	73018     	73604     	intron    	Y48G1C.2a.3    	73018     	73604     
 	exon      	73605     	73766     	exon      	Y48G1C.2a.2    	73605     	73766     
 	exon      	73605     	73766     	exon      	Y48G1C.2a.3    	73605     	73766     
 	exon      	73605     	73766     	exon      	Y48G1C.2b.1    	73605     	73766     
 	intron    	73767     	74624     	intron    	Y48G1C.2b.1    	73767     	74624     
 	intron    	73767     	74624     	intron    	Y48G1C.2a.3    	73767     	74624     
 	intron    	73767     	74624     	intron    	Y48G1C.2a.2    	73767     	74624     
-	exon      	74625     	74808     	exon      	Y48G1C.2a.2    	74625     	74808     
 	exon      	74625     	74808     	exon      	Y48G1C.2a.3    	74625     	74808     
 	exon      	74625     	74808     	exon      	Y48G1C.2b.1    	74625     	74808     
-	intron    	74809     	75170     	intron    	Y48G1C.2a.3    	74809     	75170     
+	exon      	74625     	74808     	exon      	Y48G1C.2a.2    	74625     	74808     
 	intron    	74809     	75170     	intron    	Y48G1C.2b.1    	74809     	75170     
 	intron    	74809     	75170     	intron    	Y48G1C.2a.2    	74809     	75170     
-	exon      	75171     	75490     	exon      	Y48G1C.2a.3    	75171     	75490     
+	intron    	74809     	75170     	intron    	Y48G1C.2a.3    	74809     	75170     
 	exon      	75171     	75490     	exon      	Y48G1C.2b.1    	75171     	75490     
 	exon      	75171     	75490     	exon      	Y48G1C.2a.2    	75171     	75490     
-	intron    	75491     	75950     	intron    	Y48G1C.2a.3    	75491     	75950     
-	intron    	75491     	75950     	intron    	Y48G1C.2a.2    	75491     	75950     
+	exon      	75171     	75490     	exon      	Y48G1C.2a.3    	75171     	75490     
 	intron    	75491     	75950     	intron    	Y48G1C.2b.1    	75491     	75950     
-	exon      	75951     	76112     	exon      	Y48G1C.2a.2    	75951     	76112     
+	intron    	75491     	75950     	intron    	Y48G1C.2a.2    	75491     	75950     
+	intron    	75491     	75950     	intron    	Y48G1C.2a.3    	75491     	75950     
 	exon      	75951     	76112     	exon      	Y48G1C.2b.1    	75951     	76112     
 	exon      	75951     	76112     	exon      	Y48G1C.2a.3    	75951     	76112     
+	exon      	75951     	76112     	exon      	Y48G1C.2a.2    	75951     	76112     
 	intron    	76113     	76948     	intron    	Y48G1C.2a.2    	76113     	76948     
-	intron    	76113     	76948     	intron    	Y48G1C.2b.1    	76113     	76948     
 	intron    	76113     	76948     	intron    	Y48G1C.2a.3    	76113     	76948     
-	exon      	76949     	77153     	exon      	Y48G1C.2a.3    	76949     	77153     
+	intron    	76113     	76948     	intron    	Y48G1C.2b.1    	76113     	76948     
 	exon      	76949     	77153     	exon      	Y48G1C.2a.2    	76949     	77153     
+	exon      	76949     	77153     	exon      	Y48G1C.2a.3    	76949     	77153     
 	exon      	76949     	77153     	exon      	Y48G1C.2b.1    	76949     	77153     
+	intron    	77154     	77712     	intron    	Y48G1C.2b.1    	77154     	77712     
 	intron    	77154     	77712     	intron    	Y48G1C.2a.3    	77154     	77712     
 	intron    	77154     	77712     	intron    	Y48G1C.2a.2    	77154     	77712     
-	intron    	77154     	77712     	intron    	Y48G1C.2b.1    	77154     	77712     
 	exon      	77713     	77799     	exon      	Y48G1C.2a.3    	77713     	77799     
-	exon      	77713     	77799     	exon      	Y48G1C.2b.1    	77713     	77799     
 	exon      	77713     	77799     	exon      	Y48G1C.2a.2    	77713     	77799     
+	exon      	77713     	77799     	exon      	Y48G1C.2b.1    	77713     	77799     
 	intron    	77800     	79312     	intron    	Y48G1C.2b.1    	77800     	79312     
-	intron    	77800     	79312     	intron    	Y48G1C.2a.3    	77800     	79312     
 	intron    	77800     	79312     	intron    	Y48G1C.2a.2    	77800     	79312     
-	exon      	79313     	79447     	exon      	Y48G1C.2a.2    	79313     	79447     
+	intron    	77800     	79312     	intron    	Y48G1C.2a.3    	77800     	79312     
 	exon      	79313     	79447     	exon      	Y48G1C.2b.1    	79313     	79447     
+	exon      	79313     	79447     	exon      	Y48G1C.2a.2    	79313     	79447     
 	exon      	79313     	79447     	exon      	Y48G1C.2a.3    	79313     	79447     
 	exon      	79313     	79447     	exon      	Y48G1C.2c.1    	79355     	79447     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.3    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.2    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2b.1    	79448     	80305     
 	intron    	79448     	80305     	intron    	Y48G1C.2c.1    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2b.1    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.2    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.3    	79448     	80305     
 	exon      	80306     	81061     	exon      	Y48G1C.2b.1    	80306     	80344     
 	exon      	80306     	81061     	exon      	Y48G1C.2c.1    	80306     	80344     
 	exon      	80306     	81061     	exon      	Y48G1C.2a.3    	80306     	80561     
 	exon      	80306     	81061     	exon      	Y48G1C.2a.2    	80306     	81156     
 	exon      	80306     	81061     	intron    	Y48G1C.2a.3    	80562     	80813     
 	exon      	80306     	81061     	exon      	Y48G1C.2a.3    	80814     	81063     
-Y48G1C.2c.1
-	exon      	79355     	79447     	exon      	Y48G1C.2a.2    	79313     	79447     
 	exon      	79355     	79447     	exon      	Y48G1C.2b.1    	79313     	79447     
 	exon      	79355     	79447     	exon      	Y48G1C.2a.1    	79313     	79447     
+	exon      	79355     	79447     	exon      	Y48G1C.2a.2    	79313     	79447     
 	exon      	79355     	79447     	exon      	Y48G1C.2a.3    	79313     	79447     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.1    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.3    	79448     	80305     
-	intron    	79448     	80305     	intron    	Y48G1C.2a.2    	79448     	80305     
 	intron    	79448     	80305     	intron    	Y48G1C.2b.1    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.2    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.3    	79448     	80305     
+	intron    	79448     	80305     	intron    	Y48G1C.2a.1    	79448     	80305     
 	exon      	80306     	80344     	exon      	Y48G1C.2b.1    	80306     	80344     
 	exon      	80306     	80344     	exon      	Y48G1C.2a.3    	80306     	80561     
 	exon      	80306     	80344     	exon      	Y48G1C.2a.1    	80306     	81061     
 	exon      	80306     	80344     	exon      	Y48G1C.2a.2    	80306     	81156     
-Y48G1C.10a.1
 	exon      	81193     	81272     	exon      	Y48G1C.10a.2   	81203     	81272     
 	intron    	81273     	81884     	intron    	Y48G1C.10a.2   	81273     	81884     
 	exon      	81885     	81963     	exon      	Y48G1C.10a.2   	81885     	81963     
@@ -677,32 +657,31 @@ Y48G1C.10a.1
 	exon      	86824     	86904     	exon      	Y48G1C.10b.1   	86841     	86904     
 	intron    	86905     	87033     	intron    	Y48G1C.10b.1   	86905     	87033     
 	intron    	86905     	87033     	intron    	Y48G1C.10a.2   	86905     	87033     
-	exon      	87034     	87223     	exon      	Y48G1C.10a.2   	87034     	87223     
 	exon      	87034     	87223     	exon      	Y48G1C.10b.1   	87034     	87223     
-	intron    	87224     	87519     	intron    	Y48G1C.10a.2   	87224     	87519     
+	exon      	87034     	87223     	exon      	Y48G1C.10a.2   	87034     	87223     
 	intron    	87224     	87519     	intron    	Y48G1C.10b.1   	87224     	87519     
-	exon      	87520     	87734     	exon      	Y48G1C.10b.1   	87520     	87734     
+	intron    	87224     	87519     	intron    	Y48G1C.10a.2   	87224     	87519     
 	exon      	87520     	87734     	exon      	Y48G1C.10a.2   	87520     	87734     
+	exon      	87520     	87734     	exon      	Y48G1C.10b.1   	87520     	87734     
 	intron    	87735     	88267     	intron    	Y48G1C.10b.1   	87735     	88267     
 	intron    	87735     	88267     	intron    	Y48G1C.10a.2   	87735     	88267     
-	exon      	88268     	88500     	exon      	Y48G1C.10a.2   	88268     	88500     
 	exon      	88268     	88500     	exon      	Y48G1C.10b.1   	88268     	88500     
+	exon      	88268     	88500     	exon      	Y48G1C.10a.2   	88268     	88500     
 	intron    	88501     	88565     	intron    	Y48G1C.10b.1   	88501     	88565     
 	intron    	88501     	88565     	intron    	Y48G1C.10a.2   	88501     	88565     
-	exon      	88566     	88706     	exon      	Y48G1C.10a.2   	88566     	88706     
 	exon      	88566     	88706     	exon      	Y48G1C.10b.1   	88566     	88706     
-	intron    	88707     	89371     	intron    	Y48G1C.10a.2   	88707     	89371     
+	exon      	88566     	88706     	exon      	Y48G1C.10a.2   	88566     	88706     
 	intron    	88707     	89371     	intron    	Y48G1C.10b.1   	88707     	89371     
+	intron    	88707     	89371     	intron    	Y48G1C.10a.2   	88707     	89371     
 	exon      	89372     	89584     	exon      	Y48G1C.10b.1   	89372     	89584     
 	exon      	89372     	89584     	exon      	Y48G1C.10a.2   	89372     	89584     
 	exon      	89372     	89584     	exon      	Y48G1C.10c.1   	89480     	89584     
-	intron    	89585     	90418     	intron    	Y48G1C.10a.2   	89585     	90418     
 	intron    	89585     	90418     	intron    	Y48G1C.10b.1   	89585     	90418     
+	intron    	89585     	90418     	intron    	Y48G1C.10a.2   	89585     	90418     
 	intron    	89585     	90418     	intron    	Y48G1C.10c.1   	89585     	90418     
-	exon      	90419     	91296     	exon      	Y48G1C.10b.1   	90419     	90607     
 	exon      	90419     	91296     	exon      	Y48G1C.10c.1   	90419     	90607     
+	exon      	90419     	91296     	exon      	Y48G1C.10b.1   	90419     	90607     
 	exon      	90419     	91296     	exon      	Y48G1C.10a.2   	90419     	91296     
-Y48G1C.10a.2
 	exon      	81203     	81272     	exon      	Y48G1C.10a.1   	81193     	81272     
 	intron    	81273     	81884     	intron    	Y48G1C.10a.1   	81273     	81884     
 	exon      	81885     	81963     	exon      	Y48G1C.10a.1   	81885     	81963     
@@ -736,40 +715,39 @@ Y48G1C.10a.2
 	intron    	84986     	86823     	exon      	Y48G1C.6.1     	86097     	86293     
 	exon      	86824     	86904     	exon      	Y48G1C.10a.1   	86824     	86904     
 	exon      	86824     	86904     	exon      	Y48G1C.10b.1   	86841     	86904     
-	intron    	86905     	87033     	intron    	Y48G1C.10a.1   	86905     	87033     
 	intron    	86905     	87033     	intron    	Y48G1C.10b.1   	86905     	87033     
-	exon      	87034     	87223     	exon      	Y48G1C.10a.1   	87034     	87223     
+	intron    	86905     	87033     	intron    	Y48G1C.10a.1   	86905     	87033     
 	exon      	87034     	87223     	exon      	Y48G1C.10b.1   	87034     	87223     
-	intron    	87224     	87519     	intron    	Y48G1C.10a.1   	87224     	87519     
+	exon      	87034     	87223     	exon      	Y48G1C.10a.1   	87034     	87223     
 	intron    	87224     	87519     	intron    	Y48G1C.10b.1   	87224     	87519     
-	exon      	87520     	87734     	exon      	Y48G1C.10b.1   	87520     	87734     
+	intron    	87224     	87519     	intron    	Y48G1C.10a.1   	87224     	87519     
 	exon      	87520     	87734     	exon      	Y48G1C.10a.1   	87520     	87734     
-	intron    	87735     	88267     	intron    	Y48G1C.10a.1   	87735     	88267     
+	exon      	87520     	87734     	exon      	Y48G1C.10b.1   	87520     	87734     
 	intron    	87735     	88267     	intron    	Y48G1C.10b.1   	87735     	88267     
-	exon      	88268     	88500     	exon      	Y48G1C.10b.1   	88268     	88500     
+	intron    	87735     	88267     	intron    	Y48G1C.10a.1   	87735     	88267     
 	exon      	88268     	88500     	exon      	Y48G1C.10a.1   	88268     	88500     
-	intron    	88501     	88565     	intron    	Y48G1C.10b.1   	88501     	88565     
+	exon      	88268     	88500     	exon      	Y48G1C.10b.1   	88268     	88500     
 	intron    	88501     	88565     	intron    	Y48G1C.10a.1   	88501     	88565     
+	intron    	88501     	88565     	intron    	Y48G1C.10b.1   	88501     	88565     
 	exon      	88566     	88706     	exon      	Y48G1C.10b.1   	88566     	88706     
 	exon      	88566     	88706     	exon      	Y48G1C.10a.1   	88566     	88706     
-	intron    	88707     	89371     	intron    	Y48G1C.10b.1   	88707     	89371     
 	intron    	88707     	89371     	intron    	Y48G1C.10a.1   	88707     	89371     
-	exon      	89372     	89584     	exon      	Y48G1C.10a.1   	89372     	89584     
+	intron    	88707     	89371     	intron    	Y48G1C.10b.1   	88707     	89371     
 	exon      	89372     	89584     	exon      	Y48G1C.10b.1   	89372     	89584     
+	exon      	89372     	89584     	exon      	Y48G1C.10a.1   	89372     	89584     
 	exon      	89372     	89584     	exon      	Y48G1C.10c.1   	89480     	89584     
-	intron    	89585     	90418     	intron    	Y48G1C.10a.1   	89585     	90418     
 	intron    	89585     	90418     	intron    	Y48G1C.10b.1   	89585     	90418     
+	intron    	89585     	90418     	intron    	Y48G1C.10a.1   	89585     	90418     
 	intron    	89585     	90418     	intron    	Y48G1C.10c.1   	89585     	90418     
-	exon      	90419     	91296     	exon      	Y48G1C.10b.1   	90419     	90607     
 	exon      	90419     	91296     	exon      	Y48G1C.10c.1   	90419     	90607     
+	exon      	90419     	91296     	exon      	Y48G1C.10b.1   	90419     	90607     
 	exon      	90419     	91296     	exon      	Y48G1C.10a.1   	90419     	91296     
-Y48G1C.6.1
-	exon      	83992     	85354     	intron    	Y48G1C.10a.2   	83421     	84189     
 	exon      	83992     	85354     	intron    	Y48G1C.10a.1   	83421     	84189     
+	exon      	83992     	85354     	intron    	Y48G1C.10a.2   	83421     	84189     
 	exon      	83992     	85354     	exon      	Y48G1C.10a.2   	84190     	84313     
 	exon      	83992     	85354     	exon      	Y48G1C.10a.1   	84190     	84313     
-	exon      	83992     	85354     	intron    	Y48G1C.10a.1   	84314     	84387     
 	exon      	83992     	85354     	intron    	Y48G1C.10a.2   	84314     	84387     
+	exon      	83992     	85354     	intron    	Y48G1C.10a.1   	84314     	84387     
 	exon      	83992     	85354     	exon      	Y48G1C.10a.2   	84388     	84567     
 	exon      	83992     	85354     	exon      	Y48G1C.10a.1   	84388     	84567     
 	exon      	83992     	85354     	intron    	Y48G1C.10a.1   	84568     	84613     
@@ -780,65 +758,58 @@ Y48G1C.6.1
 	exon      	83992     	85354     	intron    	Y48G1C.10a.2   	84739     	84835     
 	exon      	83992     	85354     	exon      	Y48G1C.10a.1   	84836     	84985     
 	exon      	83992     	85354     	exon      	Y48G1C.10a.2   	84836     	84985     
-	exon      	83992     	85354     	intron    	Y48G1C.10a.1   	84986     	86823     
 	exon      	83992     	85354     	intron    	Y48G1C.10a.2   	84986     	86823     
-	intron    	85355     	85440     	intron    	Y48G1C.10a.1   	84986     	86823     
+	exon      	83992     	85354     	intron    	Y48G1C.10a.1   	84986     	86823     
 	intron    	85355     	85440     	intron    	Y48G1C.10a.2   	84986     	86823     
-	exon      	85441     	85621     	intron    	Y48G1C.10a.1   	84986     	86823     
+	intron    	85355     	85440     	intron    	Y48G1C.10a.1   	84986     	86823     
 	exon      	85441     	85621     	intron    	Y48G1C.10a.2   	84986     	86823     
-	intron    	85622     	86096     	intron    	Y48G1C.10a.1   	84986     	86823     
+	exon      	85441     	85621     	intron    	Y48G1C.10a.1   	84986     	86823     
 	intron    	85622     	86096     	intron    	Y48G1C.10a.2   	84986     	86823     
-	exon      	86097     	86293     	intron    	Y48G1C.10a.1   	84986     	86823     
+	intron    	85622     	86096     	intron    	Y48G1C.10a.1   	84986     	86823     
 	exon      	86097     	86293     	intron    	Y48G1C.10a.2   	84986     	86823     
-Y48G1C.10b.1
-	exon      	86841     	86904     	exon      	Y48G1C.10a.1   	86824     	86904     
+	exon      	86097     	86293     	intron    	Y48G1C.10a.1   	84986     	86823     
 	exon      	86841     	86904     	exon      	Y48G1C.10a.2   	86824     	86904     
-	intron    	86905     	87033     	intron    	Y48G1C.10a.1   	86905     	87033     
+	exon      	86841     	86904     	exon      	Y48G1C.10a.1   	86824     	86904     
 	intron    	86905     	87033     	intron    	Y48G1C.10a.2   	86905     	87033     
+	intron    	86905     	87033     	intron    	Y48G1C.10a.1   	86905     	87033     
 	exon      	87034     	87223     	exon      	Y48G1C.10a.2   	87034     	87223     
 	exon      	87034     	87223     	exon      	Y48G1C.10a.1   	87034     	87223     
-	intron    	87224     	87519     	intron    	Y48G1C.10a.1   	87224     	87519     
 	intron    	87224     	87519     	intron    	Y48G1C.10a.2   	87224     	87519     
-	exon      	87520     	87734     	exon      	Y48G1C.10a.1   	87520     	87734     
+	intron    	87224     	87519     	intron    	Y48G1C.10a.1   	87224     	87519     
 	exon      	87520     	87734     	exon      	Y48G1C.10a.2   	87520     	87734     
-	intron    	87735     	88267     	intron    	Y48G1C.10a.1   	87735     	88267     
+	exon      	87520     	87734     	exon      	Y48G1C.10a.1   	87520     	87734     
 	intron    	87735     	88267     	intron    	Y48G1C.10a.2   	87735     	88267     
-	exon      	88268     	88500     	exon      	Y48G1C.10a.2   	88268     	88500     
+	intron    	87735     	88267     	intron    	Y48G1C.10a.1   	87735     	88267     
 	exon      	88268     	88500     	exon      	Y48G1C.10a.1   	88268     	88500     
+	exon      	88268     	88500     	exon      	Y48G1C.10a.2   	88268     	88500     
 	intron    	88501     	88565     	intron    	Y48G1C.10a.1   	88501     	88565     
 	intron    	88501     	88565     	intron    	Y48G1C.10a.2   	88501     	88565     
 	exon      	88566     	88706     	exon      	Y48G1C.10a.2   	88566     	88706     
 	exon      	88566     	88706     	exon      	Y48G1C.10a.1   	88566     	88706     
-	intron    	88707     	89371     	intron    	Y48G1C.10a.2   	88707     	89371     
 	intron    	88707     	89371     	intron    	Y48G1C.10a.1   	88707     	89371     
-	exon      	89372     	89584     	exon      	Y48G1C.10a.1   	89372     	89584     
+	intron    	88707     	89371     	intron    	Y48G1C.10a.2   	88707     	89371     
 	exon      	89372     	89584     	exon      	Y48G1C.10a.2   	89372     	89584     
+	exon      	89372     	89584     	exon      	Y48G1C.10a.1   	89372     	89584     
 	exon      	89372     	89584     	exon      	Y48G1C.10c.1   	89480     	89584     
-	intron    	89585     	90418     	intron    	Y48G1C.10a.1   	89585     	90418     
 	intron    	89585     	90418     	intron    	Y48G1C.10a.2   	89585     	90418     
+	intron    	89585     	90418     	intron    	Y48G1C.10a.1   	89585     	90418     
 	intron    	89585     	90418     	intron    	Y48G1C.10c.1   	89585     	90418     
 	exon      	90419     	90607     	exon      	Y48G1C.10c.1   	90419     	90607     
-	exon      	90419     	90607     	exon      	Y48G1C.10a.1   	90419     	91296     
 	exon      	90419     	90607     	exon      	Y48G1C.10a.2   	90419     	91296     
-Y48G1C.10c.1
+	exon      	90419     	90607     	exon      	Y48G1C.10a.1   	90419     	91296     
 	exon      	89480     	89584     	exon      	Y48G1C.10b.1   	89372     	89584     
-	exon      	89480     	89584     	exon      	Y48G1C.10a.1   	89372     	89584     
 	exon      	89480     	89584     	exon      	Y48G1C.10a.2   	89372     	89584     
-	intron    	89585     	90418     	intron    	Y48G1C.10a.1   	89585     	90418     
-	intron    	89585     	90418     	intron    	Y48G1C.10a.2   	89585     	90418     
+	exon      	89480     	89584     	exon      	Y48G1C.10a.1   	89372     	89584     
 	intron    	89585     	90418     	intron    	Y48G1C.10b.1   	89585     	90418     
+	intron    	89585     	90418     	intron    	Y48G1C.10a.2   	89585     	90418     
+	intron    	89585     	90418     	intron    	Y48G1C.10a.1   	89585     	90418     
 	exon      	90419     	90607     	exon      	Y48G1C.10b.1   	90419     	90607     
-	exon      	90419     	90607     	exon      	Y48G1C.10a.1   	90419     	91296     
 	exon      	90419     	90607     	exon      	Y48G1C.10a.2   	90419     	91296     
-Y48G1C.9a.1
+	exon      	90419     	90607     	exon      	Y48G1C.10a.1   	90419     	91296     
 	exon      	92523     	92720     	exon      	Y48G1C.9b.1    	92583     	92648     
-Y48G1C.9b.1
 	exon      	92583     	92648     	exon      	Y48G1C.9a.1    	92523     	92720     
-Y48G1C.1.1
 	exon      	94622     	94884     	exon      	Y48G1C.13.1    	94829     	94929     
-Y48G1C.13.1
 	exon      	94829     	94929     	exon      	Y48G1C.1.1     	94622     	94884     
-Y48G1C.8a.1
 	exon      	96459     	96992     	exon      	Y48G1C.8b.1    	96471     	96992     
 	intron    	96993     	97599     	intron    	Y48G1C.8b.1    	96993     	97599     
 	exon      	97600     	97960     	exon      	Y48G1C.8b.1    	97600     	97960     
@@ -867,7 +838,6 @@ Y48G1C.8a.1
 	exon      	107356    	107548    	exon      	Y48G1C.8b.1    	107356    	107548    
 	intron    	107549    	107595    	intron    	Y48G1C.8b.1    	107549    	107595    
 	exon      	107596    	108223    	exon      	Y48G1C.8b.1    	107596    	108167    
-Y48G1C.8b.1
 	exon      	96471     	96992     	exon      	Y48G1C.8a.1    	96459     	96992     
 	intron    	96993     	97599     	intron    	Y48G1C.8a.1    	96993     	97599     
 	exon      	97600     	97960     	exon      	Y48G1C.8a.1    	97600     	97960     
@@ -896,11 +866,9 @@ Y48G1C.8b.1
 	exon      	107356    	107548    	exon      	Y48G1C.8a.1    	107356    	107548    
 	intron    	107549    	107595    	intron    	Y48G1C.8a.1    	107549    	107595    
 	exon      	107596    	108167    	exon      	Y48G1C.8a.1    	107596    	108223    
-F53G12.16
+F53G12.1.1 does not have overlap
 	exon      	110551    	110771    	exon      	F53G12.15      	110576    	110724    
-F53G12.15
 	exon      	110576    	110724    	exon      	F53G12.16      	110551    	110771    
-F53G12.10.1
 	exon      	111038    	111065    	exon      	F53G12.10.2    	111038    	111065    
 	intron    	111066    	111160    	intron    	F53G12.10.2    	111066    	111160    
 	exon      	111161    	111260    	exon      	F53G12.10.2    	111161    	111260    
@@ -914,7 +882,6 @@ F53G12.10.1
 	exon      	112019    	112272    	exon      	F53G12.10.2    	112019    	112267    
 	exon      	112019    	112272    	exon      	F53G12.19      	112125    	112206    
 	exon      	112019    	112272    	intron    	F53G12.10.2    	112268    	112411    
-F53G12.10.2
 	exon      	111038    	111065    	exon      	F53G12.10.1    	111038    	111065    
 	intron    	111066    	111160    	intron    	F53G12.10.1    	111066    	111160    
 	exon      	111161    	111260    	exon      	F53G12.10.1    	111161    	111260    
@@ -930,18 +897,14 @@ F53G12.10.2
 	intron    	112268    	112411    	exon      	F53G12.10.1    	112019    	112272    
 	intron    	112268    	112411    	exon      	F53G12.9a.1    	112285    	112481    
 	exon      	112412    	112417    	exon      	F53G12.9a.1    	112285    	112481    
-F53G12.17
-	exon      	111287    	111436    	intron    	F53G12.10.2    	111261    	111509    
 	exon      	111287    	111436    	intron    	F53G12.10.1    	111261    	111509    
+	exon      	111287    	111436    	intron    	F53G12.10.2    	111261    	111509    
 	exon      	111287    	111436    	exon      	F53G12.12      	111292    	111425    
-F53G12.12
-	exon      	111292    	111425    	intron    	F53G12.10.2    	111261    	111509    
 	exon      	111292    	111425    	intron    	F53G12.10.1    	111261    	111509    
+	exon      	111292    	111425    	intron    	F53G12.10.2    	111261    	111509    
 	exon      	111292    	111425    	exon      	F53G12.17      	111287    	111436    
-F53G12.19
 	exon      	112125    	112206    	exon      	F53G12.10.2    	112019    	112267    
 	exon      	112125    	112206    	exon      	F53G12.10.1    	112019    	112272    
-F53G12.9a.1
 	exon      	112285    	112481    	intron    	F53G12.10.2    	112268    	112411    
 	exon      	112285    	112481    	exon      	F53G12.10.2    	112412    	112417    
 	exon      	113239    	113382    	exon      	F53G12.9b.1    	113314    	113382    
@@ -949,25 +912,24 @@ F53G12.9a.1
 	exon      	113426    	113527    	exon      	F53G12.9b.1    	113426    	113527    
 	intron    	113528    	113595    	intron    	F53G12.9b.1    	113528    	113595    
 	exon      	113596    	113751    	exon      	F53G12.9b.1    	113596    	113661    
-F53G12.9b.1
 	exon      	113314    	113382    	exon      	F53G12.9a.1    	113239    	113382    
 	intron    	113383    	113425    	intron    	F53G12.9a.1    	113383    	113425    
 	exon      	113426    	113527    	exon      	F53G12.9a.1    	113426    	113527    
 	intron    	113528    	113595    	intron    	F53G12.9a.1    	113528    	113595    
 	exon      	113596    	113661    	exon      	F53G12.9a.1    	113596    	113751    
-F53G12.7a.1
+F53G12.8.1 does not have overlap
+F53G12.14 does not have overlap
 	exon      	116432    	116666    	exon      	F53G12.7b.1    	116462    	116666    
 	intron    	116667    	116718    	intron    	F53G12.7b.1    	116667    	116718    
 	exon      	116719    	116974    	exon      	F53G12.7b.1    	116719    	116974    
 	intron    	116975    	117085    	intron    	F53G12.7b.1    	116975    	117085    
 	exon      	117086    	117498    	exon      	F53G12.7b.1    	117086    	117401    
-F53G12.7b.1
 	exon      	116462    	116666    	exon      	F53G12.7a.1    	116432    	116666    
 	intron    	116667    	116718    	intron    	F53G12.7a.1    	116667    	116718    
 	exon      	116719    	116974    	exon      	F53G12.7a.1    	116719    	116974    
 	intron    	116975    	117085    	intron    	F53G12.7a.1    	116975    	117085    
 	exon      	117086    	117401    	exon      	F53G12.7a.1    	117086    	117498    
-F53G12.5b.1
+F53G12.6.1 does not have overlap
 	exon      	127285    	127336    	exon      	F53G12.5a.2    	127286    	127336    
 	intron    	127337    	127384    	intron    	F53G12.5a.2    	127337    	127384    
 	intron    	127337    	127384    	exon      	F53G12.5a.3    	127384    	127436    
@@ -975,48 +937,47 @@ F53G12.5b.1
 	exon      	127385    	127436    	exon      	F53G12.5a.2    	127385    	127436    
 	intron    	127437    	128696    	intron    	F53G12.5a.3    	127437    	128696    
 	intron    	127437    	128696    	intron    	F53G12.5a.2    	127437    	128696    
-	exon      	128697    	128896    	exon      	F53G12.5a.2    	128697    	128896    
 	exon      	128697    	128896    	exon      	F53G12.5a.1    	128697    	128896    
+	exon      	128697    	128896    	exon      	F53G12.5a.2    	128697    	128896    
 	exon      	128697    	128896    	exon      	F53G12.5a.3    	128697    	128896    
-	intron    	128897    	128944    	intron    	F53G12.5a.3    	128897    	128944    
 	intron    	128897    	128944    	intron    	F53G12.5a.2    	128897    	128944    
 	intron    	128897    	128944    	intron    	F53G12.5a.1    	128897    	128944    
-	exon      	128945    	129124    	exon      	F53G12.5a.2    	128945    	129124    
+	intron    	128897    	128944    	intron    	F53G12.5a.3    	128897    	128944    
 	exon      	128945    	129124    	exon      	F53G12.5a.3    	128945    	129124    
+	exon      	128945    	129124    	exon      	F53G12.5a.2    	128945    	129124    
 	exon      	128945    	129124    	exon      	F53G12.5a.1    	128945    	129124    
-	intron    	129125    	129175    	intron    	F53G12.5a.3    	129125    	129166    
 	intron    	129125    	129175    	intron    	F53G12.5a.2    	129125    	129166    
+	intron    	129125    	129175    	intron    	F53G12.5a.3    	129125    	129166    
 	intron    	129125    	129175    	intron    	F53G12.5a.1    	129125    	129166    
-	intron    	129125    	129175    	exon      	F53G12.5a.2    	129167    	129333    
 	intron    	129125    	129175    	exon      	F53G12.5a.3    	129167    	129333    
+	intron    	129125    	129175    	exon      	F53G12.5a.2    	129167    	129333    
 	intron    	129125    	129175    	exon      	F53G12.5a.1    	129167    	129333    
 	exon      	129176    	129333    	exon      	F53G12.5a.2    	129167    	129333    
 	exon      	129176    	129333    	exon      	F53G12.5a.3    	129167    	129333    
 	exon      	129176    	129333    	exon      	F53G12.5a.1    	129167    	129333    
-	intron    	129334    	132102    	intron    	F53G12.5a.2    	129334    	132102    
-	intron    	129334    	132102    	intron    	F53G12.5a.3    	129334    	132102    
 	intron    	129334    	132102    	intron    	F53G12.5a.1    	129334    	132102    
+	intron    	129334    	132102    	intron    	F53G12.5a.3    	129334    	132102    
+	intron    	129334    	132102    	intron    	F53G12.5a.2    	129334    	132102    
 	exon      	132103    	132553    	exon      	F53G12.5a.2    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5a.3    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5a.1    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5c.1    	132262    	132553    
-	intron    	132554    	132611    	intron    	F53G12.5a.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5c.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5a.2    	132554    	132611    
+	intron    	132554    	132611    	intron    	F53G12.5a.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5a.3    	132554    	132611    
 	exon      	132612    	132693    	exon      	F53G12.5a.1    	132612    	132693    
-	exon      	132612    	132693    	exon      	F53G12.5a.2    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5c.1    	132612    	132693    
+	exon      	132612    	132693    	exon      	F53G12.5a.2    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5a.3    	132612    	132693    
-	intron    	132694    	133413    	intron    	F53G12.5a.1    	132694    	133413    
-	intron    	132694    	133413    	intron    	F53G12.5a.3    	132694    	133413    
 	intron    	132694    	133413    	intron    	F53G12.5c.1    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5a.3    	132694    	133413    
 	intron    	132694    	133413    	intron    	F53G12.5a.2    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5a.1    	132694    	133413    
 	exon      	133414    	134270    	exon      	F53G12.5c.1    	133414    	133582    
 	exon      	133414    	134270    	exon      	F53G12.5a.1    	133414    	134267    
 	exon      	133414    	134270    	exon      	F53G12.5a.2    	133414    	134269    
 	exon      	133414    	134270    	exon      	F53G12.5a.3    	133414    	134269    
-F53G12.5a.2
 	exon      	127286    	127336    	exon      	F53G12.5b.1    	127285    	127336    
 	intron    	127337    	127384    	intron    	F53G12.5b.1    	127337    	127384    
 	intron    	127337    	127384    	exon      	F53G12.5a.3    	127384    	127436    
@@ -1024,157 +985,154 @@ F53G12.5a.2
 	exon      	127385    	127436    	exon      	F53G12.5b.1    	127385    	127436    
 	intron    	127437    	128696    	intron    	F53G12.5a.3    	127437    	128696    
 	intron    	127437    	128696    	intron    	F53G12.5b.1    	127437    	128696    
-	exon      	128697    	128896    	exon      	F53G12.5b.1    	128697    	128896    
 	exon      	128697    	128896    	exon      	F53G12.5a.1    	128697    	128896    
 	exon      	128697    	128896    	exon      	F53G12.5a.3    	128697    	128896    
-	intron    	128897    	128944    	intron    	F53G12.5a.3    	128897    	128944    
+	exon      	128697    	128896    	exon      	F53G12.5b.1    	128697    	128896    
 	intron    	128897    	128944    	intron    	F53G12.5b.1    	128897    	128944    
 	intron    	128897    	128944    	intron    	F53G12.5a.1    	128897    	128944    
+	intron    	128897    	128944    	intron    	F53G12.5a.3    	128897    	128944    
 	exon      	128945    	129124    	exon      	F53G12.5a.3    	128945    	129124    
-	exon      	128945    	129124    	exon      	F53G12.5a.1    	128945    	129124    
 	exon      	128945    	129124    	exon      	F53G12.5b.1    	128945    	129124    
-	intron    	129125    	129166    	intron    	F53G12.5a.3    	129125    	129166    
+	exon      	128945    	129124    	exon      	F53G12.5a.1    	128945    	129124    
 	intron    	129125    	129166    	intron    	F53G12.5a.1    	129125    	129166    
+	intron    	129125    	129166    	intron    	F53G12.5a.3    	129125    	129166    
 	intron    	129125    	129166    	intron    	F53G12.5b.1    	129125    	129175    
 	exon      	129167    	129333    	intron    	F53G12.5b.1    	129125    	129175    
 	exon      	129167    	129333    	exon      	F53G12.5a.3    	129167    	129333    
 	exon      	129167    	129333    	exon      	F53G12.5a.1    	129167    	129333    
 	exon      	129167    	129333    	exon      	F53G12.5b.1    	129176    	129333    
-	intron    	129334    	132102    	intron    	F53G12.5a.3    	129334    	132102    
 	intron    	129334    	132102    	intron    	F53G12.5a.1    	129334    	132102    
+	intron    	129334    	132102    	intron    	F53G12.5a.3    	129334    	132102    
 	intron    	129334    	132102    	intron    	F53G12.5b.1    	129334    	132102    
+	exon      	132103    	132553    	exon      	F53G12.5b.1    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5a.1    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5a.3    	132103    	132553    
-	exon      	132103    	132553    	exon      	F53G12.5b.1    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5c.1    	132262    	132553    
-	intron    	132554    	132611    	intron    	F53G12.5a.1    	132554    	132611    
-	intron    	132554    	132611    	intron    	F53G12.5b.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5c.1    	132554    	132611    
+	intron    	132554    	132611    	intron    	F53G12.5b.1    	132554    	132611    
+	intron    	132554    	132611    	intron    	F53G12.5a.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5a.3    	132554    	132611    
 	exon      	132612    	132693    	exon      	F53G12.5a.1    	132612    	132693    
-	exon      	132612    	132693    	exon      	F53G12.5b.1    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5c.1    	132612    	132693    
+	exon      	132612    	132693    	exon      	F53G12.5b.1    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5a.3    	132612    	132693    
-	intron    	132694    	133413    	intron    	F53G12.5a.1    	132694    	133413    
-	intron    	132694    	133413    	intron    	F53G12.5b.1    	132694    	133413    
 	intron    	132694    	133413    	intron    	F53G12.5c.1    	132694    	133413    
 	intron    	132694    	133413    	intron    	F53G12.5a.3    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5b.1    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5a.1    	132694    	133413    
 	exon      	133414    	134269    	exon      	F53G12.5c.1    	133414    	133582    
 	exon      	133414    	134269    	exon      	F53G12.5a.1    	133414    	134267    
 	exon      	133414    	134269    	exon      	F53G12.5a.3    	133414    	134269    
 	exon      	133414    	134269    	exon      	F53G12.5b.1    	133414    	134270    
-F53G12.5a.3
 	exon      	127384    	127436    	intron    	F53G12.5b.1    	127337    	127384    
 	exon      	127384    	127436    	intron    	F53G12.5a.2    	127337    	127384    
 	exon      	127384    	127436    	exon      	F53G12.5a.2    	127385    	127436    
 	exon      	127384    	127436    	exon      	F53G12.5b.1    	127385    	127436    
-	intron    	127437    	128696    	intron    	F53G12.5b.1    	127437    	128696    
 	intron    	127437    	128696    	intron    	F53G12.5a.2    	127437    	128696    
-	exon      	128697    	128896    	exon      	F53G12.5b.1    	128697    	128896    
-	exon      	128697    	128896    	exon      	F53G12.5a.2    	128697    	128896    
+	intron    	127437    	128696    	intron    	F53G12.5b.1    	127437    	128696    
 	exon      	128697    	128896    	exon      	F53G12.5a.1    	128697    	128896    
-	intron    	128897    	128944    	intron    	F53G12.5a.1    	128897    	128944    
+	exon      	128697    	128896    	exon      	F53G12.5a.2    	128697    	128896    
+	exon      	128697    	128896    	exon      	F53G12.5b.1    	128697    	128896    
 	intron    	128897    	128944    	intron    	F53G12.5b.1    	128897    	128944    
 	intron    	128897    	128944    	intron    	F53G12.5a.2    	128897    	128944    
+	intron    	128897    	128944    	intron    	F53G12.5a.1    	128897    	128944    
 	exon      	128945    	129124    	exon      	F53G12.5a.2    	128945    	129124    
-	exon      	128945    	129124    	exon      	F53G12.5a.1    	128945    	129124    
 	exon      	128945    	129124    	exon      	F53G12.5b.1    	128945    	129124    
-	intron    	129125    	129166    	intron    	F53G12.5a.2    	129125    	129166    
+	exon      	128945    	129124    	exon      	F53G12.5a.1    	128945    	129124    
 	intron    	129125    	129166    	intron    	F53G12.5a.1    	129125    	129166    
+	intron    	129125    	129166    	intron    	F53G12.5a.2    	129125    	129166    
 	intron    	129125    	129166    	intron    	F53G12.5b.1    	129125    	129175    
 	exon      	129167    	129333    	intron    	F53G12.5b.1    	129125    	129175    
 	exon      	129167    	129333    	exon      	F53G12.5a.2    	129167    	129333    
 	exon      	129167    	129333    	exon      	F53G12.5a.1    	129167    	129333    
 	exon      	129167    	129333    	exon      	F53G12.5b.1    	129176    	129333    
-	intron    	129334    	132102    	intron    	F53G12.5a.2    	129334    	132102    
 	intron    	129334    	132102    	intron    	F53G12.5a.1    	129334    	132102    
+	intron    	129334    	132102    	intron    	F53G12.5a.2    	129334    	132102    
 	intron    	129334    	132102    	intron    	F53G12.5b.1    	129334    	132102    
-	exon      	132103    	132553    	exon      	F53G12.5a.1    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5a.2    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5b.1    	132103    	132553    
+	exon      	132103    	132553    	exon      	F53G12.5a.1    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5c.1    	132262    	132553    
-	intron    	132554    	132611    	intron    	F53G12.5a.1    	132554    	132611    
-	intron    	132554    	132611    	intron    	F53G12.5b.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5c.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5a.2    	132554    	132611    
+	intron    	132554    	132611    	intron    	F53G12.5b.1    	132554    	132611    
+	intron    	132554    	132611    	intron    	F53G12.5a.1    	132554    	132611    
 	exon      	132612    	132693    	exon      	F53G12.5a.1    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5b.1    	132612    	132693    
-	exon      	132612    	132693    	exon      	F53G12.5a.2    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5c.1    	132612    	132693    
-	intron    	132694    	133413    	intron    	F53G12.5a.1    	132694    	133413    
-	intron    	132694    	133413    	intron    	F53G12.5b.1    	132694    	133413    
+	exon      	132612    	132693    	exon      	F53G12.5a.2    	132612    	132693    
 	intron    	132694    	133413    	intron    	F53G12.5c.1    	132694    	133413    
 	intron    	132694    	133413    	intron    	F53G12.5a.2    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5b.1    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5a.1    	132694    	133413    
 	exon      	133414    	134269    	exon      	F53G12.5c.1    	133414    	133582    
 	exon      	133414    	134269    	exon      	F53G12.5a.1    	133414    	134267    
 	exon      	133414    	134269    	exon      	F53G12.5a.2    	133414    	134269    
 	exon      	133414    	134269    	exon      	F53G12.5b.1    	133414    	134270    
-F53G12.5a.1
-	exon      	128697    	128896    	exon      	F53G12.5b.1    	128697    	128896    
 	exon      	128697    	128896    	exon      	F53G12.5a.2    	128697    	128896    
 	exon      	128697    	128896    	exon      	F53G12.5a.3    	128697    	128896    
-	intron    	128897    	128944    	intron    	F53G12.5a.3    	128897    	128944    
+	exon      	128697    	128896    	exon      	F53G12.5b.1    	128697    	128896    
 	intron    	128897    	128944    	intron    	F53G12.5b.1    	128897    	128944    
 	intron    	128897    	128944    	intron    	F53G12.5a.2    	128897    	128944    
-	exon      	128945    	129124    	exon      	F53G12.5a.2    	128945    	129124    
+	intron    	128897    	128944    	intron    	F53G12.5a.3    	128897    	128944    
 	exon      	128945    	129124    	exon      	F53G12.5a.3    	128945    	129124    
+	exon      	128945    	129124    	exon      	F53G12.5a.2    	128945    	129124    
 	exon      	128945    	129124    	exon      	F53G12.5b.1    	128945    	129124    
-	intron    	129125    	129166    	intron    	F53G12.5a.2    	129125    	129166    
 	intron    	129125    	129166    	intron    	F53G12.5a.3    	129125    	129166    
+	intron    	129125    	129166    	intron    	F53G12.5a.2    	129125    	129166    
 	intron    	129125    	129166    	intron    	F53G12.5b.1    	129125    	129175    
 	exon      	129167    	129333    	intron    	F53G12.5b.1    	129125    	129175    
 	exon      	129167    	129333    	exon      	F53G12.5a.2    	129167    	129333    
 	exon      	129167    	129333    	exon      	F53G12.5a.3    	129167    	129333    
 	exon      	129167    	129333    	exon      	F53G12.5b.1    	129176    	129333    
-	intron    	129334    	132102    	intron    	F53G12.5a.2    	129334    	132102    
 	intron    	129334    	132102    	intron    	F53G12.5a.3    	129334    	132102    
+	intron    	129334    	132102    	intron    	F53G12.5a.2    	129334    	132102    
 	intron    	129334    	132102    	intron    	F53G12.5b.1    	129334    	132102    
 	exon      	132103    	132553    	exon      	F53G12.5a.2    	132103    	132553    
-	exon      	132103    	132553    	exon      	F53G12.5a.3    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5b.1    	132103    	132553    
+	exon      	132103    	132553    	exon      	F53G12.5a.3    	132103    	132553    
 	exon      	132103    	132553    	exon      	F53G12.5c.1    	132262    	132553    
-	intron    	132554    	132611    	intron    	F53G12.5b.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5c.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5a.2    	132554    	132611    
+	intron    	132554    	132611    	intron    	F53G12.5b.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5a.3    	132554    	132611    
 	exon      	132612    	132693    	exon      	F53G12.5b.1    	132612    	132693    
-	exon      	132612    	132693    	exon      	F53G12.5a.2    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5c.1    	132612    	132693    
+	exon      	132612    	132693    	exon      	F53G12.5a.2    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5a.3    	132612    	132693    
-	intron    	132694    	133413    	intron    	F53G12.5a.3    	132694    	133413    
 	intron    	132694    	133413    	intron    	F53G12.5c.1    	132694    	133413    
-	intron    	132694    	133413    	intron    	F53G12.5b.1    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5a.3    	132694    	133413    
 	intron    	132694    	133413    	intron    	F53G12.5a.2    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5b.1    	132694    	133413    
 	exon      	133414    	134267    	exon      	F53G12.5c.1    	133414    	133582    
 	exon      	133414    	134267    	exon      	F53G12.5a.2    	133414    	134269    
 	exon      	133414    	134267    	exon      	F53G12.5a.3    	133414    	134269    
 	exon      	133414    	134267    	exon      	F53G12.5b.1    	133414    	134270    
-F53G12.5c.1
 	exon      	132262    	132553    	exon      	F53G12.5a.2    	132103    	132553    
-	exon      	132262    	132553    	exon      	F53G12.5a.3    	132103    	132553    
-	exon      	132262    	132553    	exon      	F53G12.5a.1    	132103    	132553    
 	exon      	132262    	132553    	exon      	F53G12.5b.1    	132103    	132553    
-	intron    	132554    	132611    	intron    	F53G12.5a.1    	132554    	132611    
-	intron    	132554    	132611    	intron    	F53G12.5b.1    	132554    	132611    
+	exon      	132262    	132553    	exon      	F53G12.5a.1    	132103    	132553    
+	exon      	132262    	132553    	exon      	F53G12.5a.3    	132103    	132553    
 	intron    	132554    	132611    	intron    	F53G12.5a.2    	132554    	132611    
+	intron    	132554    	132611    	intron    	F53G12.5b.1    	132554    	132611    
+	intron    	132554    	132611    	intron    	F53G12.5a.1    	132554    	132611    
 	intron    	132554    	132611    	intron    	F53G12.5a.3    	132554    	132611    
 	exon      	132612    	132693    	exon      	F53G12.5a.1    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5b.1    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5a.2    	132612    	132693    
 	exon      	132612    	132693    	exon      	F53G12.5a.3    	132612    	132693    
-	intron    	132694    	133413    	intron    	F53G12.5a.1    	132694    	133413    
 	intron    	132694    	133413    	intron    	F53G12.5a.3    	132694    	133413    
-	intron    	132694    	133413    	intron    	F53G12.5b.1    	132694    	133413    
 	intron    	132694    	133413    	intron    	F53G12.5a.2    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5b.1    	132694    	133413    
+	intron    	132694    	133413    	intron    	F53G12.5a.1    	132694    	133413    
 	exon      	133414    	133582    	exon      	F53G12.5a.1    	133414    	134267    
 	exon      	133414    	133582    	exon      	F53G12.5a.2    	133414    	134269    
 	exon      	133414    	133582    	exon      	F53G12.5a.3    	133414    	134269    
 	exon      	133414    	133582    	exon      	F53G12.5b.1    	133414    	134270    
-F53G12.18.1
+F53G12.4.1 does not have overlap
+F53G12.3.1 does not have overlap
 	intron    	144972    	146390    	exon      	F56C11.1.2     	145968    	146748    
 	exon      	146391    	146514    	exon      	F56C11.1.2     	145968    	146748    
 	exon      	146391    	146514    	exon      	F56C11.1.1     	146486    	146748    
-F56C11.1.2
 	exon      	145968    	146748    	intron    	F53G12.18.1    	144972    	146390    
 	exon      	145968    	146748    	exon      	F53G12.18.1    	146391    	146514    
 	exon      	145968    	146748    	exon      	F56C11.1.1     	146486    	146748    
@@ -1194,7 +1152,6 @@ F56C11.1.2
 	exon      	149520    	149817    	exon      	F56C11.1.1     	149520    	149817    
 	intron    	149818    	150390    	intron    	F56C11.1.1     	149818    	150390    
 	exon      	150391    	150688    	exon      	F56C11.1.1     	150391    	150688    
-F56C11.1.1
 	exon      	146486    	146748    	exon      	F56C11.1.2     	145968    	146748    
 	exon      	146486    	146748    	exon      	F53G12.18.1    	146391    	146514    
 	intron    	146749    	146792    	intron    	F56C11.1.2     	146749    	146792    
@@ -1213,14 +1170,4 @@ F56C11.1.1
 	exon      	149520    	149817    	exon      	F56C11.1.2     	149520    	149817    
 	intron    	149818    	150390    	intron    	F56C11.1.2     	149818    	150390    
 	exon      	150391    	150688    	exon      	F56C11.1.2     	150391    	150688    
-Y74C9A.6	There is no overlap
-Y74C9A.3.1	There is no overlap
-Y74C9A.1.1	There is no overlap
-Y48G1C.12.1	There is no overlap
-F53G12.1.1	There is no overlap
-F53G12.8.1	There is no overlap
-F53G12.14	There is no overlap
-F53G12.6.1	There is no overlap
-F53G12.4.1	There is no overlap
-F53G12.3.1	There is no overlap
-Total processing time: 0:00:00.006181
+Total processing time: 0:00:00.007803

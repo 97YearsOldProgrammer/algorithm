@@ -1,0 +1,56 @@
+Trxn1 141 612
+	Trxn2 470 586
+	Trxn3 328 727
+	Trxn5 39 604
+
+Trxn1 676 822
+	Trxn2 785 895
+	Trxn3 328 727
+	Trxn4 711 953
+
+In Trxn1 966 969 there is no overlap.
+
+Trxn2 470 586
+	Trxn1 141 612
+	Trxn3 328 727
+	Trxn5 39 604
+
+Trxn2 785 895
+	Trxn1 676 822
+	Trxn4 711 953
+	Trxn5 844 965
+
+Trxn2 954 959
+	Trxn4 956 959
+	Trxn5 844 965
+
+Trxn3 328 727
+	Trxn1 141 612
+	Trxn1 676 822
+	Trxn2 470 586
+	Trxn4 711 953
+	Trxn5 39 604
+
+Trxn4 711 953
+	Trxn1 676 822
+	Trxn2 785 895
+	Trxn3 328 727
+	Trxn5 844 965
+
+Trxn4 956 959
+	Trxn2 954 959
+	Trxn5 844 965
+
+Trxn5 39 604
+	Trxn1 141 612
+	Trxn2 470 586
+	Trxn3 328 727
+
+Trxn5 844 965
+	Trxn2 785 895
+	Trxn2 954 959
+	Trxn4 711 953
+	Trxn4 956 959
+
+In Trxn6 15025 28667 there is no overlap.
+
