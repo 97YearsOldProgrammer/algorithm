@@ -8,61 +8,35 @@ arg = parser.parse_args()
 events = []
 with open(arg.gff1, 'r') as fp:
     for line in fp:
-        line = line.strip()
-        x = line.split('\t')
-        idx = x[0]                      # this is the name
-        beg = int(x[1])
-        end = int(x[2])
-        events.append({
-            'position': beg,
-            'priority': 0,
-            'scope': (beg, end),
-            'name': (idx, beg, end),
-            'overlap': []
-        })
-        events.append({
-            'position': end,
-            'priority': 1,
-            'name': (idx, beg, end)
-        })
+        idx, beg, end = line.strip().split('\t')
+        beg = int(beg)
+        end = int(end)
+        events.append( (idx, beg, end, 0) )
+        events.append( (idx, beg, end, 1) )
 
 if arg.gff2:
-    with open(arg.gff1, 'r') as fp:
+    with open(arg.gff2, 'r') as fp:
         for line in fp:
-            line = line.strip()
-            x = line.split('\t')
-            idx = x[0]                  
-            beg = int(x[1])
-            end = int(x[2])
-            events.append({
-                'position': beg,
-                'priority': 0,
-                'scope': (beg, end),
-                'name': (idx, beg, end),
-                'overlap': []
-            })
-            events.append({
-                'position': end,
-                'priority': 1,
-                'name': (idx, beg, end)
-            })
+            idx, beg, end = line.strip().split('\t')
+            beg = int(beg)
+            end = int(end)
+            events.append( (idx, beg, end, 0) )
+            events.append( (idx, beg, end, 1) )
 
-events.sort(key=lambda x: (x['position'], x['priority']))
-# Algorithm
+events.sort(key=lambda x: ( x[1], x[3] ))
 overlaps = []
-for i, event in enumerate(events):
-    priority = event['priority']
-    name     = event['name']
-    if priority == 0:
-        overlaps.append(name)
-    elif priority == 1:
-        overlaps.remove(name)
-        name1, beg1, end1 = name
+for idx, beg, end, typ in events:
+    output = (idx, beg, end)
+    if typ == 0:
+        overlaps.append(output)
+    elif typ == 1:
+        overlaps.remove(output)
         if overlaps:
-            print(f'{name1}\t{beg1}\t{end1}')
-            for name2, beg2, end2 in overlaps:
-                print(f'\t{name2}\t{beg2}\t{end2}')
+            print(f'{idx}\t{beg}\t{end}')
+            for name, beg1, end1 in overlaps:
+                print(f'\t{name}\t{beg1}\t{end1}')
             print()
         elif not overlaps: 
-            print(f'There is no overlap for {name1}\t{beg1}\t{end1}')
+            print(f'There is no overlap for {idx}\t{beg}\t{end}')
             print()
+
