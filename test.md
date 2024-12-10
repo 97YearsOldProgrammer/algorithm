@@ -2,10 +2,10 @@ Test
 ====
 
 The sweep algorithm could have different combination of data structure for output.  
-Each different way of approach have it own merit. Here is the test of these specificially under v10k standard.
+Each different way of approach have it own merit. Here is the test of these specificially under 10k standard. 
 
 ```
-python3 randomfeatures.py --chroms 20 --length 150000000 --features 10000
+python3 randomfeatures.py --features 10000
 ```
 
 | Active Space | Active data |   Output                | user   | system | cpu | total
@@ -17,3 +17,7 @@ python3 randomfeatures.py --chroms 20 --length 150000000 --features 10000
 | List         | Tuples      | append into a list      | 17.30s | 4.62s  | 98% | 23.68
 | List         | Tuples      | formatted print         | 31.80s | 0.07s  | 99% | 32.057
 
+Pros and cons
+----
+
+This algorithm 
