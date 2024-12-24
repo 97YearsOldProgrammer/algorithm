@@ -18,7 +18,7 @@ Here is the outcome for different program based on this algorithm.
 
 --------------------------------------------------------------------------------------
 
-## Apc ##~~~~
+## Apc ##
 
 This stand for all possible combination. There is one readme under the apc folder that include everything we need for understanding two solution for the whole algorithm. This problem is basically finding all possible isoforms with given gene.
 
