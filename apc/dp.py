@@ -152,7 +152,7 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
                     info['short_intron'] += 1
                     info['short_exon']   += 2
                     continue
-                if len(seq) - flank - inner_intron[1] - 3 < minex * 2 + minin:
+                if len(seq) - flank - inner_intron[-1] - 3 < minex * 2 + minin:
                     info['short_intron'] += 1
                     info['short_exon']   += 2
                     continue

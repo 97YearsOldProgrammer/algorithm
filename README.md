@@ -1,4 +1,7 @@
-# algorithm #
+algorithm
+============
+
+## project ##
 
 Hi, welcome. This repository contain different kinda of algorithm I made.
 
@@ -20,6 +23,12 @@ Here is the outcome for different program based on this algorithm.
 
 ## Apc ##
 
-This stand for all possible combination. There is one readme under the apc folder that include everything we need for understanding two solution for the whole algorithm. This problem is basically finding all possible isoforms with given gene.
+This stand for all possible combination. This is finding the best solution, fastest and preciese algorithm for finding all possible isoforms with a given gene. Here is the breakdown of overall design for solving this.   
 
-+ [report](/apc/apc_report.md)
+```
+--> iteration                   (worked, btw ugly, not-programable)   
+--> recursive bracktracking     (worked, btw slow whenever reach higher depth)   
+--> dynamic programming         (shall be best solution here)
+```
+
+The detail of overall design of this algorithm is reported in [apc_report](/apc/apc_report.md). Here is detailed explaination and overall record of how they worked.

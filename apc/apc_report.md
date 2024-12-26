@@ -13,11 +13,11 @@ APC
 
 Each title means different solution to APC problem except the original represent the original version for APC problem.
 
-| Solution                                       | Pros                                      | Cons                                                
-|:----------------------------------------------:|:-----------------------------------------:|:-----------------------------------------------------
-| [Original](original.py)                        | Precise and easy to understand            | Time consuming                                        
-| [Backtrack](backtrack.py)                      | Precise and fast for small max_intron     | Memory huge when max_intron become larger                                           
-| [Dynamic Programming](dynamic_programming.py)  | Precise, build up from backtrack, faster  | Consuming space complexity for better time complexity                                       
+| Solution                      | Pros                                      | Cons                                                
+|:-----------------------------:|:-----------------------------------------:|:-----------------------------------------------------
+| [Original](original.py)       | Precise and easy to understand            | Time consuming                                        
+| [Backtrack](backtrack.py)     | Precise and fast for small max_intron     | Memory huge when max_intron become larger                                           
+| [Dynamic Programming](dp.py)  | Precise, build up from backtrack, faster  | Consuming space complexity for better time complexity                                       
 
 ------------------------------------------------------------------------------
 
