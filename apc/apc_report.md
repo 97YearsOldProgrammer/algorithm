@@ -3,7 +3,6 @@ APC
 
 ## Breakdown ##
 
-- [Breakdown](#breakdown)
 - [Original](#original)
   - [iteration approach](#iteration-approach)
 - [Recursive Backtracking](#recursive-backtracking)
@@ -255,9 +254,9 @@ This is the place where we gonna record different test report ouf two files. Her
 |              |       | backtrack | 39 | 50 | 70784    | 507004    | 0.26s user 0.02s system 98% cpu 0.282 total 
 |              |       | original  | 39 | 50 | 70784    | 909675    | 0.49s user 0.02s system 99% cpu 0.509 total 
 |              |       | dp_it     | not tested, since with n=2, it uses the same part of backtrack
-|              | **3** | dp_bk     | 39 | 50 | 1102661  | 62151219  | 9.33s user 0.23s system 99% cpu 9.567 total
+|              | **3** | backtrack | 39 | 50 | 1102661  | 17397596  | 7.30s user 0.20s system 99% cpu 7.505 total
+|              |       | dp_bk     | 39 | 50 | 1102661  | 62151219  | 9.33s user 0.23s system 99% cpu 9.567 total
 |              |       | dp_it     | 39 | 50 | 1102661  | 39933988  | 9.44s user 0.17s system 99% cpu 9.615 total
-|              |       | backtrack | 39 | 50 | 1102661  | 17397596  | 9.73s user 0.21s system 99% cpu 9.940 total
 |              |       | original  | 39 | 50 | 1102661  |180034075  | 65.21s user 0.41s system 99% cpu 1:05.63 total
 |              | **4** | 
 |              |       | backtrack | 39 | 50 | 4414315  |162977318  | 47.65s user 36.90s system 84% cpu 1:39.55 total
