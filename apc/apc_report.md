@@ -3,13 +3,18 @@ APC
 
 ## Breakdown ##
 
-- [original](#original)
-  - [first approach](#iteration-approach)
-- [backtrack](#recursive-backtracking)
-  - [protocol](#subset-problem) 
-  - [solution](#min-heap)
-- [dynamic_programming](#dynamic-programming)
-  - [pattern](#divide-and-conquer) 
+- [APC](#apc)
+  - [Breakdown](#breakdown)
+  - [Original](#original)
+    - [iteration approach](#iteration-approach)
+  - [Recursive Backtracking](#recursive-backtracking)
+    - [Subset problem](#subset-problem)
+    - [Min-heap](#min-heap)
+    - [APC in recursive backtracking](#apc-in-recursive-backtracking)
+  - [Dynamic Programming](#dynamic-programming)
+    - [divide and conquer](#divide-and-conquer)
+  - [test](#test)
+    - [Performance](#performance)
 
 Each title means different solution to APC problem except the original represent the original version for APC problem.
 
@@ -223,3 +228,34 @@ if we actually draw more, like n = 5 or n = 6; it's not hard to tell that for so
 Why we did this?
 
 Since there is one problem fo solving this APC purely in the recursion manner, recursion doesn't like iteration, with more depth of recursion gonna make computer take more memory, and the solution by the recursive backtracking, for each intron, gonna equal to depth=2 of recursion. For the purpose of space and time complexity, dynamic programming gonna be the best solution here for all APC.
+
+------------------------------------------------------------------------------
+
+## test ##
+
+This is the place where we gonna record different test report ouf two files. Here is the breakdown of different level of testment. Since, this task somehow don't require level of base pair length btw number of donor and accepto sites matter most. We are gonna only track how different donors and acceptors here, though length of base pair matters.
+
+|      level     | seq length | minin | minex | flank size
+|:--------------:|:----------:|:------|:------|:----------
+| **Novice**     |  500bps    | 25    | 35    | 100    
+| **Standard**   |  1000bps   | 25    | 35    | 100   
+| **Expert**     |  1500bps   | 25    | 35    | 100    
+
+### Performance ###
+|  Game mode   | max   |  program  | ds | as | isoforms | trails  | time                                 
+|:------------:|:-----:|:---------:|:--:|:--:|:--------:|:-------:|:------------------------------------
+| **Novice**   | **3** | original  | 18 | 24 | 1273     | 1694244 | 0.54s user 0.01s system 97% cpu 0.562 total 
+|              |       | backtrack | 18 | 24 | 1273     | 51481   | 0.03s user 0.01s system 82% cpu 0.055 total 
+|              |       | dp        | 18 | 24 | 1273     | 32502   | 0.03s user 0.01s system 79% cpu 0.051 total 
+|              |       |           |    |    |          |         |                                             
+| **Standard** | **2** | original  | 56 | 72 | 373003   | 3940272 | 65.21s user 0.41s system 99% cpu 1:05.63 total 
+|              |       | backtrack | 56 | 72 | 373003   | 2495675 | 1.63s user 0.06s system 99% cpu 1.692 total 
+|              |       | dp        | not tested, since with n=2, it uses the same part of backtrack
+|              | **3** | original  | 39 | 50 | 1102661  |180034075| 65.21s user 0.41s system 99% cpu 1:05.63 total
+|              |       | backtrack | 39 | 50 | 1102661  | 17397596| 9.73s user 0.21s system 99% cpu 9.940 total
+|              |       | dp        | 39 | 50 | 1102661  | 39933988| 9.44s user 0.17s system 99% cpu 9.615 total
+|              | **4** | original  | I am not gonna run that on my laptop, 100% taking forever
+|              |       | backtrack | 39 | 50 | 4414315  |162977318| 47.65s user 36.90s system 84% cpu 1:39.55 total
+|              |       | dp        | 39 | 50 | 4414315  |1754448544| 134.99s user 28.01s system 93% cpu 2:53.95 total
+|              | **5** | backtrack | 39 | 50 | 6308573  |569826050| 111.45s user 75.62s system 76% cpu 4:03.59 total
+|              |       | dp        | 39 | 50 | 6308573  |12149733655|776.92s user 64.55s system 96% cpu 14:28.26 total
