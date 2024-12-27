@@ -28,7 +28,8 @@ This stand for all possible combination. This is finding the best solution, fast
 ```
 --> iteration                   (worked, btw ugly, not-programable)   
 --> recursive bracktracking     (worked, btw slow whenever reach higher depth)   
---> dynamic programming         (shall be best solution here)
+--> dynamic programming         (not worked that well, fail product)
+--> dp + bt                     (good, could be alternative solution with recursive backtracking)
 ```
 
 The detail of overall design of this algorithm is reported in [apc_report](/apc/apc_report.md). Here is detailed explaination and overall record of how they worked.

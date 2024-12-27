@@ -3,26 +3,27 @@ APC
 
 ## Breakdown ##
 
-- [APC](#apc)
-  - [Breakdown](#breakdown)
-  - [Original](#original)
-    - [iteration approach](#iteration-approach)
-  - [Recursive Backtracking](#recursive-backtracking)
-    - [Subset problem](#subset-problem)
-    - [Min-heap](#min-heap)
-    - [APC in recursive backtracking](#apc-in-recursive-backtracking)
-  - [Dynamic Programming](#dynamic-programming)
-    - [divide and conquer](#divide-and-conquer)
-  - [test](#test)
-    - [Performance](#performance)
+- [Breakdown](#breakdown)
+- [Original](#original)
+  - [iteration approach](#iteration-approach)
+- [Recursive Backtracking](#recursive-backtracking)
+  - [protocol](#subset-problem)
+  - [Min-heap](#min-heap)
+  - [progress](#apc-in-recursive-backtracking)
+- [Dynamic Programming](#dynamic-programming)
+  - [divide and conquer](#divide-and-conquer)
+  - [test standard](#test)
+  - [functional test](#performance)
+  - [Conclusion](#conclusion)
 
 Each title means different solution to APC problem except the original represent the original version for APC problem.
 
-| Solution                      | Pros                                      | Cons                                                
-|:-----------------------------:|:-----------------------------------------:|:-----------------------------------------------------
-| [Original](original.py)       | Precise and easy to understand            | Time consuming                                        
-| [Backtrack](backtrack.py)     | Precise and fast for small max_intron     | Memory huge when max_intron become larger                                           
-| [Dynamic Programming](dp.py)  | Precise, build up from backtrack, faster  | Consuming space complexity for better time complexity                                       
+| Solution                         | Pros                                      | Cons                                                
+|:--------------------------------:|:-----------------------------------------:|:-----------------------------------------------------
+| [Original](original.py)          | Precise and easy to understand            | Time consuming                                        
+| [Backtrack](backtrack.py)        | Precise and fast for small max_intron     | Memory huge when max_intron become larger                                           
+| [Dynamic Programming](dp_it.py)  | Precise, build up from backtrack, faster  | Consuming space complexity for better time complexity                       
+| [dp + bt](dp_bk.py)              | Best on here, neat and fast               | Performance best on when n is high                  
 
 ------------------------------------------------------------------------------
 
@@ -242,20 +243,39 @@ This is the place where we gonna record different test report ouf two files. Her
 | **Expert**     |  1500bps   | 25    | 35    | 100    
 
 ### Performance ###
-|  Game mode   | max   |  program  | ds | as | isoforms | trails  | time                                 
-|:------------:|:-----:|:---------:|:--:|:--:|:--------:|:-------:|:------------------------------------
-| **Novice**   | **3** | original  | 18 | 24 | 1273     | 1694244 | 0.54s user 0.01s system 97% cpu 0.562 total 
-|              |       | backtrack | 18 | 24 | 1273     | 51481   | 0.03s user 0.01s system 82% cpu 0.055 total 
-|              |       | dp        | 18 | 24 | 1273     | 32502   | 0.03s user 0.01s system 79% cpu 0.051 total 
-|              |       |           |    |    |          |         |                                             
-| **Standard** | **2** | original  | 56 | 72 | 373003   | 3940272 | 65.21s user 0.41s system 99% cpu 1:05.63 total 
-|              |       | backtrack | 56 | 72 | 373003   | 2495675 | 1.63s user 0.06s system 99% cpu 1.692 total 
-|              |       | dp        | not tested, since with n=2, it uses the same part of backtrack
-|              | **3** | original  | 39 | 50 | 1102661  |180034075| 65.21s user 0.41s system 99% cpu 1:05.63 total
-|              |       | backtrack | 39 | 50 | 1102661  | 17397596| 9.73s user 0.21s system 99% cpu 9.940 total
-|              |       | dp        | 39 | 50 | 1102661  | 39933988| 9.44s user 0.17s system 99% cpu 9.615 total
-|              | **4** | original  | I am not gonna run that on my laptop, 100% taking forever
-|              |       | backtrack | 39 | 50 | 4414315  |162977318| 47.65s user 36.90s system 84% cpu 1:39.55 total
-|              |       | dp        | 39 | 50 | 4414315  |1754448544| 134.99s user 28.01s system 93% cpu 2:53.95 total
-|              | **5** | backtrack | 39 | 50 | 6308573  |569826050| 111.45s user 75.62s system 76% cpu 4:03.59 total
-|              |       | dp        | 39 | 50 | 6308573  |12149733655|776.92s user 64.55s system 96% cpu 14:28.26 total
+
+|  Game mode   | max   |  program  | ds | as | isoforms | trails    | time                                 
+|:------------:|:-----:|:---------:|:--:|:--:|:--------:|:---------:|:------------------------------------
+| **Novice**   | **3** | backtrack | 18 | 24 | 1273     | 51481     | 0.03s user 0.01s system 82% cpu 0.055 total 
+|              |       | original  | 18 | 24 | 1273     | 1694244   | 0.54s user 0.01s system 97% cpu 0.562 total 
+|              |       | dp_it     | not tested, it use the same part of backtrack for n=1
+|              |       | dp_bk     | not tested, it use the same part of backtrack for n=1
+|              |       |           |    |    |          |           |                                             
+| **Standard** | **2** | dp_bk     | 39 | 50 | 70784    | 773751    | 0.24s user 0.02s system 98% cpu 0.265 total
+|              |       | backtrack | 39 | 50 | 70784    | 507004    | 0.26s user 0.02s system 98% cpu 0.282 total 
+|              |       | original  | 39 | 50 | 70784    | 909675    | 0.49s user 0.02s system 99% cpu 0.509 total 
+|              |       | dp_it     | not tested, since with n=2, it uses the same part of backtrack
+|              | **3** | dp_bk     | 39 | 50 | 1102661  | 62151219  | 9.33s user 0.23s system 99% cpu 9.567 total
+|              |       | dp_it     | 39 | 50 | 1102661  | 39933988  | 9.44s user 0.17s system 99% cpu 9.615 total
+|              |       | backtrack | 39 | 50 | 1102661  | 17397596  | 9.73s user 0.21s system 99% cpu 9.940 total
+|              |       | original  | 39 | 50 | 1102661  |180034075  | 65.21s user 0.41s system 99% cpu 1:05.63 total
+|              | **4** | 
+|              |       | backtrack | 39 | 50 | 4414315  |162977318  | 47.65s user 36.90s system 84% cpu 1:39.55 total
+|              |       | dp_bk     | 39 | 50 | 4414315  |968139225  | 80.62s user 20.41s system 89% cpu 1:52.41 total
+|              |       | dp_it     | 39 | 50 | 4414315  |1754448544 | 134.99s user 28.01s system 93% cpu 2:53.95 total
+|              |       | original  | I am not gonna run that on my laptop, 100% taking forever
+|              | **5** | backtrack | 39 | 50 | 6308573  |569826050  | 111.45s user 75.62s system 76% cpu 4:03.59 total
+|              |       | dp_bk     | 39 | 50 | 6308573  |3875771437 | 267.94s user 49.93s system 91% cpu 5:45.82 total
+|              |       | dp_it     | 39 | 50 | 6308573  |12149733655| 776.92s user 64.55s system 96% cpu 14:28.26 total
+|              |       | original  | failed
+| real APC     |**10** | dp_bk     | 39 | 50 | 6435575  |5650437717 | 374.31s user 52.41s system 94% cpu 7:31.70 total
+|              |       | backtrack | 39 | 50 | 6435575  |3098329592 | 446.24s user 76.57s system 93% cpu 9:19.97 total
+|              |       | dp_it     | not tested here, definitely much slower
+|              |       | original  | failed
+|              |       |           |    |    |          |           |
+| **Expert**   |  not tested yet, i don't wanna spend hours in here, btw shall get the overall same results
+|              |
+
+### Conclusion ###
+
+I am not sure whether this could be a valid compter science conclusion. Python seems like don't like huge amount of for iteration even if the for iteration is the fastest one. Since, dp_it is the true dynamic programming idea that planned to work best than the two others. However, the tested result on this race is pretty bad for it, it doesn't work that well. Well, the recursive backtracking both works perfectly nice though. Lower amount of more for loop gonna works better with python I guess. And also, in the task of finding the real all possible combination, the threshold is almost near to 9 for 1000bps and 200flank size(used for limit output). All new algorithm is able to works for finding true all possible combination, but its just the speed.

@@ -79,58 +79,82 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
     }
 
     sol = []
-    isoforms = []
+    intron1  = []
 
     def backtrack(i):
 
-        if i == depth:
-            info['trails'] += 1
+        # the exit mechanism
+        if i == 2:
             # check last exon
             if len(seq) - flank - sol[-1] + 1 < minex: 
                 info['short_exon'] += 1
                 return
-            # create isoform and save
-            tx = build_mRNA(seq, flank, len(seq) - flank - 1, sol[:] )
-            isoforms.append(tx)
+            intron1.append(sol[:])
             return
 
-        if (depth - i) % 2 == 0:
-
-            for ds in dons:
+        if i == 0:
+        # we pick the donor first as parental node
+            for n1 in dons:
                 info['trails'] += 1
-
                 # sanity check
                 if not sol:
-                    if ds - 1 - flank < minex:
+                    if n1 - 1 - flank < minex:
                         info['short_exon'] += 1
                         continue
-                elif sol and ds < sol[-1] + minex + 2:
+                elif sol and n1 < sol[-1] + minex + 2:
                     info['short_exon'] += 1 
                     continue
-
                 # algorithm
-                sol.append(ds)
+                sol.append(n1)
                 backtrack(i + 1)
                 sol.pop()
 
+        # where we pick the acceptor as parental node
         else:
-
-            for ac in accs:
+            for n2 in accs:
                 info['trails'] += 1
-
                 # sanity check
-                if sol and ac < sol[-1] + minin - 1: 
+                if sol and n2 < sol[-1]: continue
+                if sol and n2 < sol[-1] + minin - 1: 
                     info['short_intron'] += 1
                     continue
                 # algorithm
-                sol.append(ac)
+                sol.append(n2)
                 backtrack(i + 1)
                 sol.pop()
 
-    for depth in range(2, 2 * maxs + 2, 2):
-        backtrack(0)
+    backtrack(0)
 
+    sol = []
+    isoforms = []
+
+    def dynamic_programming(n):
+
+        if n == maxs: 
+            tx = build_mRNA(seq, flank, len(seq) - flank - 1, sol[:] )
+            isoforms.append(tx)
+            return
+        
+        if sol:
+            tx = build_mRNA(seq, flank, len(seq) - flank - 1, sol[:] )
+            isoforms.append(tx)
+        
+        for i1 in intron1:
+            info['trails'] += 1
+            if sol and i1[0] <= sol[-1]: continue
+            if sol and i1[0] < sol[-1] + minex + 2:
+                info['short_exon'] += 1
+                continue
+            sol.extend(i1)
+            dynamic_programming(n+1)
+            sol.pop()
+            sol.pop()
+
+    dynamic_programming(0)
     return isoforms, info
+
+"""                     test area                    """
+
 
 seq2 = '''AGGTTTTCAGTCTGCGTATCTAAATCAGCATTAATA
 TCGGGCCTCTAGTCCTTTTTGCTGGCCAAAGTGAACGTCAGCTAGT
@@ -153,7 +177,8 @@ TTGAGGAGTTAAGGCACTACCACGGAACACCAAAGTGAACGTCAGG
 CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAA
 TTGAGGAGTTAAGGCACACAGAGACCGTGTGCCAGGAGAAGTGGT
 GCTCCTGACAGTTGCCGACTCCGGGCGCATTGACTGTCAGAGAAGT
-AGTGCTACAATTGAGGAGTTAAGGCACACAGAACGC'''
+AGTGCTACAATTGAGGAGTTAAGGCACACAGAACG
+'''
 
-isoforms, info = all_possible(seq2, 25, 35, 3, 200)
-print(len(isoforms), info)
+isoforms, info = all_possible(seq2, 25, 35, 10, 200)
+print( len(isoforms), info )
