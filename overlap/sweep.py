@@ -22,15 +22,19 @@ events.sort(key=lambda x: ( x[1], x[3] ))
 
 overlaps = []
 for idx, beg, end, typ in events:
+
     if typ == 0:
         output = (idx, beg, end)
         overlaps.append(output)
+
     elif typ == 1:
         output = (idx, end, beg)
         overlaps.remove(output)
+
         if overlaps:
             print(f'{idx}\t{end}\t{beg}')
-            list(map(lambda x: print(f'\t{x[0]}\t{x[1]}\t{x[2]}'), overlaps))
+            print(overlaps[:])
+
         elif not overlaps: 
-            print(f'There is no overlap for {idx}\t{beg}\t{end}')
+            print(f'There is no overlap for {idx}\t{end}\t{beg}')
             print()
