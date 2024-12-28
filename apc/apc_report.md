@@ -21,7 +21,8 @@ Each title means different solution to APC problem except the original represent
 |:--------------------------------:|:-----------------------------------------:|:-----------------------------------------------------
 | [Original](original.py)          | Precise and easy to understand            | Time consuming                                        
 | [Backtrack](backtrack.py)        | Precise and fast for small max_intron     | Memory huge when max_intron become larger                                           
-| [Dynamic Programming](dp_it.py)  | Precise, build up from backtrack, faster  | Consuming space complexity for better time complexity                       
+| [bt_optimized](bt_op.py)         | Best version of bt                        | perfect solution
+| [Dynamic Programming](dp_it.py)  | Precise, build up from backtrack          | Consuming space complexity for better time complexity                       
 | [dp + bt](dp_bk.py)              | Best on here, neat and fast               | Performance best on when n is high                  
 
 ------------------------------------------------------------------------------
@@ -254,12 +255,13 @@ This is the place where we gonna record different test report ouf two files. Her
 |              |       | backtrack | 39 | 50 | 70784    | 507004    | 0.26s user 0.02s system 98% cpu 0.282 total 
 |              |       | original  | 39 | 50 | 70784    | 909675    | 0.49s user 0.02s system 99% cpu 0.509 total 
 |              |       | dp_it     | not tested, since with n=2, it uses the same part of backtrack
-|              | **3** | backtrack | 39 | 50 | 1102661  | 17397596  | 7.30s user 0.20s system 99% cpu 7.505 total
+|              | **3** | bt_op     | 39 | 50 | 1102661  | 16961376  | 6.87s user 0.20s system 99% cpu 7.087 total
+|              |       | backtrack | 39 | 50 | 1102661  | 17397596  | 7.59s user 0.22s system 99% cpu 7.821 total
 |              |       | dp_bk     | 39 | 50 | 1102661  | 62151219  | 9.33s user 0.23s system 99% cpu 9.567 total
 |              |       | dp_it     | 39 | 50 | 1102661  | 39933988  | 9.44s user 0.17s system 99% cpu 9.615 total
 |              |       | original  | 39 | 50 | 1102661  |180034075  | 65.21s user 0.41s system 99% cpu 1:05.63 total
 |              | **4** | 
-|              |       | backtrack | 39 | 50 | 4414315  |162977318  | 47.65s user 36.90s system 84% cpu 1:39.55 total
+|              |       | backtrack | 39 | 50 | 4414315  |145579722  | 38.35s user 25.43s system 83% cpu 1:16.14 total
 |              |       | dp_bk     | 39 | 50 | 4414315  |968139225  | 80.62s user 20.41s system 89% cpu 1:52.41 total
 |              |       | dp_it     | 39 | 50 | 4414315  |1754448544 | 134.99s user 28.01s system 93% cpu 2:53.95 total
 |              |       | original  | I am not gonna run that on my laptop, 100% taking forever

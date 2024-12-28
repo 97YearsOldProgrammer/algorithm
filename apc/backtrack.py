@@ -108,10 +108,9 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
                 info['trails'] += 1
 
                 # sanity check
-                if not sol:
-                    if ds - 1 - flank < minex:
-                        info['short_exon'] += 1
-                        continue
+                if not sol and ds - 1 - flank < minex:
+                    info['short_exon'] += 1
+                    continue
                 elif sol and ds < sol[-1] + minex + 2:
                     info['short_exon'] += 1 
                     continue
@@ -130,6 +129,7 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
                 if sol and ac < sol[-1] + minin - 1: 
                     info['short_intron'] += 1
                     continue
+
                 # algorithm
                 sol.append(ac)
                 backtrack(i + 1)
@@ -137,3 +137,29 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
     
     backtrack(0)
     return isoforms, info
+
+seq2 = '''AGGTTTTCAGTCTGCGTATCTAAATCAGCATTAATA
+TCGGGCCTCTAGTCCTTTTTGCTGGCCAAAGTGAACGTCAGCTAGT
+CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAAC
+TTGAGGAGTTAAGGCACTACCACGGAACACCAAAGTGAACGTCAGG
+CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAA
+TTGAGGAGTTAAGGCACACAGAGACCGTGTGCCAGGAGAAGTGGT
+GCTCCTGACAGTTGCCGACTCCGGGCGCATTGACTGTCACTGCTA
+TTGAGGAGTTAAGGCACTACCACGGAACACCAAAGTGAACGTCAG
+CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAT
+TTGAGGAGTTAAGGCACACAGAGACCGTGTGCCAGGAGAAGTGGT
+GCTCCTGACAGTTGCCGACTCCGGGCGCATTGACTGTCACTTCGA
+GAAACAAATAGTTATCAGTGCTACAACGCTACAACGCTACAACGCT
+TTGAGGAGTTAAGGCACTACCACGGAACACCAAAGTGAACGTCAGG
+CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAA
+TTGAGGAGTTAAGGCACACAGAGACCGTGTGCCAGGAGAAGTGGT
+GCTCCTGACAGTTGCCGACTCCGGGCGCATTGACTGTCACTGCTA
+TTGAGGAGTTAAGGCACTACCACGGAAACGCTACAACGCTTGCAT
+TTGAGGAGTTAAGGCACTACCACGGAACACCAAAGTGAACGTCAGG
+CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAA
+TTGAGGAGTTAAGGCACACAGAGACCGTGTGCCAGGAGAAGTGGT
+GCTCCTGACAGTTGCCGACTCCGGGCGCATTGACTGTCAGAGAAGT
+AGTGCTACAATTGAGGAGTTAAGGCACACAGAACG
+'''
+isoforms, info = all_possible(seq2, 25, 35, 2, 200)
+print(len(isoforms), info)
