@@ -27,9 +27,9 @@ This stand for all possible combination. This is finding the best solution, fast
 
 ```
 --> iteration                   (worked, btw ugly, not-programable)   
---> recursive bracktracking     (best solution1, btw kinda bad when depth reach high)   
+--> recursive bracktracking     (best solution, somehow would be not that good when depth/maxs is high)   
 --> dynamic programming         (not worked that well, fail product)
---> dp + bt                     (best solution2, bad when depth is low, worked when depth reach high)
+--> dp + bt                     (alternative solution, bad when depth is low, still worked fine when depth reach high)
 ```
 
 The detail of overall design of this algorithm is reported in [apc_report](/apc/apc_report.md). Here is detailed explaination and overall record of how they worked.

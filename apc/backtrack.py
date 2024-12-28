@@ -49,7 +49,7 @@ def build_mRNA(seq, beg, end, res):
 
     for i, index in enumerate(res):
         if i % 2 == 0: dons.append(index)
-        else: accs.append(index)
+        else:          accs.append(index)
 
     # introns
     for a, b in zip(dons, accs):
@@ -83,7 +83,8 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
 
     def backtrack(i):
 
-        if i == depth:
+        if i == maxs * 2:
+
             info['trails'] += 1
             # check last exon
             if len(seq) - flank - sol[-1] + 1 < minex: 
@@ -94,7 +95,14 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
             isoforms.append(tx)
             return
 
-        if (depth - i) % 2 == 0:
+        if i % 2 == 0:
+
+            if sol:
+                if len(seq) - flank - sol[-1] + 1 < minex: 
+                    info['short_exon'] += 1
+                    return
+                tx = build_mRNA(seq, flank, len(seq) - flank - 1, sol[:] )
+                isoforms.append(tx)
 
             for ds in dons:
                 info['trails'] += 1
@@ -126,8 +134,6 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
                 sol.append(ac)
                 backtrack(i + 1)
                 sol.pop()
-
-    for depth in range(2, 2 * maxs + 2, 2):
-        backtrack(0)
-
+    
+    backtrack(0)
     return isoforms, info
