@@ -96,14 +96,15 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
         # we pick the donor first as parental node
             for n1 in dons:
                 info['trails'] += 1
+                
                 # sanity check
-                if not sol:
-                    if n1 - 1 - flank < minex:
-                        info['short_exon'] += 1
-                        continue
+                if not sol and n1 - 1 - flank < minex:
+                    info['short_exon'] += 1
+                    continue
                 elif sol and n1 < sol[-1] + minex + 2:
                     info['short_exon'] += 1 
                     continue
+
                 # algorithm
                 sol.append(n1)
                 backtrack(i + 1)

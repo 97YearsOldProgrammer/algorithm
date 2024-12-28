@@ -86,10 +86,12 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
         if i == maxs * 2:
 
             info['trails'] += 1
+            
             # check last exon
             if len(seq) - flank - sol[-1] + 1 < minex: 
                 info['short_exon'] += 1
                 return
+            
             # create isoform and save
             tx = build_mRNA(seq, flank, len(seq) - flank - 1, sol[:] )
             isoforms.append(tx)
@@ -111,6 +113,7 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
                 if not sol and ds - 1 - flank < minex:
                     info['short_exon'] += 1
                     continue
+
                 elif sol and ds < sol[-1] + minex + 2:
                     info['short_exon'] += 1 
                     continue
@@ -137,29 +140,3 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
     
     backtrack(0)
     return isoforms, info
-
-seq2 = '''AGGTTTTCAGTCTGCGTATCTAAATCAGCATTAATA
-TCGGGCCTCTAGTCCTTTTTGCTGGCCAAAGTGAACGTCAGCTAGT
-CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAAC
-TTGAGGAGTTAAGGCACTACCACGGAACACCAAAGTGAACGTCAGG
-CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAA
-TTGAGGAGTTAAGGCACACAGAGACCGTGTGCCAGGAGAAGTGGT
-GCTCCTGACAGTTGCCGACTCCGGGCGCATTGACTGTCACTGCTA
-TTGAGGAGTTAAGGCACTACCACGGAACACCAAAGTGAACGTCAG
-CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAT
-TTGAGGAGTTAAGGCACACAGAGACCGTGTGCCAGGAGAAGTGGT
-GCTCCTGACAGTTGCCGACTCCGGGCGCATTGACTGTCACTTCGA
-GAAACAAATAGTTATCAGTGCTACAACGCTACAACGCTACAACGCT
-TTGAGGAGTTAAGGCACTACCACGGAACACCAAAGTGAACGTCAGG
-CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAA
-TTGAGGAGTTAAGGCACACAGAGACCGTGTGCCAGGAGAAGTGGT
-GCTCCTGACAGTTGCCGACTCCGGGCGCATTGACTGTCACTGCTA
-TTGAGGAGTTAAGGCACTACCACGGAAACGCTACAACGCTTGCAT
-TTGAGGAGTTAAGGCACTACCACGGAACACCAAAGTGAACGTCAGG
-CAAAGACGAGTAGTGTCGCGAAACAAATAGTTATCAGTGCTACAA
-TTGAGGAGTTAAGGCACACAGAGACCGTGTGCCAGGAGAAGTGGT
-GCTCCTGACAGTTGCCGACTCCGGGCGCATTGACTGTCAGAGAAGT
-AGTGCTACAATTGAGGAGTTAAGGCACACAGAACG
-'''
-isoforms, info = all_possible(seq2, 25, 35, 2, 200)
-print(len(isoforms), info)

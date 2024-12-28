@@ -260,7 +260,7 @@ This is the place where we gonna record different test report ouf two files. Her
 |              |       | dp_bk     | 39 | 50 | 1102661  | 62151219  | 9.33s user 0.23s system 99% cpu 9.567 total
 |              |       | dp_it     | 39 | 50 | 1102661  | 39933988  | 9.44s user 0.17s system 99% cpu 9.615 total
 |              |       | original  | 39 | 50 | 1102661  |180034075  | 65.21s user 0.41s system 99% cpu 1:05.63 total
-|              | **4** | 
+|              | **4** | bt_op     | 39 | 50 | 4414315  |146682383  | 31.06s user 26.49s system 83% cpu 1:08.93 total
 |              |       | backtrack | 39 | 50 | 4414315  |145579722  | 38.35s user 25.43s system 83% cpu 1:16.14 total
 |              |       | dp_bk     | 39 | 50 | 4414315  |968139225  | 80.62s user 20.41s system 89% cpu 1:52.41 total
 |              |       | dp_it     | 39 | 50 | 4414315  |1754448544 | 134.99s user 28.01s system 93% cpu 2:53.95 total
