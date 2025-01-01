@@ -81,36 +81,18 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
 
     def backtrack(i):
 
-        if i == maxs * 2:
-
-            info['trails'] += 1
-
-            # check last exon
-            if len(seq) - flank - acc[-1] + 1 < minex: 
-                info['short_exon'] += 1
-                return
-            
-            # create isoform and save
-            tx = build_mRNA(seq, flank, len(seq) - flank - 1, don, acc )
-            isoforms.append(tx)
-            return
+        if i == maxs * 2: return
 
         if i % 2 == 0:
 
-            if acc:
-                info['trails'] += 1
-                if len(seq) - flank - acc[-1] + 1 < minex: 
-                    info['short_exon'] += 1
-                    return
-                tx = build_mRNA(seq, flank, len(seq) - flank - 1, don, acc )
-                isoforms.append(tx)
-
             for ds in dons:
                 info['trails'] += 1
-                if don and ds < acc[-1]: continue
 
-                # check first_exon
+                # fast check
+                if don and ds <= acc[-1]: continue
+                # sanity check
                 else: 
+                    # check first exon
                     if ds - 1 - flank < minex:
                         info['short_exon'] += 1
                         continue
@@ -129,17 +111,26 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
 
             for ac in accs:
                 info['trails'] += 1
-                if acc and ac < don[-1]: continue
 
+                # fast check
+                if ac <= don[-1]: continue
                 # check short_intron
                 if ac < don[-1] + minin - 1:
                     info['short_intron'] += 1
                     continue
 
-                # algorithm
                 acc.append(ac)
-                backtrack(i + 1)
-                acc.pop()
+                # check last exon
+                if len(seq) - flank - ac + 1 >= minex:
+                    # creating isoform and store
+                    tx = build_mRNA(seq, flank, len(seq) - flank - 1, don, acc )
+                    isoforms.append(tx)
+                    backtrack(i + 1)
+                    acc.pop()
+                else: 
+                    info['short_exon'] += 1
+                    acc.pop()
+                    continue
     
     backtrack(0)
     return isoforms, info
