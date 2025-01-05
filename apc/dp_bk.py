@@ -83,46 +83,49 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
 
     def backtrack(i):
 
-        # the exit mechanism
-        if i == 2:
-            # check last exon
-            if len(seq) - flank - sol[-1] + 1 < minex: 
-                info['short_exon'] += 1
-                return
-            intron1.append(sol[:])
-            return
+        if i == 2: return
+ 
+        if i % 2 == 0:
 
-        if i == 0:
-        # we pick the donor first as parental node
-            for n1 in dons:
+            for ds in dons:
                 info['trails'] += 1
-                
-                # sanity check
-                if not sol and n1 - 1 - flank < minex:
+
+                # check first exon
+                if not sol and ds - 1 - flank < minex:
                     info['short_exon'] += 1
                     continue
-                elif sol and n1 < sol[-1] + minex + 2:
+                # check interior exon
+                elif sol and ds < sol[-1] + minex + 2:
                     info['short_exon'] += 1 
                     continue
 
                 # algorithm
-                sol.append(n1)
+                sol.append(ds)
                 backtrack(i + 1)
                 sol.pop()
 
-        # where we pick the acceptor as parental node
         else:
-            for n2 in accs:
+            
+            for ac in accs:
                 info['trails'] += 1
+
+                # fast check
+                if ac <= sol[-1]: continue
                 # sanity check
-                if sol and n2 < sol[-1]: continue
-                if sol and n2 < sol[-1] + minin - 1: 
+                if ac < sol[-1] + minin - 1: 
                     info['short_intron'] += 1
                     continue
-                # algorithm
-                sol.append(n2)
-                backtrack(i + 1)
-                sol.pop()
+
+                sol.append(ac)
+                # check last exon
+                if len(seq) - flank - ac + 1 >= minex:
+                    intron1.append( sol[:] )
+                    backtrack(i + 1)
+                    sol.pop()
+                else: 
+                    info['short_exon'] += 1
+                    sol.pop()
+                    continue
 
     backtrack(0)
 
@@ -131,22 +134,21 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
 
     def dynamic_programming(n):
 
-        if n == maxs: 
-            tx = build_mRNA(seq, flank, len(seq) - flank - 1, sol[:] )
-            isoforms.append(tx)
-            return
-        
-        if sol:
-            tx = build_mRNA(seq, flank, len(seq) - flank - 1, sol[:] )
-            isoforms.append(tx)
-        
+        if n == maxs: return
+
         for i1 in intron1:
             info['trails'] += 1
+            # sanity check
             if sol and i1[0] <= sol[-1]: continue
             if sol and i1[0] < sol[-1] + minex + 2:
                 info['short_exon'] += 1
                 continue
+
             sol.extend(i1)
+            # create isoforms and store
+            tx = build_mRNA(seq, flank, len(seq) - flank - 1, sol[:] )
+            isoforms.append(tx)
+            # backtrack
             dynamic_programming(n+1)
             sol.pop()
             sol.pop()

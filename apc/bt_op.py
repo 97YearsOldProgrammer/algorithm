@@ -44,10 +44,6 @@ def build_mRNA(seq, beg, end, dons, accs):
 		'score': 0
 	}
 
-	if len(dons) == 0:
-		tx['exons'].append((beg, end))
-		return tx
-
 	# introns
 	for a, b in zip(dons, accs):
 		tx['introns'].append((a, b))
