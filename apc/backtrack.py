@@ -91,11 +91,11 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
                 info['trails'] += 1
 
                 # check first exon
-                if not sol and ds - 1 - flank < minex:
+                if not sol and ds - flank < minex:
                     info['short_exon'] += 1
                     continue
                 # check interior exon
-                if sol and ds < sol[-1] + minex + 2:
+                if sol and ds < sol[-1] + minex + 1:
                     info['short_exon'] += 1 
                     continue
 
@@ -118,7 +118,7 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
 
                 sol.append(ac)
                 # check last exon
-                if len(seq) - flank - ac + 1 >= minex:
+                if len(seq) - flank - ac - 1 >= minex:
                     # creating isoform and store
                     tx = build_mRNA(seq, flank, len(seq) - flank - 1, sol[:] )
                     isoforms.append(tx)
