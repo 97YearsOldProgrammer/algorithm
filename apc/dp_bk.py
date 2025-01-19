@@ -91,11 +91,11 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
                 info['trails'] += 1
 
                 # check first exon
-                if not sol and ds - flank < minex:
+                if not sol and ds - 1 - flank < minex:
                     info['short_exon'] += 1
                     continue
                 # check interior exon
-                elif sol and ds < sol[-1] + minex + 1:
+                if sol and ds < sol[-1] + minex + 2:
                     info['short_exon'] += 1 
                     continue
 
@@ -118,7 +118,7 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
 
                 sol.append(ac)
                 # check last exon
-                if len(seq) - flank - ac - 1 >= minex:
+                if len(seq) - flank - ac + 1 >= minex:
                     intron1.append( sol[:] )
                     backtrack(i + 1)
                     sol.pop()
@@ -140,7 +140,7 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
             info['trails'] += 1
             # sanity check
             if sol and i1[0] <= sol[-1]: continue
-            if sol and i1[0] < sol[-1] + minex + 1:
+            if sol and i1[0] < sol[-1] + minex + 2:
                 info['short_exon'] += 1
                 continue
 
