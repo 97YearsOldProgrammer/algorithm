@@ -89,12 +89,12 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
                 # sanity check
                 else: 
                     # check first exon
-                    if ds - 1 - flank < minex:
+                    if ds - flank < minex:
                         info['short_exon'] += 1
                         continue
 
                 # check short_exon
-                if acc and ds < acc[-1] + minex + 2:
+                if acc and ds < acc[-1] + minex + 1:
                     info['short_exon'] += 1
                     continue
 
@@ -117,7 +117,7 @@ def all_possible(seq, minin, minex, maxs, flank, gff=None):
 
                 acc.append(ac)
                 # check last exon
-                if len(seq) - flank - ac + 1 >= minex:
+                if len(seq) - flank - ac - 1 >= minex:
                     # creating isoform and store
                     tx = build_mRNA(seq, flank, len(seq) - flank - 1, don, acc )
                     isoforms.append(tx)

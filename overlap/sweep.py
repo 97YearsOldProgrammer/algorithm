@@ -32,9 +32,8 @@ for idx, beg, end, typ in events:
         overlaps.remove(output)
 
         if overlaps:
-            print(f'{idx}\t{end}\t{beg}')
+            print(f'{output}--',ends="")
             print(overlaps[:])
 
         elif not overlaps: 
-            print(f'There is no overlap for {idx}\t{end}\t{beg}')
-            print()
+            print(f'There is no overlap for {output}')
