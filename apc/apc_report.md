@@ -15,6 +15,8 @@ APC
   - [functional test](#performance)
   - [Conclusion](#conclusion)
 
+## Fast update: I found better and neater way to do them all. The idea is in the C version of this algo. [C version](isoform.c) ##
+
 Each title means different solution to APC problem except the original represent the original version for APC problem.
 
 | Solution                         | Pros                                      | Cons                                                

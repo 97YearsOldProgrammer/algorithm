@@ -132,6 +132,8 @@ void pointer_printer(const int *start, const int *end)
     {
         printf("%d\t", *p);
     }
+
+    printf("\n");
     
 }
 
@@ -145,7 +147,7 @@ void all_isoform(const int *donor, const int *donor_end, const int *acceptor, co
     static int isoform[20];
 
     // whenever we are out of donor and acceptor, exit
-    if ( *donor == *donor_end && *acceptor == *acceptor_end)
+    if ( donor > donor_end || acceptor > acceptor_end)
     {
         return;
     }
@@ -159,8 +161,12 @@ void all_isoform(const int *donor, const int *donor_end, const int *acceptor, co
             continue;
         }
 
+        // ==================================================================\\
+        // add whatever features we want to continue the loop if bad isoform \\
+        // ==================================================================\\
+
         isoform[spot] = *p1;
-        spot ++;
+        
 
         // picking acceptors
         for (const int *p2 = acceptor; p2 <= acceptor_end; p2++)
@@ -171,12 +177,16 @@ void all_isoform(const int *donor, const int *donor_end, const int *acceptor, co
                 continue;
             }
 
-            isoform[spot] = *p2;
-            spot ++;
+            isoform[spot + 1] = *p2;
             
-            pointer_printer( *isoform, *isoform + spot -1 );
+            pointer_printer( isoform, isoform + spot + 1 );
+
+            // ====================================================================== \\
+            // here we could add the mRNA function which used to store and check then \\
+            // ====================================================================== \\            
+
             // recursion, continue picking
-            all_isoform(*p1, *donor_end, *p2, *acceptor_end, spot);
+            all_isoform(p1, donor_end, p2, acceptor_end, spot + 2);
         }
     }   
     
