@@ -44,7 +44,11 @@ void all_isoform(SpliceSiteData *ssd, const int *donor, const int *acceptor, con
 
 // ====================  test sequence ==================== 
 
-char seq[] = "ACGTTGACGTAAGTAAAGCAGCGCCACGAGTAAGAGTAACCGTTTACC";
+char seq[] = "ACGTTGACGTAAGTAAAGCGCAGCGCCCGACGCAGCG"
+             "GCGCAGCGCGCGCAGCGCCGTAAGTAAAGCAGCGCAGCGCCAGCAGT"       
+             "AACAGCGCCAGCAGGCGCAGCGCTAACGAGTAAGTAACCGGCAGCG"
+             "TTTAGTCGCAGCGCTAAGCGCTAACGAGTAAGCGCCAG"
+             "CCAGCAGGTAAAGGCGCTAAGCGCTAAGCTACGCAGCAGGCG";
 
 // ====================  execution     ====================
 
@@ -54,7 +58,7 @@ int main(void){
 
     //remember to change those constant
     //minin, minex, flank
-    assigner(&ssd, 2, 2, 2);
+    assigner(&ssd, 5, 5, 5);
 
     // allocate size to donor and acceptor
     allocate_da_array(&ssd, seq);
@@ -97,29 +101,11 @@ void assigner(SpliceSiteData *ssd, const int minin, const int minex, const int f
 void allocate_da_array(SpliceSiteData *ssd, const char *seq)
 
 {
+
     size_t len = strlen(seq);
     ssd->seq_len = len;
-    
-    if (len <= 500)
-
-    {
-        ssd->dons = malloc ( 20 * sizeof(int) );
-        ssd->accs = malloc ( 20 * sizeof(int) );
-    }
-
-    else if (len > 500 && len <= 1500)
-
-    {
-        ssd->dons = malloc ( 100 * sizeof(int) );
-        ssd->accs = malloc ( 100 * sizeof(int) );
-    }
-
-    else if (len > 1500 && len <= 3000)
-
-    {
-        ssd->dons = malloc ( 150 * sizeof(int) );
-        ssd->accs = malloc ( 150 * sizeof(int) );
-    }
+    ssd->dons = malloc ( (len/10) * sizeof(int) );
+    ssd->accs = malloc ( (len/10) * sizeof(int) );
 
 }
 
@@ -127,7 +113,10 @@ void allocate_da_array(SpliceSiteData *ssd, const char *seq)
 
 void splice_site_reader(SpliceSiteData *ssd, const char *seq)
 {
-    ssd->max_isoform_length = floor ( ( ssd->seq_len + 1 - 2 * ssd->flank_size - ssd-> min_ex ) / (ssd->min_ex + ssd->min_in) );
+    // formula to calculate maximum isoform length
+    // assign 10 more spots for missing digit during calculation
+    ssd->max_isoform_length = floor ( ( ssd->seq_len + 1 - 2 * ssd->flank_size - ssd-> min_ex ) / (ssd->min_ex + ssd->min_in) ) + 10;
+
     ssd->isoform = malloc ( ssd->max_isoform_length * sizeof(int) );
     ssd->dons_count = 0;
     ssd->accs_count = 0;
