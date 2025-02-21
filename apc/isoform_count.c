@@ -104,8 +104,27 @@ void allocate_da_array(SpliceSiteData *ssd, const char *seq)
 
     size_t len = strlen(seq);
     ssd->seq_len = len;
-    ssd->dons = malloc ( (len/10) * sizeof(int) );
-    ssd->accs = malloc ( (len/10) * sizeof(int) );
+
+    int dons = 0;
+    int accs = 0;
+
+    for (int i = 0; i < len - 1; i ++)
+    {
+
+        if (seq[i] == 'G' && seq[i+1] == 'T')
+        {
+            dons++;
+        } 
+
+        else if (seq[i] =='A' && seq[i+1] == 'G') 
+        {
+            accs++;
+        }
+
+    }
+
+    ssd->dons = malloc ( (dons + 10) * sizeof(int) );
+    ssd->accs = malloc ( (accs + 10) * sizeof(int) );
 
 }
 
