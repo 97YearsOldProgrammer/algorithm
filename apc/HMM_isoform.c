@@ -3,12 +3,16 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
+#include <cblas.h>
+
 
 // constructing Hidden Markov Model for isoform analysis
 // given numerical definition of HMM 
 
 // HMM = {N, M, A, B, pi}
 // necessary condition we need to calcualte
+// for isoform analysis, we don't need to give out the initial state of pi
+// since the starting point is settle down either A T C or G
 
 // global index explaination
 // A = 1
@@ -32,7 +36,8 @@ typedef struct{
     int A;
     int B;
     int alpha;
-} lamba;
+    int pi;
+} Lamba;
 
 // N  = number of observed state
 // M  = number of hidden state
@@ -42,15 +47,8 @@ void set_parameter(Hidden_markov_model *hmm, const int N, const int M)
     hmm.M->M;
     hmm.A[4][4]; // if we are consider the base pair as observed events
     hmm.B[N][M]; // this is bug for compile, make it dynamic allocation later on
-    hmm.alpha[3]
+    hmm.alpha[4]; // this gonna be either 0 0 1 0 or  0 1 0 0 or 1 0 0 0 or 0 0 0 1
 }
-
-// A  = transition matrix for observed state
-// B  = matrix for given state, having hidden state M
-// pi = 1D array for probability of given start state
-// outer layer: given base pair
-// inner layer: the probability of next base pair be
-void 
 
 int A[4][4];
 
@@ -71,7 +69,40 @@ int B[4][N];
 
 int alpha[T][N][M];
 
+// A  = transition matrix for observed state
+// B  = matrix for given state, having hidden state M
+// pi = 1D array for probability of given start state
+// outer layer: given base pair
+// inner layer: the probability of next base pair be
 
+void sequence_transversion(const *seq)
+{
+    for( i = 0; i < strlen(seq); i++)
+    {
+        
+    }
+}
+void transition_matrix(Lamba *l)
+{
+    // current transition between each observed base pair is set to 0.25
+    // edit directly if we wanna change soemthing 
+    // or later for automatic update
+
+    l.A = double A[4][4] = {
+
+    //    A     C     G     T
+        {0.25, 0.25, 0.25, 0.25}, // A
+        {0.25, 0.25, 0.25, 0.25}, // C
+        {0.25, 0.25, 0.25, 0.25}, // G
+        {0.25, 0.25, 0.25, 0.25}  // T
+
+    }
+
+    
+
+
+
+}
 void forward_algorithm(Hidden_markov_model *HMM, int *alpha, const int *A, const *B, int depth)
 {
 
