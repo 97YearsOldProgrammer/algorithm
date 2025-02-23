@@ -1,11 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include <math.h>
-#include <cblas.h>
-
-
 // constructing Hidden Markov Model for isoform analysis
 // given numerical definition of HMM 
 
@@ -14,155 +6,267 @@
 // for isoform analysis, we don't need to give out the initial state of pi
 // since the starting point is settle down either A T C or G
 
-// global index explaination
-// A = 1
-// T = 2
-// C = 3
-// G = 4
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <math.h>
 
-typedef struct{
-    int N;
-    int M;
-    int numerical_seq;
-} Hidden_markov_model;
+// defining parameter for markov model
+#define OS 4     // number of observed state ； OS == N
+#define HS 3     // number of hidden state   ； HS == M
+#define Ot 4     // given probability distribution at T = Ot
 
-// note if we are not making everything into the log space or whatever turns them into the int
-// the struct of lamba shall be as double
-
-// lamba = {A, B, pi}
-typedef struct{
-    int A;
-    int B;
-    int alpha;
-    int pi;
-} Lamba;
-
-// N  = number of observed state
-// M  = number of hidden state
-void set_parameter(Hidden_markov_model *hmm, const int N, const int M)
+typedef struct
 {
-    hmm.N->N;
-    hmm.M->M;
-    hmm.A[4][4]; // if we are consider the base pair as observed events
-    hmm.B[N][M]; // this is bug for compile, make it dynamic allocation later on
-    hmm.alpha[4]; // this gonna be either 0 0 1 0 or  0 1 0 0 or 1 0 0 0 or 0 0 0 1
-}
+    int T;                  // T  is length for observed events
+    int *numerical_seq;     // used for easier calculation
+}   Hidden_markov_model;
 
-int A[4][4];
+typedef struct
+{                         // lambda = {A, B, pi}
+    double A[HS][HS];     // A  is the transition matrix for observed state
+    double B[HS][OS];     // B  is the emission matrix for hidden state
+    double pi[HS];        // pi is the initial probability for hidden state
+}   Lambda;
 
-int B[4][N];
+typedef struct
+{
+    double **alpha;       // alpha for forward algorithm
+}   Fw_algo;
 
-// setting up the alpha for forward-backward algorithm
-// given numerical definiton of alpha
-// alpha = P(sequence of event, end state of i | given condition lamba)
+typedef struct
+{
+    double **beta;        // beta for backward algorithm
+}   Bw_algo;
 
-// first layer:  given the position of the state, which is up to T
-// middle layer: given the observed state; which is up to N
-// third layer:  given the hidden state;   which is up to N
+/*******************\
+prototype being used
+\*******************/
 
-int alpha[T][N][M];
+void numerical_transcription(Hidden_markov_model *hmm, const char *seq);
 
-// A  = transition matrix for observed state
-// B  = matrix for given state, having hidden state M
-// pi = 1D array for probability of given start state
-// outer layer: given base pair
-// inner layer: the probability of next base pair be
+// prevent overflow
+double log_sum_exp(double *logs, int n);
 
-int main(void){
+// forward algorithm
+void allocate_alpha(Hidden_markov_model *hmm, Fw_algo *fw);
+void basis_of_forward_algorithm(Hidden_markov_model *hmm, Lambda *l, Fw_algo *fw);
+void forward_algorithm(Hidden_markov_model *hmm, Lambda *l, Fw_algo *fw);
 
+// backward algorithm
+void allocate_beta(Hidden_markov_model *hmm, Bw_algo *bw);
+void basis_of_backward_algorithm(Hidden_markov_model *hmm, Lambda *l, Bw_algo *bw);
+void backward_algorithm(Hidden_markov_model *hmm, Lambda *l, Bw_algo *bw);
+
+void free_alpha(Hidden_markov_model *hmm, Fw_algo *fw);
+void free_beta(Hidden_markov_model *hmm, Bw_algo *bw);
+
+// ====================  test sequence ==================== 
+
+char seq[] = "ACGTTTTGCGT";
+
+// ====================  execution     ====================
+
+int main(){
+
+    Hidden_markov_model hmm;
+
+    Lambda l = {
+        .A =
+        {   // given transition matrix
+            // ds   ac    etc     
+            {0.70, 0.15, 0.15}, // ds
+            {0.15, 0.70, 0.15}, // ac
+            {0.05, 0.05, 0.90}, // etc
+        },
+
+        .B =
+        {   // Emission matrix
+            // A     C      G     T
+            { 0.10, 0.10, 0.40, 0.40}, // ds
+            { 0.40, 0.10, 0.40, 0.10}, // ac
+            { 0.30, 0.20, 0.20, 0.30}, // etc
+        },
+            // ds     ac   etc
+        .pi = {0.01, 0.01, 0.98}       // initial probability
+    };
+
+    Fw_algo fw;
+    Bw_algo bw;
+
+    numerical_transcription(&hmm, seq);
+    allocate_alpha(&hmm, &fw);
+    allocate_beta(&hmm, &bw);
+
+    // forward algorithm
+    basis_of_forward_algorithm(&hmm, &l, &fw);
+    basis_of_backward_algorithm(&hmm, &l, &bw);
+
+    forward_algorithm(&hmm, &l, &fw);
+    backward_algorithm(&hmm, &l, &bw);
+
+    double log_total = log_sum_exp(fw.alpha[hmm.T-1], HS);
+
+    printf(" Total sequence probability (linear): %.3e\n", exp(log_total) );
+
+    printf(" \nState probabilities at t = %d:\n", Ot );
+    
+    for(int i = 0; i < HS; i++) 
+    {
+        double log_gamma = fw.alpha[Ot][i] + bw.beta[Ot][i] - log_total;
+        printf("State %d: %.4f\n", i, exp(log_gamma));
+    }
+
+    // free memory
+    free_alpha(&hmm, &fw);
+    free_beta(&hmm, &bw);
     free(hmm.numerical_seq);
-}
 
-// turns original sequence into int 
-// A == 1 , C == 2, G == 3, T == 4
+    return 0;
+}
 
 void numerical_transcription(Hidden_markov_model *hmm, const char *seq)
 {
-    
+
+    // turns original sequence into int 
     size_t len = strlen(seq);
-    hmm->numerical_seq = malloc ( len * sizeof(int));
 
-    for( i = 0; i < len; i++)
+    hmm->T = len;
+    hmm->numerical_seq = malloc ( len * sizeof(int) );
+
+    for( int i = 0; i < len; i++)
     {
-        if      (seq[i] == 'A'){
-            hmm.numerical_seq[i] = 1
-        }
-        else if (seq[i] == 'C'){
-            hmm.numerical_seq[i] = 2
-        }
-        else if (seq[i] == 'G'){
-            hmm.numerical_seq[i] = 3
-        }
-        else if (seq[i] == 'T'){
-            hmm.numerical_seq[i] = 4
-        }
+
+        // A == 0 , C == 1, G == 2, T == 3  
+        if      (seq[i] == 'A')     hmm->numerical_seq[i] = 0;
+        else if (seq[i] == 'C')     hmm->numerical_seq[i] = 1;
+        else if (seq[i] == 'G')     hmm->numerical_seq[i] = 2;
+        else if (seq[i] == 'T')     hmm->numerical_seq[i] = 3;
     }
 
 }
 
-void transition_matrix(Lamba *l)
+void allocate_alpha(Hidden_markov_model *hmm, Fw_algo *fw)
 {
-    // current transition between each observed base pair is set to 0.25
-    // edit directly if we wanna change soemthing 
-    // or later for automatic update
 
-    l->A = double A[4][4] = {
+    assert(Ot < hmm->T && "Wrong Ot input: Ot exceeds sequence length");
 
-    //    A     C     G     T
+    fw->alpha = malloc ( hmm->T * sizeof(double*) );
 
-        {0.25, 0.25, 0.25, 0.25}, // A
-        {0.25, 0.25, 0.25, 0.25}, // C
-        {0.25, 0.25, 0.25, 0.25}, // G
-        {0.25, 0.25, 0.25, 0.25}  // T
-
-    }
-
-}
-
-void starting_matrix(Lamba *l)
-{
-    l->pi = double pi[4] = {
-
-    //    A     C     G     T
-
-        0.25, 0.25, 0.25, 0.25
-
+    for (int i = 0 ; i < hmm->T ; i++ )
+    {
+        fw->alpha[i] = calloc(HS, sizeof(double) );
     }
 }
 
-void hidden_state_matrix(Lamba *l)
+void basis_of_forward_algorithm(Hidden_markov_model *hmm, Lambda *l, Fw_algo *fw)
 {
-    // outer layer: given state X as base pair
-    // inner layer: number of hidden state associated with
-    // i assume there is 3 hidden state rn
+    int obs = hmm->numerical_seq[0];
 
-    l->B = double B[4][3] = {
-    
-    //     ds    as    etc
-        { 0.33, 0.33, 0.33 }, // A
-        { 0.33, 0.33, 0.33 }, // C
-        { 0.33, 0.33, 0.33 }, // G
-        { 0.33, 0.33, 0.33 }  // T
-
+    for (int i = 0; i < HS; i++)
+    {
+        fw->alpha[0][i] = log(l->pi[i]) + log(l->B[i][obs]);;
     }
 }
 
-// parameter; given a hidden state we want to find probability on
-// which is const int *hs; pointer of that
-
-// this is calculating first 
-void basis_of_forward_algorithm(Lamba *l)
+double log_sum_exp(double *logs, int n) 
 {
-    // alpha(current observed state) = P(observed state) * P(hidden state | observed state)
-    // data structure [current position][observed state][hidden state]
+    double max_log = logs[0];
 
-    // this part require dynamic allocation
-    // since we cannot tell how much position we need unless we are given a sequence 
-    
-    l->alpha[0][]
+    for (int i = 1; i < n ; i++)
+    {
+        if( logs[i] > max_log )
+        {
+            max_log = logs[i];
+        }
+    }
+
+    double sum = 0.0;
+
+    for( int i = 0; i < n; i++)
+        sum += exp(logs[i] - max_log);
+
+    return max_log + log(sum);       
 }
 
-void forward_algorithm(Hidden_markov_model *HMM, Lamba *l, int *hs, int *alpha, const int *A, const *B, int depth)
+void forward_algorithm(Hidden_markov_model *hmm, Lambda *l, Fw_algo *fw)
+{
+    for (int t = 1; t < hmm->T; t++)
+    {
+        int obs = hmm->numerical_seq[t];    // getting observed value
+
+        for (int i = 0; i < HS; i ++)
+        {
+            double log_fw[HS];
+
+            for (int j = 0; j < HS; j++)
+            {
+                log_fw[j] = fw->alpha[t - 1][j] + log(l->A[j][i]);
+            }
+
+            double p = log_sum_exp(log_fw, HS);
+
+            fw->alpha[t][i] = p + log( l->B[i][obs] );
+        }
+    }
+}
+void free_alpha(Hidden_markov_model *hmm, Fw_algo *fw)
+{
+    for (int i = 0; i < hmm->T; i ++)
+    {
+        free( fw->alpha[i] );
+    }
+    free(fw->alpha);
+}
+
+void allocate_beta(Hidden_markov_model *hmm, Bw_algo *bw)
 {
 
+    bw->beta = malloc ( hmm->T * sizeof(double*) );
+
+    for (int i = 0 ; i < hmm->T ; i++ )
+    {
+        bw->beta[i] = calloc(HS, sizeof(double) );
+    }
+}
+
+void basis_of_backward_algorithm(Hidden_markov_model *hmm, Lambda *l, Bw_algo *bw)
+{
+    int last_idx = hmm->T - 1;
+
+    for (int i = 0; i < HS; i++)
+    {
+        bw->beta[last_idx][i] = 0.0;  // set them to 1.0; but log(1) = 0.0
+    }
+}
+
+void backward_algorithm(Hidden_markov_model *hmm, Lambda *l, Bw_algo *bw)
+{
+    for (int t = (hmm->T - 2); t >= 0; t--)
+    {
+        int obs = hmm->numerical_seq[t + 1];    // getting observed value
+
+        for (int i = 0; i < HS; i ++)
+        {
+            double log_bw[HS];
+
+            for (int j = 0; j < HS; j++)
+            {
+                log_bw[j] = log(l->A[i][j]) + log(l->B[j][obs]) + bw->beta[t+1][j];
+            }
+
+            bw->beta[t][i] = log_sum_exp(log_bw, HS);
+
+        }
+    }
+}
+
+void free_beta(Hidden_markov_model *hmm, Bw_algo *bw)
+{
+    for (int i = 0; i < hmm->T; i ++)
+    {
+        free( bw->beta[i] );
+    }
+    free(bw->beta); 
 }
