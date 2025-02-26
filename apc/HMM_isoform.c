@@ -40,6 +40,22 @@ typedef struct
     double **beta;        // beta for backward algorithm
 }   Bw_algo;
 
+typedef struct
+{
+    double prob;          // probability for delta 
+    // type 0 == exon ; type 1 == intron
+    int    type;          // modified viterbi for isoform purpose
+    int    len ;          // keep track of len for exon and intron 
+}Delta;
+
+typedef struct
+{
+    Delta  **delta;       // delta for veterbi algorithm
+    int    **backpointer; // pointer for recursion
+}   Viterbi;
+
+
+
 /*******************\
 prototype being used
 \*******************/
@@ -58,6 +74,9 @@ void forward_algorithm(Hidden_markov_model *hmm, Lambda *l, Fw_algo *fw);
 void allocate_beta(Hidden_markov_model *hmm, Bw_algo *bw);
 void basis_of_backward_algorithm(Hidden_markov_model *hmm, Lambda *l, Bw_algo *bw);
 void backward_algorithm(Hidden_markov_model *hmm, Lambda *l, Bw_algo *bw);
+
+void allocate_viterbi(Hidden_markov_model *hmm, Viterbi *vit);
+void basis_viterbi_algoirthm(Hidden_markov_model *hmm, Lambda *l, Viterbi *vit);
 
 void free_alpha(Hidden_markov_model *hmm, Fw_algo *fw);
 void free_beta(Hidden_markov_model *hmm, Bw_algo *bw);
@@ -94,23 +113,32 @@ int main(){
 
     Fw_algo fw;
     Bw_algo bw;
+    Viterbi_algo vit;
 
     numerical_transcription(&hmm, seq);
-    allocate_alpha(&hmm, &fw);
-    allocate_beta(&hmm, &bw);
 
     // forward algorithm
+    allocate_alpha(&hmm, &fw);
     basis_of_forward_algorithm(&hmm, &l, &fw);
-    basis_of_backward_algorithm(&hmm, &l, &bw);
-
     forward_algorithm(&hmm, &l, &fw);
+
+    // backward algorithm
+    allocate_beta(&hmm, &bw);
+    basis_of_backward_algorithm(&hmm, &l, &bw);
     backward_algorithm(&hmm, &l, &bw);
+
+    // viterbi algorithm
+    allocate_viterbi(&hmm, &vit);
+    basis_of_ve
 
     double log_total = log_sum_exp(fw.alpha[hmm.T-1], HS);
 
     printf(" Total sequence probability (linear): %.3e\n", exp(log_total) );
 
-    printf(" \nState probabilities at t = %d:\n", Ot );
+    printf(" \nState probabilities at t = %d:\n", Ot
+    
+    
+    );
     
     for(int i = 0; i < HS; i++) 
     {
@@ -166,7 +194,8 @@ void basis_of_forward_algorithm(Hidden_markov_model *hmm, Lambda *l, Fw_algo *fw
 
     for (int i = 0; i < HS; i++)
     {
-        fw->alpha[0][i] = log(l->pi[i]) + log(l->B[i][obs]);;
+        basis = log(l->pi[i]) + log(l->B[i][obs]);
+        fw->alpha[0][i] = basis;
     }
 }
 
@@ -211,6 +240,7 @@ void forward_algorithm(Hidden_markov_model *hmm, Lambda *l, Fw_algo *fw)
         }
     }
 }
+
 void free_alpha(Hidden_markov_model *hmm, Fw_algo *fw)
 {
     for (int i = 0; i < hmm->T; i ++)
@@ -269,4 +299,57 @@ void free_beta(Hidden_markov_model *hmm, Bw_algo *bw)
         free( bw->beta[i] );
     }
     free(bw->beta); 
+}
+
+void allocate_viterbi(Hidden_markov_model *hmm, Viterbi *vit)
+{
+    vit->delta = malloc (hmm->T * sizeof(Delta*) );
+    vit->backpointer = malloc(hmm->T * sizeof(int*) );
+
+    for (int t = 0; h < hmm->T; t++)
+    {
+        vit->delta[t] = malloc(HS * sizeof(Delta*) );
+        vit->backpointer[t] = malloc(HS * sizeof(int) );
+    }
+}
+
+void basis_viterbi_algoirthm(Hidden_markov_model *hmm, Lambda *l, Viterbi *vit)
+{
+    int obs = hmm->numerical_seq[0];
+
+    for (int i = 0; i < HS; i++)
+    {
+        basis = log(l->pi[i]) + log(l->B[i][obs]);
+        vit->delta[0][i].prob = basis;
+        vit->delta[0][i].len  = 1;                      // first len is 1
+
+        if (i == 0)      vit->delta[0][i].type = 1;     // if we start as a donor site, it's a intron
+        else if (i == 2) vit->delta[0][i].type = 0;     // if we start as normal base pair, it's a exon
+    }
+}
+
+void viterbi_algorithm(Hidden_markov_model *hmm, Lambda *l, Viterbi *vit)
+{
+    for (int t = 1; t < hmm->T; t++)
+    {   // loop all position of observed sequence
+        int obs = hmm->numerical_seq[t];    // gather the observed state information
+
+        for (int i = 0; i < HS; i++)
+        {   // this is for next hidden state
+            double max_p = -INFINITY;       // - inf for assigning first value; if that overflow
+            int    steps = -1;              // keep track the steps            
+
+            for (int j = 0; j < HS; j++)
+            {   // loop all previous hidden state
+                if ( vit->delta[t][i].len < 2 && vit->delta[t][i].type 
+                vit->delta[t][i].len
+                vit->delta[t][i].prob
+                double p = vit->delta[t - 1][j] + log( l->A[j][i] );
+
+            }
+
+        }
+
+    }
+
 }
