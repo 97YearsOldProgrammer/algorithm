@@ -337,11 +337,20 @@ void viterbi_algorithm(Hidden_markov_model *hmm, Lambda *l, Viterbi *vit)
         for (int i = 0; i < HS; i++)
         {   // this is for next hidden state
             double max_p = -INFINITY;       // - inf for assigning first value; if that overflow
-            int    steps = -1;              // keep track the steps            
+            int    steps = -1;              // keep track the steps  
+
+            if      (i = 0 && (vit->delta[t][i].type == 1 && vit->delta[t][i].len < 3) ) continue;  // no ds consider if we are on an intron already with ds
+            else if (i = 1 && (vit->delta[t][i].type == 1 && vit->delta[t][i].len < 3) ) continue;  // no ac consider if we are on an exon already with as
+            if (vit->delta[t][i].len < 3)   // adding condition to path we wanna loop
+                {
+                    if (vit->delta[t][i].type == 0 && )
+                }          
 
             for (int j = 0; j < HS; j++)
             {   // loop all previous hidden state
-                if ( vit->delta[t][i].len < 2 && vit->delta[t][i].type 
+
+
+
                 vit->delta[t][i].len
                 vit->delta[t][i].prob
                 double p = vit->delta[t - 1][j] + log( l->A[j][i] );
