@@ -4,7 +4,6 @@
 #include <assert.h>
 #include <math.h>
 #include "HMM_model.h"
-#include "HMM_algo.c"
 
 char seq[] = "ACGTTTTGCGT";
 

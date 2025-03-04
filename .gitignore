@@ -7,3 +7,6 @@
 
 # Ignore all dSYM folders and their contents
 **/*.dSYM/**
+
+# Ignore all precompiled files
+**/*.o

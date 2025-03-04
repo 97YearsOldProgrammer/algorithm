@@ -1,23 +1,20 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g
 
-OBJS = main.o HMM_model.o HMM_algo.o
+OBJS = main.o HMM_algo.o
 
 all: conventional_HMM
 
 conventional_HMM: $(OBJS)
 	$(CC) $(CFLAGS) -o conventional_HMM $(OBJS) -lm
+	@chmod +x conventional_HMM
 
-main.o: main.c hmm.h
-	@echo "Calculating and output for HMM"
+main.o: main.c HMM_algo.c HMM_model.h
+	@echo "Compling main"
 	$(CC) $(CFLAGS) -c main.c
 
-HMM_model.o: HMM_model.h
-	@echo "Initializing data structure for HMM"
-	$(CC) $(CFLAGS) -c HMM_model.h
-
 HMM_sample.o: HMM_algo.c
-	@echo "Initializing algorithm for HMM"
+	@echo "Compling HMM algorithms"
 	$(CC) $(CFLAGS) -c HMM_algo.c
 
 clean: 
