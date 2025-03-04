@@ -2,5 +2,11 @@
 .DS_Store
 
 # Ignore compile files by VS code studio
-.dsYM
-.vscode
+**/*.dSYM/
+.vscode/
+
+# Ignore all dSYM folders and their contents
+**/*.dSYM/**
+**/HMM_isoform.dSYM/**
+**/isoform_count.dSYM/**
+**/isoform.dSYM/**
