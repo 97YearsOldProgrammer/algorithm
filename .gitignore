@@ -7,6 +7,3 @@
 
 # Ignore all dSYM folders and their contents
 **/*.dSYM/**
-**/HMM_isoform.dSYM/**
-**/isoform_count.dSYM/**
-**/isoform.dSYM/**
