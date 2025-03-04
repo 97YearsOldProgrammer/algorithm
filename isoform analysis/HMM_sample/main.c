@@ -3,7 +3,8 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
-#include "hmm.h"
+#include "HMM_model.h"
+#include "HMM_algo.c"
 
 char seq[] = "ACGTTTTGCGT";
 

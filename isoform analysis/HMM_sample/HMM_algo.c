@@ -11,7 +11,7 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
-#include "hmm.h"
+#include "HMM_model.h"
 
 void numerical_transcription(Hidden_markov_model *hmm, const char *seq)
 {
