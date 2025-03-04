@@ -1,5 +1,5 @@
-#ifndef HMM_SAMPLE
-#define HMM_SAMPLE
+#ifndef HMM_MODEL
+#define HMM_MODEL
 
 #define OS 4     // number of observed state ； OS == N
 #define HS 3     // number of hidden state   ； HS == M
