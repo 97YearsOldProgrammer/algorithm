@@ -1,2 +1,6 @@
 # Ignore macOS file in there
 .DS_Store
+
+# Ignore compile files by VS code studio
+.dsYM
+.vscode
