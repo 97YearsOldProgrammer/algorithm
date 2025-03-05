@@ -3,6 +3,10 @@
 #include <string.h>
 #include "model.h"
 
+void donor_site_reader(Lambda *l, )
+{
+
+}
 
 // Function to load a PWM from a file
 PWM* load_pwm_from_file(const char *filename) {
