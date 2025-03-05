@@ -5,19 +5,19 @@
 #define HS 13                   // 1 (exon) + 1 (intron) + 5 (donor site) + 6(acceptor site)
 #define OT                      // used for print function; see which probability spot you wanna see
 
-typedef struct Ot               // observed events with length T
+typedef struct                  // observed events with length T
 {
     int T;                      // overall length for sequence
     int numerical_sequence;     // transcribe from base pair to digits
-};
+} Ot;
 
-typedef struct emission_matrix
+typedef struct
 {
     double dons;                // the emission probability for donor sites
     double accs;                // the emission probability for acceptor sites
     double exon;                // the emission probability for exon
     double intron;              // the emission probability for intron
-};
+} emission_matrix;
 
 // transition probability matrix illustration
 // exon donor_sites1...donor_sites5 intron acceptor_site1...acceptor_sites6
@@ -28,17 +28,17 @@ typedef struct emission_matrix
 // ac_sites1-6 = 6-11;
 // intron = 12;
 
-typedef struct Lambda
+typedef struct
 {
     double A;                   // the transition probability
     emission_matrix B;          // the pre-defined emission probibility data strcuture
     double pi;                  // the initial probability
-};
+} Lambda;
 
-typedef struct explicit_duration
+typedef struct
 {
     double ed_exon;             // the ed probability for exon
     double ed_intron;           // the ed probability for intron
-}
+} explicit_duration;
 
 #endif
