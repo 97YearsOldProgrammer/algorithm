@@ -13,10 +13,10 @@ typedef struct                  // observed events with length T
 
 typedef struct
 {
-    double dons;                // the emission probability for donor sites
-    double accs;                // the emission probability for acceptor sites
-    double exon;                // the emission probability for exon
-    double intron;              // the emission probability for intron
+    double dons[5][4];                // the emission probability for donor sites
+    double intron[6][4];              // the emission probability for intron
+    double accs[256];         // the emission probability for acceptor sites
+    double exon[256];         // the emission probability for exon
 } emission_matrix;
 
 // transition probability matrix illustration
@@ -37,8 +37,14 @@ typedef struct
 
 typedef struct
 {
-    double ed_exon;             // the ed probability for exon
-    double ed_intron;           // the ed probability for intron
+    double ed_exon[1000];             // the ed probability for exon
+    double ed_intron[1000];           // the ed probability for intron
 } explicit_duration;
+
+// declared function
+void donor_parser(Lambda *l, char *filename);
+void acceptor_parser(Lambda *l, char *filename);
+void exon_intron_parser(Lambda *l, char *filename);
+void explicit_duration_probability(explicit_duration *ed, char *filename, int digit);
 
 #endif
