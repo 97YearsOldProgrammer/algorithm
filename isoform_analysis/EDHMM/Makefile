@@ -15,11 +15,11 @@ main.o: main.c parser.c model.c model.h
 
 parser.o: parser.c model.h
 	@echo "Compling function and data structure for computation"
-	$(CC) $(CFLAGS) -c parser.c
+	$(CC) $(CFLAGS) -o parser.c
 
-model.o: model.o model.h
+model.o: model.c model.h
 	@echo "Compling model"
-	$(CC) $(CFLAGS) -c model.c
+	$(CC) $(CFLAGS) -o model.c
 
 clean: 
 	@echo "Removing everything but the source file"

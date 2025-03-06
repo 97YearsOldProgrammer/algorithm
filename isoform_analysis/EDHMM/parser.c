@@ -114,7 +114,7 @@ void explicit_duration_probability(explicit_duration *ed, char *filename, int di
 {
     assert(digit == 0 || digit == 1);                   // 0 for exon, 1 for intron
 
-    FILE *file = fopen(filename, "r")
+    FILE *file = fopen(filename, "r");
 
     char line[256];
     char *token;

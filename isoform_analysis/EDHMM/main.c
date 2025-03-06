@@ -28,14 +28,12 @@ int main(int argc, char *argv[])
     explicit_duration ed;
 
     // initialize datas
-    void donor_parser(&l, don_emission);                            // donor emission prob
-    void acceptor_parser(&l, acc_emission);                         // acceptor emission prob
-    void exon_intron_parser(&l, exon_emission);                     // exon emission prob
-    void exon_intron_parser(&l, intron_emission);                   // intron emission prob
-    void explicit_duration_probability(&ed, Ped_exon, int 0);       // exon ed prob
-    void explicit_duration_probability(&ed, Ped_intron, int 1);     // intron ed prob
-
-
+    donor_parser(&l, don_emission);                            // donor emission prob
+    acceptor_parser(&l, acc_emission);                         // acceptor emission prob
+    exon_intron_parser(&l, exon_emission);                     // exon emission prob
+    exon_intron_parser(&l, intron_emission);                   // intron emission prob
+    explicit_duration_probability(&ed, Ped_exon,   0);         // exon ed prob
+    explicit_duration_probability(&ed, Ped_intron, 1);         // intron ed prob
 
 
 }
