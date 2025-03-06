@@ -112,7 +112,7 @@ void exon_intron_parser(Lambda *l, char *filename)      // get emission probabil
 
 void explicit_duration_probability(explicit_duration *ed, char *filename, int digit)
 {
-    assert( 0 <= digit <= 1);
+    assert(digit == 0 || digit == 1);                   // 0 for exon, 1 for intron
 
     FILE *file = fopen(filename, "r")
 
@@ -132,13 +132,14 @@ void explicit_duration_probability(explicit_duration *ed, char *filename, int di
     {
         if (line[0] == '%')     continue;
 
-        int c_line ++;
+        c_line ++;
 
         token = strtok(line, " \t\n");
         p = atof(token);
 
-        if(digit == 1)  ed->ed_exon[c_line]   = p;
+        if(digit == 0)  ed->ed_exon[c_line]   = p;
         else            ed->ed_intron[c_line] = p;
     }
+
     fclose(file);
 }

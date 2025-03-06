@@ -13,10 +13,10 @@ typedef struct                  // observed events with length T
 
 typedef struct
 {
-    double dons[5][4];                // the emission probability for donor sites
-    double intron[6][4];              // the emission probability for intron
-    double accs[256];         // the emission probability for acceptor sites
-    double exon[256];         // the emission probability for exon
+    double dons[5][4];          // the emission probability for donor sites
+    double intron[6][4];        // the emission probability for intron
+    double accs[256];           // the emission probability for acceptor sites
+    double exon[256];           // the emission probability for exon
 } emission_matrix;
 
 // transition probability matrix illustration
