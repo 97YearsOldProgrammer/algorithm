@@ -11,15 +11,15 @@ EDHMM: $(OBJS)
 
 main.o: main.c parser.c model.c model.h
 	@echo "Compling main"
-	$(CC) $(CFLAGS) -o main.c
+	$(CC) $(CFLAGS) -c main.c
 
 parser.o: parser.c model.h
 	@echo "Compling function and data structure for computation"
-	$(CC) $(CFLAGS) -o parser.c
+	$(CC) $(CFLAGS) -c parser.c
 
 model.o: model.c model.h
 	@echo "Compling model"
-	$(CC) $(CFLAGS) -o model.c
+	$(CC) $(CFLAGS) -c model.c
 
 clean: 
 	@echo "Removing everything but the source file"

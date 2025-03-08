@@ -41,13 +41,14 @@ typedef struct
 
 typedef struct
 {
-    double exon[1000];               // the ed probability for exon
-    double intron[1000];             // the ed probability for intron
+    double exon[1000];                  // the ed probability for exon
+    double intron[1000];                // the ed probability for intron
 } Explicit_duration;
 
 typedef struct
 {
-    double  a;                        
+    double  a;                          // alpha component for forward algorithm
+    double log_fw[HS];                  // prepared for log softmax trick   
 } Forward_algorithm;
 
 // declared function
