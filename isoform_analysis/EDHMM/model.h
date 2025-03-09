@@ -38,6 +38,7 @@ typedef struct
     Transition_matrix A;                // the transition probability
     Emission_matrix B;                  // the pre-defined emission probibility data strcuture
     double pi;                          // the initial probability
+    double log_values[1050];            // prepared for log softmax trick
 } Lambda;
 
 typedef struct
@@ -46,14 +47,20 @@ typedef struct
     double intron[1000];                // the ed probability for intron
     int max_len_exon;                   // max len for exon
     int max_len_intron;                 // max len for intron
+    int min_len_exon;                   // min len for exon
+    int min_len_intron;                 // min len for intron
 } Explicit_duration;
 
 typedef struct
 {
-    double  a;                          // alpha component for forward algorithm
-    double log_fw[HS];                  // prepared for log softmax trick   
-    double log_values[1050];            // prepared for log softmax trick
+    double **a;                           // alpha component for forward algorithm
 } Forward_algorithm;
+
+typedef struct
+{
+    double **b;                           // beta component for backward algorithm
+} Backward_algorithm;                   
+
 
 // declared function
 void donor_parser(Lambda *l, char *filename);

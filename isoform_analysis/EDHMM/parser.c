@@ -142,6 +142,9 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
         token = strtok(line, " \t\n");
         p = atof(token);
 
+        if      (p != 0.0 && digit == 0) ed->min_len_exon;      // update min exon   len
+        else if (p != 0.0 && digit == 1) ed->max_len_exon;      // update min intron len
+        
         if(digit == 0)  ed->exon[c_line]   = p;
         else            ed->intron[c_line] = p;
     }
