@@ -79,8 +79,10 @@ void acceptor_parser(Lambda *l, char *filename)         // get emission probabil
     fclose(file);
 }
 
-void exon_intron_parser(Lambda *l, char *filename)      // get emission probability for exon and intron
+void exon_intron_parser(Lambda *l, char *filename, int digit)      // get emission probability for exon and intron
 {
+    assert(digit == 0 || digit == 1);                   // 0  for exon, 1 for intron
+
     FILE *file = fopen(filename, "r");
 
     char line[256];
@@ -105,10 +107,13 @@ void exon_intron_parser(Lambda *l, char *filename)      // get emission probabil
         token = strtok(NULL, " \t\n");                  // get the probability 
 
         p = atof(token);
-        l->B.exon[c_line] = p;                          // store the probability
+        if(digit == 0)  l->B.exon[c_line]   = p;        // store the prob for exon
+        else            l->B.intron[c_line] = p;        // store the prob for intron
     }
     fclose(file);
 }
+
+// eplicit_duration //
 
 void explicit_duration_probability(Explicit_duration *ed, char *filename, int digit)
 {
@@ -140,6 +145,9 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
         if(digit == 0)  ed->exon[c_line]   = p;
         else            ed->intron[c_line] = p;
     }
+
+    if (digit == 0)     ed->max_len_exon   = c_line;
+    else                ed->max_len_intron = c_line;
 
     fclose(file);
 }

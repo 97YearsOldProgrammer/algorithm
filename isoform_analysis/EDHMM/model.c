@@ -140,14 +140,97 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
         for ( i = 0 ; i < HS ; i ++ )                                                           // the next position; 0 for exon, 1 for intron
         {
- 
-            for ( j = 0 ; j < HS ; j ++ )                                                       // ask all previous alpha
+            int log_index = 0;                                                                  // prepare for log-space calcualtion
+
+            if (i = 0)
             {
-                if (i = j) continue;                                                            // no self-transition for HSMM
+                int max_len        = ed->max_len_exon;                                          // max_len for exon state
+                int transition_len = 5;                                                         // 5 bps for donor site 
+            }
+            else if (i = 1)
+            {
+                int max_len = ed->max_len_intron;                                               // max_len for intron state
+                int transition_len = 6;                                                         // 6 bps for acceptor site
             }
 
-            double 
-        }
+            for ( j = 0 ; j < HS ; j ++ )                                                       // the situation of transition out
+            {
+                if (i = j) continue;                                                            // no self-transition for HSMM
+                
+                for ( int d = 1 ; d <= ed->max_len && t - d - transition_len + 1 >= 0 ; d ++ )
+                {
+                    // get product for emission prob
 
+                    double emission_product = 1.0;                                              // what we want to calculate out here
+
+                    for ( int s = t - d + 1 ; s <= t ;  s++ )
+                    {
+                        int index = base4_to_int(info->numerical_sequence, s - 3, 4);           // how we get index value from 4 base pair
+
+                        double emission_prob;
+
+                        if      ( i = 0 ) emission_prob = l->B.exon[index];                     // p emission exon
+                        else if ( i = 1 ) emission_prob = l->B.intron[index];                   // p emission intron
+
+                        emission_product *= emission_prob;                                      // update value
+                    }
+
+                    // get explicit duration prob
+
+                    if      ( i = 0 ) ed_prob = ed->exon[d];
+                    else if ( i = 1 ) ed_prob = ed->intron[d];
+
+                    // get transition prob
+
+                    double trans_prob;                                                          // transition prob
+
+                    if ( j == 0 && i == 1)                                                      // from exon to intron
+                    {
+                        int index = base4_to_int(info->numerical_sequence , t - d - 4 , 5);     // 5bps motif
+                        trans_prob = l->A.dons[index];
+                    }
+                    else if ( j == 1 && i == 0)                                                 // from intron to exon
+                    {
+                        int index = base4_to_int(info->numerical_sequence , t - d - 5 , 6);     // 6bps motif
+                        trans_prob = l->A.accs[index];
+                    }
+
+                    // formal computation
+
+                    double all = alpha->a[t - d][j] * trans_prob * duration_prob * emission_product;
+                    if  ( all > 0 ) alpha->log_values[log_index] = safe_log(all); 
+                    log_index ++;
+                }
+                
+            }
+
+            for ( int d = 1 ; d <= ed->max_len && t - transition_len - d + 1 >= 0 ; d ++ )      // for continue probability
+            {
+                // get emission product
+                double emission_product = 1.0;
+
+                for ( int s = t - d + 1 ; s <= t ;  s++ )
+                {
+                    int index = base4_to_int(info->numerical_sequence, s - 3, 4);               // how we get index value from 4 base pair
+
+                    double emission_prob;
+
+                    if      ( i = 0 ) emission_prob = l->B.exon[index];                         // p emission exon
+                    else if ( i = 1 ) emission_prob = l->B.intron[index];                       // p emission intron
+
+                    emission_product *= emission_prob;                                          // update value
+                }
+
+                // get explicit duration probability
+                if      ( i = 0 ) ed_prob = ed->exon[d];
+                else if ( i = 1 ) ed_prob = ed->intron[d];
+
+                double all = alpha->a[t - d][i] * ed_prob * emission_product;
+                if ( all > 0 ) alpha->log_values[log_index] = safe_log(all);
+                log_index ++
+            }
+
+            alpha->a[t][i] = exp(log_sum_exp (alpha->log_values, log_index))
+        }
     }
 }

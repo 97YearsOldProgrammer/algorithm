@@ -14,9 +14,9 @@ typedef struct                          // observed events with length T
 typedef struct
 {
     double dons[5][4];                  // the emission probability for donor sites
-    double intron[6][4];                // the emission probability for intron
-    double accs[256];                   // the emission probability for acceptor sites
+    double accs[6][4];                  // the emission probability for acceptor sites
     double exon[256];                   // the emission probability for exon
+    double intron[256];                 // the emission probability for intron
 } Emission_matrix;
 
 typedef struct                          // degrade the sequence of conventional transition prob from donor 1-5 acceptor 1-6
@@ -43,12 +43,15 @@ typedef struct
 {
     double exon[1000];                  // the ed probability for exon
     double intron[1000];                // the ed probability for intron
+    int max_len_exon;                   // max len for exon
+    int max_len_intron;                 // max len for intron
 } Explicit_duration;
 
 typedef struct
 {
     double  a;                          // alpha component for forward algorithm
     double log_fw[HS];                  // prepared for log softmax trick   
+    double log_values[1050];            // prepared for log softmax trick
 } Forward_algorithm;
 
 // declared function
