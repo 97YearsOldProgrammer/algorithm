@@ -94,18 +94,6 @@ void allocate_alpha(Observed_events *info, Forward_algorithm *alpha)    // assig
     }
 }
 
-int initialize_forward_algorithm(Forward_algorithm *alpha, Explicit_duration *ed)
-{
-    int i = 0;
-    while ( ed->exon[i] == 0.0)
-    {
-        alpha->a[i][0] = 0.0;                                                                   // set invalid exon vlaue
-        alpha->a[i][1] = 0.0;                                                                   // set invalid intron value ; actually missing 5 bps here
-        i ++;    
-    }
-    return i;                                                                                   // we wanna know where is the valid start point
-}
-
 double safe_log(double x)                                                                       // handle log 0
 {
     const double epsilon = 1e-10;                                                               // log 0 gonna crush in C, name a value for it
@@ -128,34 +116,60 @@ double log_sum_exp(double *logs, int n)
     return max_log + log(sum);       
 }
 
+void initial_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorithm *alpha, Observed_events *info)
+{
+    for ( int i = 0 ; i < HS ; i ++ )
+    {
+        double initial_prob = l->pi[i];
+        
+        double ed_prob;
+        
+        if      ( i == 0 ) ed_prob = ed->exon[0];
+        else if ( i == 1 ) ed_prob = ed->intron[0];
+
+        int index = base4_to_int(info->numerical_sequence, FLANK - 3, 4);
+        double emission_prob;
+
+        if       ( i == 0 ) emission_prob = l->B.exon[index];
+        else if  ( i == 1 ) emission_prob = l->B.intron[index];
+
+        double all = intial_prob * ed_prob * emission_prob;
+        
+        if ( all > 0 )  alpha->a[0][i] = exp( log(all) );
+        else            alpha->a[0][i] = 0.0;
+
+    }
+
+}
 void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed)
 {
-    int beg = initialize_forward_algorithm(alpha, ed);                                          // which time t we wanna continue
 
-    for ( t = beg ; t < info->T ; t ++ )                                                        // iterate every element in the time scale
+    for ( int t = 1 ; t < info->T ; t ++ )                                                      // iterate every element in the time scale
     {
         int current = info->numerical_sequence[t];                                              // getting the current obs event
         int before  = info->numerical_sequence[t - 3];                                          // prepared for the exon or intron
         int index   = base4_to_int(info->numerical_sequence, before, current);                  // value for emission prob for intron or exon                   
 
-        for ( i = 0 ; i < HS ; i ++ )                                                           // the next position; 0 for exon, 1 for intron
+        for ( int i = 0 ; i < HS ; i ++ )                                                       // the next position; 0 for exon, 1 for intron
         {
             int log_index = 0;                                                                  // prepare for log-space calcualtion
+            int max_len;
+            int transition_len;
 
-            if (i = 0)
+            if ( i == 0 )
             {
-                int max_len        = ed->max_len_exon;                                          // max_len for exon state
-                int transition_len = 5;                                                         // 5 bps for donor site 
+                max_len        = ed->max_len_exon;                                              // max_len for exon state
+                transition_len = 5;                                                             // 5 bps for donor site 
             }
-            else if (i = 1)
+            else if (i == 1)
             {
-                int max_len = ed->max_len_intron;                                               // max_len for intron state
-                int transition_len = 6;                                                         // 6 bps for acceptor site
+                max_len = ed->max_len_intron;                                                   // max_len for intron state
+                transition_len = 6;                                                             // 6 bps for acceptor site
             }
 
-            for ( j = 0 ; j < HS ; j ++ )                                                       // the situation of transition out
+            for ( int j = 0 ; j < HS ; j ++ )                                                   // the situation of transition out
             {
-                if (i = j) continue;                                                            // no self-transition for HSMM
+                if (i == j) continue;                                                           // no self-transition for HSMM
                 
                 for ( int d = 1 ; d <= ed->max_len && t - d - transition_len + 1 >= 0 ; d ++ )
                 {
@@ -176,6 +190,8 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                     }
 
                     // get explicit duration prob
+
+                    double ed_prob;
 
                     if      ( i = 0 ) ed_prob = ed->exon[d];
                     else if ( i = 1 ) ed_prob = ed->intron[d];
@@ -198,13 +214,11 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                     // formal computation
 
                     double all = alpha->a[t - d][j] * trans_prob * duration_prob * emission_product;
-                    if  ( all > 0 ) alpha->log_values[log_index] = safe_log(all); 
-                    log_index ++;
+                    if  ( all > 0 ) alpha->log_values[log_index++] = safe_log(all); 
                 }
-                
             }
 
-            for ( int d = 1 ; d <= ed->max_len && t - transition_len - d + 1 >= 0 ; d ++ )      // for continue probability
+            for ( int d = 1 ; d <= ed->max_len && t - d + 1 >= 0 ; d ++ )      // for continue probability
             {
                 // get emission product
                 double emission_product = 1.0;
@@ -215,22 +229,23 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
                     double emission_prob;
 
-                    if      ( i = 0 ) emission_prob = l->B.exon[index];                         // p emission exon
-                    else if ( i = 1 ) emission_prob = l->B.intron[index];                       // p emission intron
-
+                    if      ( i == 0 ) emission_prob = l->B.exon[index];                        // p emission exon
+                    else if ( i == 1 ) emission_prob = l->B.intron[index];                      // p emission intron
                     emission_product *= emission_prob;                                          // update value
                 }
 
                 // get explicit duration probability
-                if      ( i = 0 ) ed_prob = ed->exon[d];
-                else if ( i = 1 ) ed_prob = ed->intron[d];
+
+                double ed_prob;
+
+                if      ( i == 0 ) ed_prob = ed->exon[d];
+                else if ( i == 1 ) ed_prob = ed->intron[d];
 
                 double all = alpha->a[t - d][i] * ed_prob * emission_product;
-                if ( all > 0 ) alpha->log_values[log_index] = safe_log(all);
-                log_index ++
+                if ( all > 0 ) alpha->log_values[log_index++] = safe_log(all);
             }
 
-            alpha->a[t][i] = exp(log_sum_exp (alpha->log_values, log_index))
+            alpha->a[t][i] = exp( log_sum_exp (alpha->log_values, log_index) );
         }
     }
 }
