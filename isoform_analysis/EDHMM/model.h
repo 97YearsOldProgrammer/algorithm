@@ -38,7 +38,7 @@ typedef struct
 {
     Transition_matrix A;                // the transition probability
     Emission_matrix B;                  // the pre-defined emission probibility data strcuture
-    double pi;                          // the initial probability
+    double *pi;                          // the initial probability
     double log_values[1050];            // prepared for log softmax trick
 } Lambda;
 
@@ -98,18 +98,22 @@ void initial_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algori
 // ---- computation       //
 void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed);
 // ---- free memory       // 
-void free_alpha(Observed_events *info, Forward_algorithm *alpha)
+void free_alpha(Observed_events *info, Forward_algorithm *alpha);
 
 // backward algorithm //
 
 // ---- memory allocation //
 void allocate_beta(Observed_events *info, Backward_algorithm *beta);
 // ---- initialize        //
-void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info)
+void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info);
 // ---- computation       //
-void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed)
+void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed);
 // ---- free memory       //
-void free_beta(Observed_events *info, Backward_algorithm *beta)
+void free_beta(Observed_events *info, Backward_algorithm *beta);
 
+// output section //
+
+// ---- posterior prob //
+void print_posterior_probabilities(Observed_events *info, Forward_algorithm *fw, Backward_algorithm *bw, int start_pos, int end_pos);
 
 #endif

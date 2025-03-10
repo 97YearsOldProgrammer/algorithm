@@ -25,4 +25,7 @@ clean:
 	@echo "Removing everything but the source file"
 	rm -f EDHMM *.o
 
+test: EDHMM
+	./EDHMM seq
+	
 .PHONY: all clean

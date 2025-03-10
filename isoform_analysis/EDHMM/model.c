@@ -10,16 +10,16 @@ void numerical_transcription(Observed_events *info, const char *seq)
     size_t len = strlen(seq);
 
     info->T = len;
-    info->numerical_seq = malloc ( len * sizeof(int) );
+    info->numerical_sequence = malloc ( len * sizeof(int) );
 
-    for( int i = 0; i < len; i++)
+    for( size_t i = 0; i < len; i++)
     {
 
         // A == 0 , C == 1, G == 2, T == 3  
-        if      (seq[i] == 'A')     info->numerical_seq[i] = 0;
-        else if (seq[i] == 'C')     info->numerical_seq[i] = 1;
-        else if (seq[i] == 'G')     info->numerical_seq[i] = 2;
-        else if (seq[i] == 'T')     info->numerical_seq[i] = 3;
+        if      (seq[i] == 'A')     info->numerical_sequence[i] = 0;
+        else if (seq[i] == 'C')     info->numerical_sequence[i] = 1;
+        else if (seq[i] == 'G')     info->numerical_sequence[i] = 2;
+        else if (seq[i] == 'T')     info->numerical_sequence[i] = 3;
     }
 }
 
@@ -327,8 +327,8 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 
                         double emission_prob;
 
-                        if      ( i = 0 ) emission_prob = l->B.exon[index];                     // p emission exon
-                        else if ( i = 1 ) emission_prob = l->B.intron[index];                   // p emission intron
+                        if      ( i == 0 ) emission_prob = l->B.exon[index];                    // p emission exon
+                        else if ( i == 1 ) emission_prob = l->B.intron[index];                  // p emission intron
 
                         emission_product *= emission_prob;                                      // update value
                     }
@@ -409,4 +409,32 @@ void free_beta(Observed_events *info, Backward_algorithm *beta)
         free( beta->b[i] );
     }
     free( beta->b );
+}
+
+// output //
+
+// posterior prob //
+void print_posterior_probabilities(Observed_events *info, Forward_algorithm *fw, Backward_algorithm *bw, int start_pos, int end_pos) 
+{
+    printf("\n=== Posterior Probabilities ===\n");
+    printf("Position\tExon\t\tIntron\n");
+    printf("----------------------------------------\n");
+    
+    // Calculate total observation probability for normalization
+    double total_prob = 0.0;
+    for (int i = 0; i < 2; i++) { // Just sum exon and intron states
+        total_prob += fw->a[info->T - 2 * FLANK][i];
+    }
+    
+    // Print posterior probabilities for the requested range
+    for (int t = start_pos; t <= end_pos && t < info->T - 2 * FLANK + 1; t++) {
+        printf("%d\t\t", t + FLANK);
+        
+        for (int i = 0; i < 2; i++) { // Just print for exon (0) and intron (1)
+            double posterior = (fw->a[t][i] * bw->b[t][i]) / total_prob;
+            printf("%.6f\t", posterior);
+        }
+        printf("\n");
+    }
+    printf("----------------------------------------\n");
 }

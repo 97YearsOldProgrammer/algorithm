@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "model.h"
 
 // read the sequence from file
@@ -151,7 +152,7 @@ void exon_intron_parser(Lambda *l, char *filename, int digit)      // get emissi
     {
         if ( line[0] == '%')     continue;              // skip the first line        
 
-        int c_line ++;
+        c_line ++;
 
         token = strtok(line, " \t\n");                  // 4 base pair from the file
         token = strtok(NULL, " \t\n");                  // get the probability 
@@ -192,8 +193,8 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
         token = strtok(line, " \t\n");
         p = atof(token);
 
-        if      (p != 0.0 && digit == 0) ed->min_len_exon;      // update min exon   len
-        else if (p != 0.0 && digit == 1) ed->max_len_exon;      // update min intron len
+        if      (p != 0.0 && digit == 0) ed->min_len_exon = c_line;        // update min exon   len
+        else if (p != 0.0 && digit == 1) ed->min_len_intron = c_line;      // update min intron len
         
         if(digit == 0)  ed->exon[c_line]   = p;
         else            ed->intron[c_line] = p;
