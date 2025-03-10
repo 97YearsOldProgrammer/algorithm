@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
     char *intron_emission;
     char *Ped_exon;
     char *Ped_intron;
+    char *seq_input;
 
     // handle argv value //
     don_emission    = argv[1];
@@ -24,6 +25,7 @@ int main(int argc, char *argv[])
     intron_emission = argv[4];
     Ped_exon        = argv[5];
     Ped_intron      = argv[6];
+    seq_input       = argv[7];
 
     // data structure //
     Observed_events info;
@@ -34,8 +36,8 @@ int main(int argc, char *argv[])
     Backward_algorithm bw;
 
     // get sequence //
-    read_sequence_file(const char *filename, Observed_events *info);
-    numerical_transcription(Observed_events *info, const char *seq);
+    read_sequence_file(seq_input, &info);
+    numerical_transcription(&info, info->original_sequence);
     
     // initialize datas //
     donor_parser(&l, don_emission);                            // donor emission prob
