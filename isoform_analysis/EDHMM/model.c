@@ -44,9 +44,9 @@ int base4_to_int(int *array, int beg, int length)
 {
     int value = 0;
     
-    for (int i = beg ; i < length ; i++ )
+    for (int i = 0; i < length; i++)
     {
-        value += array[i] * power(4, length - i - 1);
+        value += array[beg + i] * power(4, length - i - 1);
     }
     
     return value;
