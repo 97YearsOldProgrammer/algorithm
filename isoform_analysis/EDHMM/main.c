@@ -5,12 +5,12 @@
 int main(int argc, char *argv[])
 {
     // Default paths for model files
-    char *default_don_emission = "../edhmm/models/don.pwm";
-    char *default_acc_emission = "../edhmm/models/acc.pwm";
-    char *default_exon_emission = "../edhmm/models/exon.mm";
-    char *default_intron_emission = "../edhmm/models/intron.mm";
-    char *default_Ped_exon = "../edhmm/models/exon.len";
-    char *default_Ped_intron = "../edhmm/models/intron.len";
+    char *default_don_emission = "../EdHMM/models/don.pwm";
+    char *default_acc_emission = "../EdHMM/models/acc.pwm";
+    char *default_exon_emission = "../EdHMM/models/exon.mm";
+    char *default_intron_emission = "../EdHMM/models/intron.mm";
+    char *default_Ped_exon = "../EdHMM/models/exon.len";
+    char *default_Ped_intron = "../EdHMM/models/intron.len";
 
     // argv section for command-line inputs
     char *don_emission;
