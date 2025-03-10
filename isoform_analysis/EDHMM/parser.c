@@ -3,6 +3,56 @@
 #include <string.h>
 #include "model.h"
 
+// read the sequence from file
+
+void read_sequence_file(const char *filename, Observed_events *info)
+{
+    FILE *file = fopen(filename, "r");
+    
+    if (file == NULL)
+    {
+        printf("Error: Cannot open sequence file %s\n", filename);
+        return;
+    }
+    
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+    rewind(file);
+
+    char *buffer = (char*)malloc(file_size + 1);
+    size_t read_size = fread(buffer, 1, file_size, file);
+
+    buffer[read_size] = '\0';
+    char *sequence = (char*)malloc(file_size + 1);
+
+    size_t seq_index = 0;
+    
+    // Parse each line
+    char *line = strtok(buffer, "\n");
+    while (line != NULL)
+    {
+        
+        // Extract valid DNA characters
+        for (int i = 0; line[i] != '\0'; i++)
+        {
+            if (line[i] == 'A' || line[i] == 'C' || line[i] == 'G' || line[i] == 'T')
+            {
+                sequence[seq_index++] = line[i];
+            }
+        }
+        
+        line = strtok(NULL, "\n");
+    }
+    
+    sequence[seq_index] = '\0';
+        sequence = (char*)realloc(sequence, seq_index + 1);
+    
+    info->original_sequence = sequence;
+    info->T = seq_index; 
+    
+    free(buffer);
+    fclose(file);
+}
 
 // emission probability //
 

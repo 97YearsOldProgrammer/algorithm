@@ -8,8 +8,9 @@
 
 typedef struct                          // observed events with length T
 {
+    char *original_sequence;            // where the original sequence store
     int T;                              // overall length for sequence
-    int numerical_sequence;             // transcribe from base pair to digits
+    int *numerical_sequence;            // transcribe from base pair to digits
 } Observed_events;
 
 typedef struct
@@ -62,10 +63,53 @@ typedef struct
 } Backward_algorithm;                   
 
 
-// declared function
+// declared function //
+
+// seq reading //
+void read_sequence_file(const char *filename, Observed_events *info);
+void numerical_transcription(Observed_events *info, const char *seq);
+
+// input model //
 void donor_parser(Lambda *l, char *filename);
 void acceptor_parser(Lambda *l, char *filename);
-void exon_intron_parser(Lambda *l, char *filename);
-void explicit_duration_probability(explicit_duration *ed, char *filename, int digit);
+void exon_intron_parser(Lambda *l, char *filename, int digit);
+void explicit_duration_probability(Explicit_duration *ed, char *filename, int digit);
+
+// EDHMM setup // 
+void setup_initial_probability(Lambda *l);
+
+// computation function //
+int power(int base, int exp);
+int base4_to_int(int *array, int beg, int length);
+double total_prob(double *array, int length);
+double safe_log(double x);
+double log_sum_exp(double *logs, int n);
+
+// suffix algorithm to get all transition prob // 
+void initialize_donor_transition_matrix(Lambda *l, Apc *a, int depth);
+void initialize_acceptor_transition_matrix(Lambda *l, Apc *a, int depth);
+
+// forward algorithm //
+
+// ---- memory allocation //
+void allocate_alpha(Observed_events *info, Forward_algorithm *alpha);
+// ---- initialize        //
+void initial_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorithm *alpha, Observed_events *info);
+// ---- computation       //
+void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed);
+// ---- free memory       // 
+void free_alpha(Observed_events *info, Forward_algorithm *alpha)
+
+// backward algorithm //
+
+// ---- memory allocation //
+void allocate_beta(Observed_events *info, Backward_algorithm *beta);
+// ---- initialize        //
+void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info)
+// ---- computation       //
+void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed)
+// ---- free memory       //
+void free_beta(Observed_events *info, Backward_algorithm *beta)
+
 
 #endif

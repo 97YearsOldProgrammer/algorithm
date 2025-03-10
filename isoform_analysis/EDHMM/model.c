@@ -4,6 +4,25 @@
 #include <string.h>
 #include <math.h>
 
+void numerical_transcription(Observed_events *info, const char *seq)
+{
+    // turns original sequence into int 
+    size_t len = strlen(seq);
+
+    info->T = len;
+    info->numerical_seq = malloc ( len * sizeof(int) );
+
+    for( int i = 0; i < len; i++)
+    {
+
+        // A == 0 , C == 1, G == 2, T == 3  
+        if      (seq[i] == 'A')     info->numerical_seq[i] = 0;
+        else if (seq[i] == 'C')     info->numerical_seq[i] = 1;
+        else if (seq[i] == 'G')     info->numerical_seq[i] = 2;
+        else if (seq[i] == 'T')     info->numerical_seq[i] = 3;
+    }
+}
+
 void setup_initial_probability(Lambda *l)                               // actually no longer needed
 {
     l->pi = calloc(HS, sizeof(double) );                                // left-right HMM; only exon are 1
@@ -86,9 +105,9 @@ void initialize_acceptor_transition_matrix(Lambda *l, Apc *a, int depth)// set t
 void allocate_alpha(Observed_events *info, Forward_algorithm *alpha)    // assign data structure for alpha
 {
 
-    alpha->a = malloc ( info->T * sizeof(double*) );                    // 2x2; outer layer as length of sequence
+    alpha->a = malloc ( (info->T - 2 * FLANK + 1) * sizeof(double*) );                    // 2x2; outer layer as length of sequence
 
-    for (int i = 0 ; i < info->T ; i++ )
+    for (int i = 0 ; i < (info->T - 2 * FLANK + 1) ; i++ )
     {
         alpha->a[i] = calloc( HS , sizeof(double) );                    // inner layer as number of Hidden States
     }
@@ -147,12 +166,9 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
     int terminal_region_intron = info->T - ed->min_len_exon - FLANK + 1;                        // no intron continue beyond this point
     int terminal_region_exon   = info->T - ed->min_len_exon - ed->max_len_exon - FLANK + 1;     // no exon to intron beyond this point 
 
-    for ( int t = FLANK ; t < info->T ; t ++ )                                                  // iterate every element in the time scale
+    for ( int t = 0 ; t < info->T - 2 * FLANK + 1 ; t ++ )                                      // iterate every element in the time scale
     {
-        int current = info->numerical_sequence[t];                                              // getting the current obs event
-        int before  = info->numerical_sequence[t - 3];                                          // prepared for the exon or intron
-        int index   = base4_to_int(info->numerical_sequence, before, current);                  // value for emission prob for intron or exon                   
-
+         
         for ( int i = 0 ; i < HS ; i ++ )                                                       // the next position; 0 for exon, 1 for intron
         {
             int log_index = 0;                                                                  // prepare for log-space calcualtion
@@ -183,7 +199,7 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
                     for ( int s = t - d + 1 ; s <= t ;  s++ )
                     {
-                        int index = base4_to_int(info->numerical_sequence, s - 3, 4);           // how we get index value from 4 base pair
+                        int index = base4_to_int(info->numerical_sequence, s - 3 + FLANK, 4);   // how we get index value from 4 base pair
 
                         double emission_prob;
 
@@ -197,8 +213,8 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
                     double ed_prob;
 
-                    if      ( i = 0 ) ed_prob = ed->exon[d];
-                    else if ( i = 1 ) ed_prob = ed->intron[d];
+                    if      ( i == 0 ) ed_prob = ed->exon[d];
+                    else if ( i == 1 ) ed_prob = ed->intron[d];
 
                     // get transition prob
 
@@ -206,12 +222,12 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
                     if ( j == 0 && i == 1)                                                      // from exon to intron
                     {
-                        int index = base4_to_int(info->numerical_sequence , t - d - 4 , 5);     // 5bps motif
+                        int index = base4_to_int(info->numerical_sequence , t - d + FLANK , 5); // 5bps motif
                         trans_prob = l->A.dons[index];
                     }
                     else if ( j == 1 && i == 0)                                                 // from intron to exon
                     {
-                        int index = base4_to_int(info->numerical_sequence , t - d - 5 , 6);     // 6bps motif
+                        int index = base4_to_int(info->numerical_sequence , t-d- 6 + FLANK, 6); // 6bps motif
                         trans_prob = l->A.accs[index];
                     }
 
@@ -229,7 +245,7 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
                 for ( int s = t - d + 1 ; s <= t ;  s++ )
                 {
-                    int index = base4_to_int(info->numerical_sequence, s - 3, 4);               // how we get index value from 4 base pair
+                    int index = base4_to_int(info->numerical_sequence, s - 3 + FLANK, 4);       // how we get index value from 4 base pair
 
                     double emission_prob;
 
@@ -257,9 +273,9 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 void allocate_beta(Observed_events *info, Backward_algorithm *beta)                             // assign data structure for backward algorithm
 {
 
-    beta->b = malloc ( info->T * sizeof(double*) );                                             // 2x2; outer layer as length of sequence
+    beta->b = malloc ( (info->T - 2 * FLANK + 1) * sizeof(double*) );                           // 2x2; outer layer as length of sequence
 
-    for (int i = 0 ; i < info->T ; i++ )
+    for (int i = 0 ; i < (info->T - 2 * FLANK + 1) ; i++ )
     {
         beta->b[i] = calloc( HS , sizeof(double) );                                             // inner layer as number of Hidden States
     }
@@ -267,7 +283,7 @@ void allocate_beta(Observed_events *info, Backward_algorithm *beta)             
 
 void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info)
 {
-    int last_bps = info->T - 1;     // minus one cuz array start as 0, but not bps
+    int last_bps = info->T - 2 * FLANK; 
 
     // constrain ; only possible to end as an exon 
     beta->b[last_bps][0] = 1.0;
@@ -278,12 +294,9 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 {
     int start_region_intron = info->T - ed->min_len_exon - FLANK + 1;
 
-    for ( int t = info->T - 1 ; t >= FLANK ; t-- )
+    for ( int t = info->T - FLANK ; t >= FLANK ; t-- )
     {
-        int current = info->numerical_sequence[t];                                              // getting the current obs event
-        int before  = info->numerical_sequence[t - 3];                                          // prepared for the exon or intron
-        int index   = base4_to_int(info->numerical_sequence, before, current);                  // value for emission prob for intron or exon   
-        
+
         for ( int i = 0 ; i < HS ; i ++ )                                                       // the before position; 0 for exon, 1 for intron
         {
             int log_index = 0;                                                                  // prepare for log-space calcualtion
@@ -310,7 +323,7 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 
                     for ( int s = t + 1 ; s <= t + d ;  s++ )
                     {
-                        int index = base4_to_int(info->numerical_sequence, s + 3, 4);           // how we get index value from 4 base pair
+                        int index = base4_to_int(info->numerical_sequence, s - 3, 4);           // how we get index value from 4 base pair
 
                         double emission_prob;
 
@@ -333,12 +346,12 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 
                     if ( j == 0 && i == 1)                                                      // from exon to intron
                     {
-                        int index = base4_to_int(info->numerical_sequence , t + d + 4 , 5);     // 5bps motif
+                        int index = base4_to_int(info->numerical_sequence , t - d , 5);         // 5bps motif
                         trans_prob = l->A.dons[index];
                     }
                     else if ( j == 1 && i == 0)                                                 // from intron to exon
                     {
-                        int index = base4_to_int(info->numerical_sequence , t + d + 5 , 6);     // 6bps motif
+                        int index = base4_to_int(info->numerical_sequence , t - d - 6 , 6);     // 6bps motif
                         trans_prob = l->A.accs[index];
                     }
 
@@ -349,14 +362,14 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                 }
             }
 
-            for ( int d = 1 ; d <= max_len && t + d >= 0 ; d ++ )                           // for continue probability
+            for ( int d = 1 ; d <= max_len && t + d >= 0 ; d ++ )                               // for continue probability
             {
                 // get emission product
                 double emission_product = 1.0;
 
                 for ( int s = t + 1 ; s <= t + d ;  s++ )
                 {
-                    int index = base4_to_int(info->numerical_sequence, s + 3, 4);               // how we get index value from 4 base pair
+                    int index = base4_to_int(info->numerical_sequence, s - 3, 4);               // how we get index value from 4 base pair
 
                     double emission_prob;
 
@@ -379,4 +392,21 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
             beta->b[t][i] = exp( log_sum_exp (l->log_values, log_index) );
         }
     }
+}
+
+void free_alpha(Observed_events *info, Forward_algorithm *alpha)
+{
+    for (int i = 0 ; i < (info->T - 2 * FLANK + 1); i ++)
+    {
+        free( alpha->a[i] );
+    }
+    free( alpha->a ); 
+}
+void free_beta(Observed_events *info, Backward_algorithm *beta)
+{
+    for (int i = 0 ; i < (info->T - 2 * FLANK  + 1) ; i ++)
+    {
+        free( beta->b[i] );
+    }
+    free( beta->b );
 }
