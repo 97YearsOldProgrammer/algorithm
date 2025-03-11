@@ -8,6 +8,8 @@
 
 void read_sequence_file(const char *filename, Observed_events *info)
 {
+    printf("Start reading the sequence data:");
+
     FILE *file = fopen(filename, "r");
     
     if (file == NULL)
@@ -53,12 +55,15 @@ void read_sequence_file(const char *filename, Observed_events *info)
     
     free(buffer);
     fclose(file);
+
+    printf("\t\u2713\n");
 }
 
 // emission probability //
 
 void donor_parser(Lambda *l, char *filename)            // get emission probability for donor site
 {
+    printf("Start getting donor site emission Probability:");
     FILE *file = fopen(filename, "r");
 
     char line[256];
@@ -92,10 +97,13 @@ void donor_parser(Lambda *l, char *filename)            // get emission probabil
         }
     }
     fclose(file);
+    printf("\t\u2713\n");
 }
 
 void acceptor_parser(Lambda *l, char *filename)         // get emission probability for acceptor site
 {
+    printf("Start getting acceptor site emission Probability:");
+
     FILE *file = fopen(filename, "r");
 
     char line[256];
@@ -128,40 +136,84 @@ void acceptor_parser(Lambda *l, char *filename)         // get emission probabil
         }
     }
     fclose(file);
+
+    printf("\t\u2713\n");
 }
 
-void exon_intron_parser(Lambda *l, char *filename, int digit)      // get emission probability for exon and intron
+void exon_intron_parser(Lambda *l, char *filename, int digit)
 {
-    assert(digit == 0 || digit == 1);                   // 0  for exon, 1 for intron
+    assert(digit == 0 || digit == 1);                   // 0 for exon, 1 for intron
+
+    if      ( digit == 0 )    printf("Start getting exon   emission  Probability:");
+    else if ( digit == 1 )    printf("Start getting intron emission  Probability:");
 
     FILE *file = fopen(filename, "r");
 
     char line[256];
-    char *token;
-    double p;                                           // probability we are gonna store
+    char seq[5];                                        // To hold sequences like AAAA
+    double p;
 
     if (file == NULL)
     {
-        printf("Invalid emission probability for exon or intron. Can't find file!\n");
+        printf("Error: Cannot open file %s\n", filename);
         return;
     }
-
-    int c_line = -1;                                    // count of line
-
-    while( fgets( line, sizeof(line) , file) != NULL )  // nest while loop to get elements
+    
+    // Initialize arrays to zero
+    if (digit == 0)
     {
-        if ( line[0] == '%')     continue;              // skip the first line        
-
-        c_line ++;
-
-        token = strtok(line, " \t\n");                  // 4 base pair from the file
-        token = strtok(NULL, " \t\n");                  // get the probability 
-
-        p = atof(token);
-        if(digit == 0)  l->B.exon[c_line]   = p;        // store the prob for exon
-        else            l->B.intron[c_line] = p;        // store the prob for intron
+        memset(l->B.exon, 0, 256 * sizeof(double));
+    } else 
+    {
+        memset(l->B.intron, 0, 256 * sizeof(double));
     }
+
+    // Skip header line
+    if (fgets(line, sizeof(line), file) != NULL && line[0] == '%')      printf("\t\u2713");
+    else 
+    {
+        printf("Warning: No header found in %s\n", filename);
+        rewind(file); // Go back to start if no header
+    }
+
+    int entries_parsed = 0;
+
+    // Process each line
+    while ( fgets( line , sizeof(line), file) != NULL )
+    {
+        // Skip empty lines or header lines
+        if (line[0] == '\n' || line[0] == '\r' || line[0] == '%')   continue;
+        
+        // Parse the line with sequence and probability
+        if (sscanf(line, "%4s %lf", seq, &p) == 2) 
+        {
+            // Convert sequence to index
+            int index = 0;
+            for (int i = 0; i < 4; i++) 
+            {
+                if (seq[i] == 'A') index = index * 4 + 0;
+                else if (seq[i] == 'C') index = index * 4 + 1;
+                else if (seq[i] == 'G') index = index * 4 + 2;
+                else if (seq[i] == 'T') index = index * 4 + 3;
+                else {
+                    printf("Warning: Invalid character in sequence: %c\n", seq[i]);
+                    break;
+                }
+            }
+            
+            // Store probability in the appropriate array
+            if (index < 256) 
+            {
+                if      (digit == 0)     l->B.exon[index] = p;
+                else                     l->B.intron[index] = p;
+
+                entries_parsed++;
+            }
+        }
+    }
+    
     fclose(file);
+    printf("\t\u2713\n");
 }
 
 // eplicit_duration //
@@ -170,38 +222,79 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
 {
     assert(digit == 0 || digit == 1);                   // 0 for exon, 1 for intron
 
+    if      ( digit == 0 ) printf("Starting getting exon   explicit duration probability");
+    else if ( digit == 1 ) printf("Starting getting intron explicit duration probability");
+    
     FILE *file = fopen(filename, "r");
+
+
+    if (file == NULL)
+    {
+        printf("Error opening explicit duration file: %s\n", filename);
+        perror("Error details");
+        return;
+    }
 
     char line[256];
     char *token;
     double p;
-
-    if (file == NULL)
+    
+    // Initialize arrays to zero
+    if (digit == 0) 
     {
-        printf("Can't find the file for the explicit duration.");
-        return;
+        memset(ed->exon, 0, 1000 * sizeof(double));
+        ed->min_len_exon = 0;
+        ed->max_len_exon = 0;
+    } else 
+    {
+        memset(ed->intron, 0, 1000 * sizeof(double));
+        ed->min_len_intron = 0;
+        ed->max_len_intron = 0;
     }
 
     int c_line = -1;
+    int nonzero_values = 0;
 
-    while( fgets( line, sizeof(line) , file) != NULL)
+    while (fgets(line, sizeof(line), file) != NULL)
     {
-        if (line[0] == '%')     continue;
+        if (line[0] == '%')     continue;  // Skip header line
 
-        c_line ++;
-
-        token = strtok(line, " \t\n");
-        p = atof(token);
-
-        if      (p != 0.0 && digit == 0) ed->min_len_exon = c_line;        // update min exon   len
-        else if (p != 0.0 && digit == 1) ed->min_len_intron = c_line;      // update min intron len
+        c_line++;
         
-        if(digit == 0)  ed->exon[c_line]   = p;
-        else            ed->intron[c_line] = p;
+        // Clean up the line - remove whitespace
+        token = strtok(line, " \t\r\n");
+        if (token == NULL) continue;
+        
+        p = atof(token);
+        
+        // Store the probability and track first non-zero value
+        if (digit == 0) 
+        {
+            ed->exon[c_line] = p;
+            if (p > 0 && ed->min_len_exon == 0)     ed->min_len_exon = c_line;
+        } else 
+        {
+            ed->intron[c_line] = p;
+            if (p > 0 && ed->min_len_intron == 0)   ed->min_len_intron = c_line;
+        }
+        
+        if (p > 0) nonzero_values++;
     }
 
-    if (digit == 0)     ed->max_len_exon   = c_line;
-    else                ed->max_len_intron = c_line;
-
     fclose(file);
+    printf("\t\u2713\n");
+
+    // Set max length
+    if (digit == 0) 
+    {
+        ed->max_len_exon = c_line;
+        printf("Exon duration: min=%d, max=%d, found %d non-zero values\n", 
+               ed->min_len_exon, ed->max_len_exon, nonzero_values);
+    } else 
+    {
+        ed->max_len_intron = c_line;
+        printf("Intron duration: min=%d, max=%d, found %d non-zero values\n", 
+               ed->min_len_intron, ed->max_len_intron, nonzero_values);
+    }
+
 }

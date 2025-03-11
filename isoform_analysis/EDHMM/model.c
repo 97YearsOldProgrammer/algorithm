@@ -6,6 +6,8 @@
 
 void numerical_transcription(Observed_events *info, const char *seq)
 {
+    printf("Start transforming original sequence into base4:");
+
     // turns original sequence into int 
     size_t len = strlen(seq);
 
@@ -21,12 +23,16 @@ void numerical_transcription(Observed_events *info, const char *seq)
         else if (seq[i] == 'G')     info->numerical_sequence[i] = 2;
         else if (seq[i] == 'T')     info->numerical_sequence[i] = 3;
     }
+
+    printf("\t\u2713\n");
 }
 
 void setup_initial_probability(Lambda *l)                               // actually no longer needed
 {
+    printf("Start getting initial probability down");
     l->pi = calloc(HS, sizeof(double) );                                // left-right HMM; only exon are 1
     l->pi[0] = 1;                                                       // initial probability of exon are 1
+    printf("\t\u2713\n");
 }
 
 int power(int base, int exp)                                            // wtf, C don't have power for int
@@ -104,13 +110,14 @@ void initialize_acceptor_transition_matrix(Lambda *l, Apc *a, int depth)// set t
 
 void allocate_alpha(Observed_events *info, Forward_algorithm *alpha)    // assign data structure for alpha
 {
-
+    printf("Start allocate memory for the forward algorithm:");
     alpha->a = malloc ( (info->T - 2 * FLANK + 1) * sizeof(double*) );                    // 2x2; outer layer as length of sequence
 
     for (int i = 0 ; i < (info->T - 2 * FLANK + 1) ; i++ )
     {
         alpha->a[i] = calloc( HS , sizeof(double) );                    // inner layer as number of Hidden States
     }
+    printf("\t\u2713\n");
 }
 
 double safe_log(double x)                                                                       // handle log 0
@@ -137,6 +144,8 @@ double log_sum_exp(double *logs, int n)
 
 void initial_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorithm *alpha, Observed_events *info)
 {
+    printf("Start initialize forward algorithm:");
+
     for ( int i = 0 ; i < HS ; i ++ )
     {
         double initial_prob = l->pi[i];
@@ -159,20 +168,181 @@ void initial_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algori
 
     }
 
+    printf("\t\u2713\n");
 }
 
 void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed)
 {
-    int terminal_region_intron = info->T - ed->min_len_exon - FLANK + 1;                        // no intron continue beyond this point
-    int terminal_region_exon   = info->T - ed->min_len_exon - ed->max_len_exon - FLANK + 1;     // no exon to intron beyond this point 
+
+    int terminal_region_intron = info->T - ed->min_len_exon - FLANK + 1;
+    int terminal_region_exon = info->T - ed->min_len_exon - ed->min_len_intron - FLANK + 1;
+
+    if (terminal_region_exon <= 0)
+        printf("Invalid data input. Check FLANK size. Seq len. Min Exon\n");
+    else
+        printf("Start forward algorithm with terminal intron region %d", terminal_region_intron);
+    
+    if (terminal_region_intron <= 0)
+        printf("Invalid data input. Check FLANK size. Seq len. Min Intron & Exon\n");
+    else
+        printf("Start forward algorithm with terminal exon region %d", terminal_region_exon);
+
+    for (int t = 0; t < info->T - 2 * FLANK + 1; t++)
+    {
+        for (int i = 0; i < HS; i++)
+        {
+            // biological restrain
+            if (t >= terminal_region_intron && i == 1)
+            {
+                alpha->a[t][i] = 0.0;
+                continue;
+            }
+
+            int log_index = 0;
+            int max_len;
+
+            if (i == 0)
+                max_len = ed->max_len_exon;
+            else if (i == 1)
+                max_len = ed->max_len_intron;
+
+            for (int j = 0; j < HS; j++)
+            {
+                if (i == j) continue;  // no self-transition for HSMM
+
+                // biological restrain
+                if (t >= terminal_region_exon && j == 0 && i == 1) continue;
+                
+                for (int d = 1; d <= max_len; d++)
+                {
+                    printf("We get here");
+                    if (t < d) break;  // not making sense if d larger than t
+
+                    // Check for valid indices before computing emission product
+                    if (t - d + 1 - 3 + FLANK < 0) 
+                        continue;
+
+                    double emission_product = 1.0;
+
+                    for (int s = t - d + 1; s <= t; s++)
+                    {
+                        // Check for valid index before accessing numerical_sequence
+                        if (s - 3 + FLANK < 0 || s - 3 + FLANK + 4 > info->T) 
+                            continue;
+                        
+                        int index = base4_to_int(info->numerical_sequence, s - 3 + FLANK, 4);
+
+                        double emission_prob;
+                        if (i == 0) 
+                            emission_prob = l->B.exon[index];
+                        else if (i == 1) 
+                            emission_prob = l->B.intron[index];
+
+                        emission_product *= emission_prob;
+                    }
+
+                    double ed_prob;
+                    if (i == 0) 
+                        ed_prob = ed->exon[d];
+                    else if (i == 1) 
+                        ed_prob = ed->intron[d];
+
+                    double trans_prob;
+
+                    if (j == 0 && i == 1)  // from exon to intron
+                    {
+                        // Check for valid index before accessing numerical_sequence
+                        if (t - d + FLANK < 0 || t - d + FLANK + 5 > info->T) 
+                            continue;
+                        
+                        int index = base4_to_int(info->numerical_sequence, t - d + FLANK, 5);
+                        trans_prob = l->A.dons[index];
+                    }
+                    else if (j == 1 && i == 0)  // from intron to exon
+                    {
+                        // Check for valid index before accessing numerical_sequence
+                        if (t - d - 6 + FLANK < 0 || t - d - 6 + FLANK + 6 > info->T) 
+                            continue;
+                        
+                        int index = base4_to_int(info->numerical_sequence, t - d - 6 + FLANK, 6);
+                        trans_prob = l->A.accs[index];
+                    }
+
+                    double all = alpha->a[t - d][j] * trans_prob * ed_prob * emission_product;
+
+                    if (all > 0) 
+                        l->log_values[log_index++] = all;
+                    else
+                        l->log_values[log_index++] = safe_log(all);  // Fixed function name
+                }
+            }
+
+            for (int d = 1; d <= max_len; d++)  // for continue probability
+            {
+                if (t + 1 < d) break;
+
+                // Check for valid indices before computing emission product
+                if (t - d + 1 - 3 + FLANK < 0) 
+                    continue;
+
+                double emission_product = 1.0;
+
+                for (int s = t - d + 1; s <= t; s++)
+                {
+                    // Check for valid index before accessing numerical_sequence
+                    if (s - 3 + FLANK < 0 || s - 3 + FLANK + 4 > info->T) 
+                        continue;
+                    
+                    int index = base4_to_int(info->numerical_sequence, s - 3 + FLANK, 4);
+
+                    double emission_prob;
+                    if (i == 0) 
+                        emission_prob = l->B.exon[index];
+                    else if (i == 1) 
+                        emission_prob = l->B.intron[index];
+                    
+                    emission_product *= emission_prob;
+                }
+
+                double ed_prob;
+                if (i == 0) 
+                    ed_prob = ed->exon[d];
+                else if (i == 1) 
+                    ed_prob = ed->intron[d];
+
+                double all = alpha->a[t - d][i] * ed_prob * emission_product;
+
+                if (all > 0) 
+                    l->log_values[log_index++] = all;
+                else
+                    l->log_values[log_index++] = safe_log(all);  // Fixed function name
+            }
+
+            // Check if we have valid log values before calling log_sum_exp
+            if (log_index > 0)
+                alpha->a[t][i] = exp(log_sum_exp(l->log_values, log_index));
+            else
+                alpha->a[t][i] = 0.0;  // Default value if no contributions
+        }
+    }
+}
+
+/*
+void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed)
+{
+    int terminal_region_intron = info->T - ed->min_len_exon - FLANK + 1;                          // no intron continue beyond this point
+    int terminal_region_exon   = info->T - ed->min_len_exon - ed->min_len_intron - FLANK + 1;     // no exon to intron beyond this point 
+
+    if ( terminal_region_exon   <= 0 )  printf("Invalid data input. Check FLANK size. Seq len. Min Exon\n");
+    else                                printf("Start forwrad algorithm with terminal intron region %d", terminal_region_intron);
+    if ( terminal_region_intron <= 0 )  printf("Invalid data input. Check FLANK size. Seq len. Min Intron & Exon\n");   
+    else                                printf("Start forward algorithm with terminal exon region %d", terminal_region_exon);
 
     for ( int t = 0 ; t < info->T - 2 * FLANK + 1 ; t ++ )                                      // iterate every element in the time scale
     {
          
         for ( int i = 0 ; i < HS ; i ++ )                                                       // the next position; 0 for exon, 1 for intron
         {
-            int log_index = 0;                                                                  // prepare for log-space calcualtion
-            int max_len;
 
             // biological restrain
             if ( t >= terminal_region_intron && i == 1)                                         // can't have new intron after this
@@ -180,6 +350,9 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                 alpha->a[t][i] = 0.0;
                 continue;
             }
+
+            int log_index = 0;                                                                  // prepare for log-space calcualtion
+            int max_len;
 
             if      ( i == 0 )    max_len = ed->max_len_exon;                                   // max_len for exon state
             else if ( i == 1 )    max_len = ed->max_len_intron;                                 // max_len for intron state
@@ -191,8 +364,10 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                 // biological restrain
                 if (t >= terminal_region_exon && j == 0 && i == 1) continue;                    // no exon->intron transition beyond this point
                 
-                for ( int d = 1 ; d <= max_len && t - d >= 0 ; d ++ )                           // skip those unsatisfied len; cuz they all 0
+                for ( int d = 1 ; d <= max_len ; d ++ )                                         // skip those unsatisfied len; cuz they all 0
                 {
+                    if ( t < d )   break;                                                       // not making sence if d larger than s
+
                     // get product for emission prob
 
                     double emission_product = 1.0;                                              // what we want to calculate out here
@@ -234,12 +409,16 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                     // formal computation
 
                     double all = alpha->a[t - d][j] * trans_prob * ed_prob * emission_product;
-                    if  ( all > 0 ) l->log_values[log_index++] = safe_log(all); 
+
+                    if      ( all > 0 ) l->log_values[log_index++] = all;
+                    else                l->log_values[log_index++] = safe_log(all); 
                 }
             }
 
-            for ( int d = 1 ; d <= max_len && t - d + 1 >= 0 ; d ++ )                           // for continue probability
+            for ( int d = 1 ; d <= max_len; d ++ )                                              // for continue probability
             {
+                if ( t + 1 < d )    break;   
+
                 // get emission product
                 double emission_product = 1.0;
 
@@ -262,16 +441,21 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                 else if ( i == 1 ) ed_prob = ed->intron[d];
 
                 double all = alpha->a[t - d][i] * ed_prob * emission_product;
-                if ( all > 0 ) l->log_values[log_index++] = safe_log(all);
+
+                if ( all > 0 ) l->log_values[log_index++] = all;
+                else           l->log_values[log_index++] = safe_log(all);
             }
 
-            alpha->a[t][i] = exp( log_sum_exp (l->log_values, log_index) );
+            if ( log_index == 0 )   alpha->a[t][i] = 0.0;
+            else                    alpha->a[t][i] = exp( log_sum_exp (l->log_values, log_index) );
         }
     }
 }
+*/
 
 void allocate_beta(Observed_events *info, Backward_algorithm *beta)                             // assign data structure for backward algorithm
 {
+    printf("Start allocate memory for the backward algorithm:");
 
     beta->b = malloc ( (info->T - 2 * FLANK + 1) * sizeof(double*) );                           // 2x2; outer layer as length of sequence
 
@@ -279,28 +463,32 @@ void allocate_beta(Observed_events *info, Backward_algorithm *beta)             
     {
         beta->b[i] = calloc( HS , sizeof(double) );                                             // inner layer as number of Hidden States
     }
+    printf("\t\u2713\n");
 }
 
 void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info)
 {
+    printf("Start initialize backward algorithm:");
     int last_bps = info->T - 2 * FLANK; 
 
     // constrain ; only possible to end as an exon 
     beta->b[last_bps][0] = 1.0;
     beta->b[last_bps][1] = 0.0;
+    printf("\t\u2713\n");
 }
 
 void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed)
 {
     int start_region_intron = info->T - ed->min_len_exon - FLANK + 1;
 
-    for ( int t = info->T - FLANK ; t >= FLANK ; t-- )
+    if ( start_region_intron < FLANK || start_region_intron < 0 )   printf("Invalid data. Check Seq_len. FLANK. Min_exon.");
+    else                                                            printf("Start backward algorithm. No exon to intron transiton before %d", start_region_intron);
+
+    for ( int t = info->T - 2* FLANK - 1 ; t >= 0 ; t-- )
     {
 
         for ( int i = 0 ; i < HS ; i ++ )                                                       // the before position; 0 for exon, 1 for intron
         {
-            int log_index = 0;                                                                  // prepare for log-space calcualtion
-            int max_len;
 
             // biological restrain
             if ( t >= start_region_intron && i == 1)                                            // can't have new intron after this
@@ -309,6 +497,9 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                 continue;
             }
 
+            int log_index = 0;                                                                  // prepare for log-space calcualtion
+            int max_len;
+
             if      ( i == 0 )    max_len = ed->max_len_exon;                                   // max_len for exon state
             else if ( i == 1 )    max_len = ed->max_len_intron;                                 // max_len for intron state
 
@@ -316,8 +507,9 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
             {
                 if (i == j) continue;                                                           // no self-transition for HSMM
                 
-                for ( int d = 1 ; d <= max_len && t + d >= 0 ; d ++ )                           // skip those unsatisfied len; cuz they all 0
+                for ( int d = 1 ; d <= max_len; d ++ )                                          // skip those unsatisfied len; cuz they all 0
                 {
+                    if ( (t + d)  > (info->T - 2 * FLANK) )    break;                           // can durate longer than current point       
 
                     double emission_product = 1.0;                                              // what we want to calculate out here
 
@@ -358,12 +550,15 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                     // formal computation
 
                     double all = beta->b[t + d][j] * trans_prob * ed_prob * emission_product;
-                    if  ( all > 0 ) l->log_values[log_index++] = safe_log(all); 
+                    if  ( all > 0 ) l->log_values[log_index++] = all;
+                    else            l->log_values[log_index++] = safe_log(all);
                 }
             }
 
             for ( int d = 1 ; d <= max_len && t + d >= 0 ; d ++ )                               // for continue probability
             {
+                if ( t + d >= info->T - 2 * FLANK + 1)  break;
+                
                 // get emission product
                 double emission_product = 1.0;
 
@@ -386,10 +581,13 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                 else if ( i == 1 ) ed_prob = ed->intron[d];
 
                 double all = beta->b[t + d][i] * ed_prob * emission_product;
-                if ( all > 0 ) l->log_values[log_index++] = safe_log(all);
+
+                if ( all > 0 ) l->log_values[log_index++] = all;
+                else           l->log_values[log_index++] = safe_log(all);
             }
 
-            beta->b[t][i] = exp( log_sum_exp (l->log_values, log_index) );
+            if (log_index == 0) beta->b[t][i] = 0.0;
+            else                beta->b[t][i] = exp( log_sum_exp (l->log_values, log_index) );   
         }
     }
 }

@@ -1,10 +1,8 @@
 #ifndef HMM_MODEL
 #define HMM_MODEL
 
-#define OS 4
-#define HS 13                           // 1 (exon) + 1 (intron) + 5 (donor site) + 6(acceptor site)
+#define HS 2                            // 1 (exon) + 1 (intron) ; 5 (donor site) + 6(acceptor site) degraded
 #define FLANK 100                       // define the global flank size
-#define OT                              // used for print function; see which probability spot you wanna see
 
 typedef struct                          // observed events with length T
 {

@@ -62,8 +62,14 @@ int main(int argc, char *argv[])
 
     // initialize computation //
     setup_initial_probability(&l);                             // setup pi 
+
+    printf("Start calculating transition probability for donor sites");
     initialize_donor_transition_matrix(&l, &apc, 0);           // setup transition prob for exon to intron
+    printf("\t\u2713\n");
+
+    printf("Start calculating transition probability for acceptor sites");
     initialize_acceptor_transition_matrix(&l, &apc, 0);        // setup transition prob for intron to exon
+    printf("\t\u2713\n");
 
     // initialize memory //
     allocate_alpha(&info, &fw);                                 // allocate forward  algorithm
