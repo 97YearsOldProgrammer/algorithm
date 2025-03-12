@@ -158,12 +158,12 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
     int terminal_region_exon   = info->T - ed->min_len_exon - ed->min_len_intron - FLANK + 1;     // no exon to intron beyond this point 
 
     if ( terminal_region_exon   <= 0 )  printf("Invalid data input. Check FLANK size. Seq len. Min Exon\n");
-    else                                printf("Start forwrad algorithm with terminal intron region %d", terminal_region_intron);
+    else                                printf("Start forwrad algorithm with terminal intron region %d\n", terminal_region_intron);
     if ( terminal_region_intron <= 0 )  printf("Invalid data input. Check FLANK size. Seq len. Min Intron & Exon\n");   
-    else                                printf("Start forward algorithm with terminal exon region %d", terminal_region_exon);
+    else                                printf("Start forward algorithm with terminal exon region %d\n", terminal_region_exon);
 
     int real_bps = info->T - 2 * FLANK + 1;
-    printf("Start working on total Seq len: %d, Flank size: %d, Real bps len without Flank %d", info->T + 1, FLANK, real_bps);
+    printf("Start working on total Seq len: %d, Flank size: %d, Real bps len without Flank %d\n", info->T + 1, FLANK, real_bps);
 
     for ( int t = 0 ; t < info->T - 2 * FLANK + 1 ; t ++ )                                      // iterate every element in the time scale
     {
@@ -307,8 +307,8 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 {
     int start_region_intron = info->T - ed->min_len_exon - FLANK + 1;
 
-    if ( start_region_intron < FLANK || start_region_intron < 0 )   printf("Invalid data. Check Seq_len. FLANK. Min_exon.");
-    else                                                            printf("Start backward algorithm. No exon to intron transiton before %d", start_region_intron);
+    if ( start_region_intron < FLANK || start_region_intron < 0 )   printf("Invalid data. Check Seq_len. FLANK. Min_exon.\n");
+    else                                                            printf("Start backward algorithm. No exon to intron transiton before %d.\n", start_region_intron);
 
     for ( int t = info->T - 2* FLANK - 1 ; t >= 0 ; t-- )
     {
@@ -364,12 +364,12 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 
                     if ( j == 0 && i == 1)                                                      // from exon to intron
                     {
-                        int index = base4_to_int(info->numerical_sequence , t - d , 5);         // 5bps motif
+                        int index = base4_to_int(info->numerical_sequence , t - 4 + d + FLANK , 5);     // 5bps motif
                         trans_prob = l->A.dons[index];
                     }
                     else if ( j == 1 && i == 0)                                                 // from intron to exon
                     {
-                        int index = base4_to_int(info->numerical_sequence , t - d - 6 , 6);     // 6bps motif
+                        int index = base4_to_int(info->numerical_sequence , t + d + FLANK, 6);          // 6bps motif
                         trans_prob = l->A.accs[index];
                     }
 
@@ -438,27 +438,125 @@ void free_beta(Observed_events *info, Backward_algorithm *beta)
 // output //
 
 // posterior prob //
-void print_posterior_probabilities(Observed_events *info, Forward_algorithm *fw, Backward_algorithm *bw, int start_pos, int end_pos) 
-{
+void print_posterior_probabilities(Observed_events *info, Forward_algorithm *fw, Backward_algorithm *bw, int start_pos, int end_pos) {
+    printf("DEBUG: Entering print_posterior_probabilities function\n");
+    printf("DEBUG: info->T = %d, FLANK = %d\n", info->T, FLANK);
+    printf("DEBUG: start_pos = %d, end_pos = %d\n", start_pos, end_pos);
+    printf("DEBUG: fw = %p, bw = %p\n", (void*)fw, (void*)bw);
+    
+    // Basic sanity checks first
+    if (info == NULL) {
+        printf("ERROR: info is NULL\n");
+        return;
+    }
+    if (fw == NULL) {
+        printf("ERROR: fw is NULL\n");
+        return;
+    }
+    if (bw == NULL) {
+        printf("ERROR: bw is NULL\n");
+        return;
+    }
+    
+    // Check matrix pointers
+    printf("DEBUG: Checking fw->a = %p\n", (void*)fw->a);
+    if (fw->a == NULL) {
+        printf("ERROR: fw->a is NULL\n");
+        return;
+    }
+    
+    printf("DEBUG: Checking bw->b = %p\n", (void*)bw->b);
+    if (bw->b == NULL) {
+        printf("ERROR: bw->b is NULL\n");
+        return;
+    }
+    
+    // Check sequence length
+    if (info->T <= 2 * FLANK) {
+        printf("ERROR: Sequence too short for analysis (T=%d, FLANK=%d)\n", info->T, FLANK);
+        return;
+    }
+    
     printf("\n=== Posterior Probabilities ===\n");
     printf("Position\tExon\t\tIntron\n");
     printf("----------------------------------------\n");
     
-    // Calculate total observation probability for normalization
-    double total_prob = 0.0;
-    for (int i = 0; i < 2; i++) { // Just sum exon and intron states
-        total_prob += fw->a[info->T - 2 * FLANK][i];
+    // Calculate safe boundaries
+    int max_pos = info->T - 2 * FLANK;
+    printf("DEBUG: max_pos = %d\n", max_pos);
+    
+    // Ensure start_pos and end_pos are within bounds
+    if (start_pos < 0) {
+        printf("DEBUG: Adjusted start_pos from %d to 0\n", start_pos);
+        start_pos = 0;
+    }
+    if (end_pos > max_pos) {
+        printf("DEBUG: Adjusted end_pos from %d to %d\n", end_pos, max_pos);
+        end_pos = max_pos;
     }
     
-    // Print posterior probabilities for the requested range
-    for (int t = start_pos; t <= end_pos && t < info->T - 2 * FLANK + 1; t++) {
+    printf("DEBUG: Final range: start_pos=%d, end_pos=%d\n", start_pos, end_pos);
+    
+    // Simpler approach with conservative checks
+    for (int t = start_pos; t <= end_pos; t++) {
+        printf("DEBUG: Processing position t = %d\n", t);
+        
+        // Check bounds thoroughly
+        if (t < 0) {
+            printf("DEBUG: t < 0, skipping\n");
+            continue;
+        }
+        if (t >= info->T - 2 * FLANK + 1) {
+            printf("DEBUG: t >= info->T - 2 * FLANK + 1, skipping\n");
+            break;
+        }
+        
+        // Check array access
+        printf("DEBUG: Checking fw->a[%d]\n", t);
+        if (fw->a[t] == NULL) {
+            printf("ERROR: fw->a[%d] is NULL\n", t);
+            continue;
+        }
+        
+        printf("DEBUG: Checking bw->b[%d]\n", t);
+        if (bw->b[t] == NULL) {
+            printf("ERROR: bw->b[%d] is NULL\n", t);
+            continue;
+        }
+        
+        // Output position
         printf("%d\t\t", t + FLANK);
         
-        for (int i = 0; i < 2; i++) { // Just print for exon (0) and intron (1)
-            double posterior = (fw->a[t][i] * bw->b[t][i]) / total_prob;
+        // Calculate normalization - double check each step
+        double pos_total = 0.0;
+        for (int i = 0; i < 2; i++) {
+            printf("DEBUG: Accessing fw->a[%d][%d] = %f\n", t, i, fw->a[t][i]);
+            printf("DEBUG: Accessing bw->b[%d][%d] = %f\n", t, i, bw->b[t][i]);
+            
+            double fw_val = fw->a[t][i];
+            double bw_val = bw->b[t][i];
+            double product = fw_val * bw_val;
+            
+            printf("DEBUG: Product = %f\n", product);
+            pos_total += product;
+        }
+        
+        printf("DEBUG: pos_total = %f\n", pos_total);
+        
+        // Handle potential division by zero
+        if (pos_total < 1e-10) {
+            printf("DEBUG: pos_total too small, printing zeros\n");
+            printf("0.000000\t0.000000\n");
+            continue;
+        }
+        
+        // Calculate and print posteriors
+        for (int i = 0; i < 2; i++) {
+            double posterior = (fw->a[t][i] * bw->b[t][i]) / pos_total;
             printf("%.6f\t", posterior);
         }
         printf("\n");
     }
     printf("----------------------------------------\n");
+    printf("DEBUG: Successfully completed print_posterior_probabilities function\n");
 }

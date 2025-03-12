@@ -37,7 +37,7 @@ typedef struct
     Transition_matrix A;                // the transition probability
     Emission_matrix B;                  // the pre-defined emission probibility data strcuture
     double *pi;                          // the initial probability
-    double log_values[1050];            // prepared for log softmax trick
+    double log_values[2000];            // prepared for log softmax trick
 } Lambda;
 
 typedef struct

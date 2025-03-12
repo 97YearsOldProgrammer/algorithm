@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall -Wextra
+CFLAGS = -fsanitize=address -g
 OBJS = main.o parser.o model.o
 
 all: EDHMM

@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     // get sequence //
     read_sequence_file(seq_input, &info);
     numerical_transcription(&info, info.original_sequence);
+    printf("this is digit %d\n\n", info.numerical_sequence[628]);
     
     // initialize datas //
     donor_parser(&l, don_emission);                            // donor emission prob
