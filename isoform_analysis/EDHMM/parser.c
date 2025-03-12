@@ -57,6 +57,7 @@ void read_sequence_file(const char *filename, Observed_events *info)
     fclose(file);
 
     printf("\t\u2713\n");
+    printf("We get original sequence with Seq len: %d\n\n", seq_index);
 }
 
 // emission probability //
@@ -288,12 +289,12 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
     if (digit == 0) 
     {
         ed->max_len_exon = c_line;
-        printf("Exon duration: min=%d, max=%d, found %d non-zero values\n", 
+        printf("Exon duration: min=%d, max=%d, found %d non-zero values\n\n", 
                ed->min_len_exon, ed->max_len_exon, nonzero_values);
     } else 
     {
         ed->max_len_intron = c_line;
-        printf("Intron duration: min=%d, max=%d, found %d non-zero values\n", 
+        printf("Intron duration: min=%d, max=%d, found %d non-zero values\n\n", 
                ed->min_len_intron, ed->max_len_intron, nonzero_values);
     }
 
