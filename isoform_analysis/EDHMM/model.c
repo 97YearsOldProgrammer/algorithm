@@ -154,35 +154,34 @@ void initial_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algori
 
 void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed)
 {
-    int terminal_region_intron = info->T - ed->min_len_exon - FLANK + 1;                          // no intron continue beyond this point
-    int terminal_region_exon   = info->T - ed->min_len_exon - ed->min_len_intron - FLANK + 1;     // no exon to intron beyond this point 
+    printf("Start computation for forward algorithm.\n")
 
-    if ( terminal_region_exon   <= 0 )  printf("Invalid data input. Check FLANK size. Seq len. Min Exon\n");
-    else                                printf("Start forwrad algorithm with terminal intron region %d\n", terminal_region_intron);
-    if ( terminal_region_intron <= 0 )  printf("Invalid data input. Check FLANK size. Seq len. Min Intron & Exon\n");   
-    else                                printf("Start forward algorithm with terminal exon region %d\n", terminal_region_exon);
+    int terminal_region_intron = info->T - ed->min_len_exon - FLANK - 1;                        // no intron continue beyond this point
+    int terminal_region_exon   = info->T - ed->min_len_exon - ed->min_len_intron - FLANK - 1;   // no exon to intron beyond this point 
 
-    int real_bps = info->T - 2 * FLANK + 1;
-    printf("Start working on total Seq len: %d, Flank size: %d, Real bps len without Flank %d\n", info->T + 1, FLANK, real_bps);
+    // debug print out
+    if ( terminal_region_exon   <= 0 )  printf("\tInvalid data input. Check FLANK size. Seq len. Min Exon\n");
+    else                                printf("\tStart forwrad algorithm with terminal intron region %d\n", terminal_region_intron);
+    if ( terminal_region_intron <= 0 )  printf("\tInvalid data input. Check FLANK size. Seq len. Min Intron & Exon\n");   
+    else                                printf("\tStart forward algorithm with terminal exon region %d\n", terminal_region_exon);
 
-    for ( int t = 0 ; t < info->T - 2 * FLANK + 1 ; t ++ )                                      // iterate every element in the time scale
+    printf("\tStart working on total Seq len: %d, Flank size: %d, Real bps len without Flank %d\n", info->T, FLANK, info->T - 2 * FLANK);
+
+    // area for computation//
+
+    for ( int t = 1 ; t < info->T - 2 * FLANK ; t ++ )                                          
     {
-         
         for ( int i = 0 ; i < HS ; i ++ )                                                       // the next position; 0 for exon, 1 for intron
         {
-
             // biological restrain
             if ( t >= terminal_region_intron && i == 1)                                         // can't have new intron after this
             {                                                                                   // cuz we have to end as exon
-                alpha->a[t][i] = 0.0;
+                alpha->a[t][i] = 0.0;                                                           
                 continue;
             }
 
             int log_index = 0;                                                                  // prepare for log-space calcualtion
-            int max_len;
-
-            if      ( i == 0 )    max_len = ed->max_len_exon;                                   // max_len for exon state
-            else if ( i == 1 )    max_len = ed->max_len_intron;                                 // max_len for intron state
+            int max_len = ( i == 0 ) ? ed->max_len_exon : max_len = ed->max_len_intron;
 
             for ( int j = 0 ; j < HS ; j ++ )                                                   // the situation of transition out
             {
@@ -191,90 +190,71 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                 // biological restrain
                 if (t >= terminal_region_exon && j == 0 && i == 1) continue;                    // no exon->intron transition beyond this point
                 
-                for ( int d = 1 ; d <= max_len ; d ++ )                                         // skip those unsatisfied len; cuz they all 0
-                {
-                    if ( t < d )   break;                                                       // not making sence if d larger than s
+                for ( int d = 1 ; d <= max_len ; d ++ )                                         // not a bug here; shall be max_len
+                {   
+                    if ( t < d )   break;                                                       // t - d < 0 ; so t < d cannot exit
 
                     // get product for emission prob
-
                     double emission_product = 1.0;                                              // what we want to calculate out here
 
-                    for ( int s = t - d + 1 ; s <= t ;  s++ )
+                    for ( int s = t - d + 1 ; s <= t ;  s++ )                                   // the product notation on the formula 
                     {
                         int index = base4_to_int(info->numerical_sequence, s - 3 + FLANK, 4);   // how we get index value from 4 base pair
 
-                        double emission_prob;
-
-                        if      ( i == 0 ) emission_prob = l->B.exon[index];                    // p emission exon
-                        else if ( i == 1 ) emission_prob = l->B.intron[index];                  // p emission intron
+                        double emission_prob = (i == 0) ? l->B.exon[index] : l->B.intron[index];// 0 for exon; 1 for intron               
 
                         emission_product *= emission_prob;                                      // update value
                     }
 
                     // get explicit duration prob
-
-                    double ed_prob;
-
-                    if      ( i == 0 ) ed_prob = ed->exon[d];
-                    else if ( i == 1 ) ed_prob = ed->intron[d];
+                    double ed_prob = ( i == 0) ? ed->exon[d - 1] : ed->intron[d - 1] ;          // from the formula
+                    // not bug here for d - 1; it's different than below for getting ed_prob
 
                     // get transition prob
-
                     double trans_prob;                                                          // transition prob
 
                     if ( j == 0 && i == 1)                                                      // from exon to intron
                     {
-                        int index = base4_to_int(info->numerical_sequence , t - d + FLANK , 5); // 5bps motif
+                        int index = base4_to_int(info->numerical_sequence , t-d+ FLANK + 1, 5); // 5bps motif
                         trans_prob = l->A.dons[index];
                     }
                     else if ( j == 1 && i == 0)                                                 // from intron to exon
                     {
-                        int index = base4_to_int(info->numerical_sequence , t-d- 6 + FLANK, 6); // 6bps motif
+                        int index = base4_to_int(info->numerical_sequence , t-d+ FLANK + 4, 6); // 6bps motif
                         trans_prob = l->A.accs[index];
                     }
 
                     // formal computation
-
                     double all = alpha->a[t - d][j] * trans_prob * ed_prob * emission_product;
-
-                    if      ( all > 0 ) l->log_values[log_index++] = all;
-                    else                l->log_values[log_index++] = safe_log(all); 
+                    l->log_values[log_index++] = ( all > 0) ? all : safe_log(all);              // if a <= 0 take safe reaction
                 }
-            }
+            } 
 
-            for ( int d = 1 ; d <= max_len; d ++ )                                              // for continue probability
+            for ( int d = 1 ; d < max_len ; d ++ )                                              // for continue probability
             {
                 if ( t < d )    break;   
 
                 // get emission product
                 double emission_product = 1.0;
 
+                // calculate product notation for emission_prob
                 for ( int s = t - d + 1 ; s <= t ;  s++ )
                 {
                     int index = base4_to_int(info->numerical_sequence, s - 3 + FLANK, 4);       // how we get index value from 4 base pair
-
-                    double emission_prob;
-
-                    if      ( i == 0 ) emission_prob = l->B.exon[index];                        // p emission exon
-                    else if ( i == 1 ) emission_prob = l->B.intron[index];                      // p emission intron
+                    double emission_prob = (i == 0) ? l->B.exon[index] : l->B.intron[index];    // 0 for exon; 1 for intron                               
                     emission_product *= emission_prob;                                          // update value
                 }
 
                 // get explicit duration probability
+                double ed_prob = ( i == 0 ) ? ed->exon[d] : ed->intron[d];                      
 
-                double ed_prob;
-
-                if      ( i == 0 ) ed_prob = ed->exon[d];
-                else if ( i == 1 ) ed_prob = ed->intron[d];
-
+                // final computation; update log value
                 double all = alpha->a[t - d][i] * ed_prob * emission_product;
-
-                if ( all > 0 ) l->log_values[log_index++] = all;
-                else           l->log_values[log_index++] = safe_log(all);
+                l->log_values[log_index++] = ( all > 0 ) ? all : safe_log(all);                 // if a <= 0 take safe reaction
             }
 
-            if ( log_index == 0 )   alpha->a[t][i] = 0.0;
-            else                    alpha->a[t][i] = exp( log_sum_exp (l->log_values, log_index) );
+            // store final value for alpha
+            alpha->a[t][i] = ( log_index == 0 ) ? 0.0 : exp( log_sum_exp (l->log_values, log_index) );  
         }
     }
 }
@@ -283,9 +263,9 @@ void allocate_beta(Observed_events *info, Backward_algorithm *beta)             
 {
     printf("Start allocate memory for the backward algorithm:");
 
-    beta->b = malloc ( (info->T - 2 * FLANK + 1) * sizeof(double*) );                           // 2x2; outer layer as length of sequence
+    beta->b = malloc ( ( info->T - 2 * FLANK ) * sizeof(double*) );                           // 2x2; outer layer as length of sequence
 
-    for (int i = 0 ; i < (info->T - 2 * FLANK + 1) ; i++ )
+    for (int i = 0 ; i < (info->T - 2 * FLANK ) ; i++ )
     {
         beta->b[i] = calloc( HS , sizeof(double) );                                             // inner layer as number of Hidden States
     }
@@ -295,7 +275,7 @@ void allocate_beta(Observed_events *info, Backward_algorithm *beta)             
 void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info)
 {
     printf("Start initialize backward algorithm:");
-    int last_bps = info->T - 2 * FLANK; 
+    int last_bps = info->T - 2 * FLANK - 1;                                                     // minus on cus start as 0
 
     // constrain ; only possible to end as an exon 
     beta->b[last_bps][0] = 1.0;
@@ -305,12 +285,12 @@ void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_ev
 
 void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed)
 {
-    int start_region_intron = info->T - ed->min_len_exon - FLANK + 1;
+    int start_region_intron = info->T - ed->min_len_exon - FLANK - 1;
 
     if ( start_region_intron < FLANK || start_region_intron < 0 )   printf("Invalid data. Check Seq_len. FLANK. Min_exon.\n");
     else                                                            printf("Start backward algorithm. No exon to intron transiton before %d.\n", start_region_intron);
 
-    for ( int t = info->T - 2* FLANK - 1 ; t >= 0 ; t-- )
+    for ( int t = info->T - 2* FLANK - 2 ; t >= 0 ; t-- )                                       // -1 cuz array start at 0; -1 again since already set up last one
     {
 
         for ( int i = 0 ; i < HS ; i ++ )                                                       // the before position; 0 for exon, 1 for intron
@@ -324,18 +304,15 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
             }
 
             int log_index = 0;                                                                  // prepare for log-space calcualtion
-            int max_len;
-
-            if      ( i == 0 )    max_len = ed->max_len_exon;                                   // max_len for exon state
-            else if ( i == 1 )    max_len = ed->max_len_intron;                                 // max_len for intron state
+            int max_len = (i == 0) ? ed->max_len_exon : ed->max_len_intron ;
 
             for ( int j = 0 ; j < HS ; j ++ )                                                   // the situation of transition out
             {
                 if (i == j) continue;                                                           // no self-transition for HSMM
                 
-                for ( int d = 1 ; d <= max_len; d ++ )                                          // skip those unsatisfied len; cuz they all 0
+                for ( int d = 1 ; d <= max_len; d ++ )                                          
                 {
-                    if ( (t + d)  > (info->T - 2 * FLANK) )    break;                           // can durate longer than current point       
+                    if ( (t + d)  > ( info->T - 2 * FLANK - 1 ) )    break;                     // can not reach further than last beta 
 
                     double emission_product = 1.0;                                              // what we want to calculate out here
 
@@ -352,11 +329,8 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                     }
 
                     // get explicit duration prob
-
-                    double ed_prob;
-
-                    if      ( i == 0 ) ed_prob = ed->exon[d];
-                    else if ( i == 1 ) ed_prob = ed->intron[d];
+                    double ed_prob = ( i == 0) ? ed->exon[d - 1] : ed->intron[d - 1];           // same logic as forward
+                    // alarm; this is not bug, seriously this is correct
 
                     // get transition prob
 
@@ -383,7 +357,7 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 
             for ( int d = 1 ; d <= max_len && t + d >= 0 ; d ++ )                               // for continue probability
             {
-                if ( t + d >= info->T - 2 * FLANK + 1)  break;
+                if ( t + d > info->T - 2 * FLANK - 1)  break;                                   // this means 
                 
                 // get emission product
                 double emission_product = 1.0;

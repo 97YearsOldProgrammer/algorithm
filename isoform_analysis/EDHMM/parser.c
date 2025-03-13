@@ -253,7 +253,7 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
         ed->max_len_intron = 0;
     }
 
-    int c_line = -1;
+    int c_line = 0;
     int nonzero_values = 0;
 
     while (fgets(line, sizeof(line), file) != NULL)

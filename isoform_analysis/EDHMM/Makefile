@@ -1,5 +1,8 @@
 CC = gcc
-CFLAGS = -fsanitize=address -g
+
+# debug for memory CFLAGS = -fsanitize=address -g
+CFLAGS = -g -Wall -Wextra	# normal with default debug; mostly useless for runtime bug
+
 OBJS = main.o parser.o model.o
 
 all: EDHMM
@@ -24,10 +27,11 @@ clean:
 	@echo "Removing everything but the source file"
 	rm -f EDHMM *.o
 
-# Add a debug target that will automatically launch lldb
+# with default debug 
 debug: EDHMM
 	lldb ./EDHMM seq
 
+# with default seq input
 test: EDHMM
 	./EDHMM seq
 	
