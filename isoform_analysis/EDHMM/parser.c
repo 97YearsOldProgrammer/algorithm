@@ -56,8 +56,7 @@ void read_sequence_file(const char *filename, Observed_events *info)
     free(buffer);
     fclose(file);
 
-    printf("\t\u2713\n");
-    printf("We get original sequence with Seq len: %d\n\n", seq_index);
+    printf("\tWe get original sequence with Seq len: %zu\n", seq_index);
 }
 
 // emission probability //
@@ -177,8 +176,6 @@ void exon_intron_parser(Lambda *l, char *filename, int digit)
         rewind(file); // Go back to start if no header
     }
 
-    int entries_parsed = 0;
-
     // Process each line
     while ( fgets( line , sizeof(line), file) != NULL )
     {
@@ -192,23 +189,17 @@ void exon_intron_parser(Lambda *l, char *filename, int digit)
             int index = 0;
             for (int i = 0; i < 4; i++) 
             {
-                if (seq[i] == 'A') index = index * 4 + 0;
+                if      (seq[i] == 'A') index = index * 4 + 0;
                 else if (seq[i] == 'C') index = index * 4 + 1;
                 else if (seq[i] == 'G') index = index * 4 + 2;
                 else if (seq[i] == 'T') index = index * 4 + 3;
-                else {
-                    printf("Warning: Invalid character in sequence: %c\n", seq[i]);
-                    break;
-                }
             }
             
             // Store probability in the appropriate array
             if (index < 256) 
             {
-                if      (digit == 0)     l->B.exon[index] = p;
+                if      (digit == 0)     l->B.exon[index]   = p;
                 else                     l->B.intron[index] = p;
-
-                entries_parsed++;
             }
         }
     }
@@ -223,7 +214,7 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
 {
     assert(digit == 0 || digit == 1);                   // 0 for exon, 1 for intron
 
-    if      ( digit == 0 ) printf("Starting getting exon   explicit duration probability");
+    if      ( digit == 0 ) printf("Starting getting exon explicit duration probability");
     else if ( digit == 1 ) printf("Starting getting intron explicit duration probability");
     
     FILE *file = fopen(filename, "r");
@@ -289,12 +280,12 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
     if (digit == 0) 
     {
         ed->max_len_exon = c_line;
-        printf("Exon duration: min=%d, max=%d, found %d non-zero values\n\n", 
+        printf("\tExon duration: min=%d, max=%d, found %d non-zero values\n\n", 
                ed->min_len_exon, ed->max_len_exon, nonzero_values);
     } else 
     {
         ed->max_len_intron = c_line;
-        printf("Intron duration: min=%d, max=%d, found %d non-zero values\n\n", 
+        printf("\tIntron duration: min=%d, max=%d, found %d non-zero values\n\n", 
                ed->min_len_intron, ed->max_len_intron, nonzero_values);
     }
 

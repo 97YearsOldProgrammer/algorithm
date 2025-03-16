@@ -51,7 +51,6 @@ int main(int argc, char *argv[])
     // get sequence //
     read_sequence_file(seq_input, &info);
     numerical_transcription(&info, info.original_sequence);
-    printf("this is digit %d\n\n", info.numerical_sequence[628]);
     
     // initialize datas //
     donor_parser(&l, don_emission);                            // donor emission prob
@@ -61,16 +60,20 @@ int main(int argc, char *argv[])
     explicit_duration_probability(&ed, Ped_exon,   0);         // exon ed prob
     explicit_duration_probability(&ed, Ped_intron, 1);         // intron ed prob
 
-    // initialize computation //
+    // transition matrix computation //
     setup_initial_probability(&l);                             // setup pi 
 
-    printf("Start calculating transition probability for donor sites");
+    printf("Start calculating transition probability for donor sites:");
     initialize_donor_transition_matrix(&l, &apc, 0);           // setup transition prob for exon to intron
     printf("\t\u2713\n");
 
-    printf("Start calculating transition probability for acceptor sites");
+    printf("Start calculating transition probability for acceptor sites:");
     initialize_acceptor_transition_matrix(&l, &apc, 0);        // setup transition prob for intron to exon
     printf("\t\u2713\n");
+
+    // normalization for transition prob //
+    normalize_transition_prob(&l, 1024, 0);
+    normalize_transition_prob(&l, 4096, 1);
 
     // initialize memory //
     allocate_alpha(&info, &fw);                                 // allocate forward  algorithm
@@ -78,7 +81,7 @@ int main(int argc, char *argv[])
 
     // initialize algorihtm //
     initial_forward_algorithm(&l, &ed, &fw, &info);            // set up alpha 0
-    initial_backward_algorithm(&l, &bw, &info);                // set up beta t
+    initial_backward_algorithm(&l, &bw, &info, &ed);                // set up beta t
 
     // forward and backward algo //
     forward_algorithm(&l, &fw, &info, &ed);                     

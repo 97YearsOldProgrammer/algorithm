@@ -2,7 +2,7 @@
 #define HMM_MODEL
 
 #define HS 2                            // 1 (exon) + 1 (intron) ; 5 (donor site) + 6(acceptor site) degraded
-#define FLANK 100                       // define the global flank size
+#define FLANK 50                        // define the global flank size
 
 typedef struct                          // observed events with length T
 {
@@ -36,8 +36,8 @@ typedef struct
 {
     Transition_matrix A;                // the transition probability
     Emission_matrix B;                  // the pre-defined emission probibility data strcuture
-    double *pi;                          // the initial probability
-    double log_values[2000];            // prepared for log softmax trick
+    double *pi;                         // the initial probability
+    double log_values[999];            // prepared for log softmax trick
 } Lambda;
 
 typedef struct
@@ -52,12 +52,14 @@ typedef struct
 
 typedef struct
 {
-    double **a;                           // alpha component for forward algorithm
+    double **a;                         // alpha component for forward algorithm
+    double **a_star;                    // times of transition prob and emission prob    
 } Forward_algorithm;
 
 typedef struct
 {
-    double **b;                           // beta component for backward algorithm
+    double **b;                         // beta component for backward algorithm
+    double **b_star;                    // times of transition prob and emission prob
 } Backward_algorithm;                   
 
 
@@ -77,6 +79,7 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
 void setup_initial_probability(Lambda *l);
 
 // computation function //
+void normalize_transition_prob(Lambda *l, int len, int dons_or_accs);
 int power(int base, int exp);
 int base4_to_int(int *array, int beg, int length);
 double total_prob(double *array, int length);
@@ -103,15 +106,12 @@ void free_alpha(Observed_events *info, Forward_algorithm *alpha);
 // ---- memory allocation //
 void allocate_beta(Observed_events *info, Backward_algorithm *beta);
 // ---- initialize        //
-void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info);
+void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed);
 // ---- computation       //
 void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed);
 // ---- free memory       //
 void free_beta(Observed_events *info, Backward_algorithm *beta);
 
 // output section //
-
-// ---- posterior prob //
-void print_posterior_probabilities(Observed_events *info, Forward_algorithm *fw, Backward_algorithm *bw, int start_pos, int end_pos);
 
 #endif
