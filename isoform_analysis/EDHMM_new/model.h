@@ -62,6 +62,12 @@ typedef struct
     double **b_star;                    // times of transition prob and emission prob
 } Backward_algorithm;                   
 
+typedef struct
+{
+    double *gamma;                      // summation for each alpha d layer ; linear memory
+} Viterbi_algorithm;
+
+
 
 // declared function //
 

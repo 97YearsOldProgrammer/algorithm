@@ -268,7 +268,7 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                         if ( j == 0 && i == 1)                                                      // from exon to intron
                         {
                             int index = base4_to_int(info->numerical_sequence , t-d+ FLANK+ 1, 5);  // 5bps motif
-                            trans_prob = l->A.accs[index];
+                            trans_prob = l->A.dons[index];
                         }
                         else if ( j == 1 && i == 0)                                                 // from intron to exon
                         {
