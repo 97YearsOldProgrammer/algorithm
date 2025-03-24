@@ -141,21 +141,19 @@ double safe_log(double x)                                                       
 
 double log_sum_exp(double *logs, int n) 
 {
-    double max_log = logs[0];
+    double max = logs[0];
 
     for (int i = 1; i < n ; i++)                                                                // get local maximum
     {
-        if( logs[i] > max_log )         max_log = logs[i];                  
+        if( logs[i] > max )     max = logs[i];                  
     }
 
     double sum = 0.0;
 
     for( int i = 0 ; i < n ; i++)       sum += exp(logs[i] - max_log);                          // log soft max trick
 
-    return max_log + log(sum);       
+    return max + log(sum);       
 }
-
-/* allocate memory for forward algorithm */
 
 void allocate_alpha(Observed_events *info, Forward_algorithm *alpha , Explicit_duration *ed)                            
 {
@@ -192,22 +190,7 @@ void allocate_alpha(Observed_events *info, Forward_algorithm *alpha , Explicit_d
     printf("\t\u2713\n");
 }
 
-void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info)
-{   
-    /*
-        gamma[T] = sum(d >= 1) a(t)(m, d)
-        [T]: the specific time we wanna know about most possible path
-        
-        this don't have to be store as linear array
-        idk; cuz not sure whether we don't need it or not
-    */
-
-    int len = info->T - 2 * FLANK;
-    vit->gamma = malloc ( len , sizeof(double) );
-}
-
-
-void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorithm *alpha, Observed_events *info, Viterbi_algorithm *vit)
+void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorithm *alpha, Observed_events *info)
 {
     /*
         first loop: updating all possible a(1)(m, d)
@@ -228,11 +211,6 @@ void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorith
 
     for ( int d = 0 ; d < max_len ; d ++)
     { 
-        /*
-            assign intron directly to 0.0 ; cuz no intron as start ; for splicing model
-        */ 
-
-        alpha->basis[1][d] = 0.0;  
 
         int    index         = base4_to_int(info->numerical_sequence, d - 3 + FLANK, 4);
         double emission_prob = l->B.exon[index];
@@ -267,15 +245,6 @@ void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorith
     */
 
     alpha->a[0][0] = 0.0;
-    alpha->a[0][1] = 0.0;
-
-    /*
-        third part of basis function
-        record sum of all current basis layer for viterbi algorithm
-    */
-
-    vit[]
-
 }
 
 void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed, Viterbi_algorithm *vit)
@@ -305,8 +274,7 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
             */
 
             double log_bm_sum = 0.0;
-
-            double log_trans  = 0.0;
+            double log_trans;
             double trans_prob;
 
             if ( i == 0 )
@@ -323,18 +291,34 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
             // the previous state
             int j = (i == 0) ? 1 : 0;
 
-            if (alpha->a[j][t - 1] = 0.0)   log_trans = 0.0;
+            if (alpha->a[j][t - 1] == 0.0)   log_trans = 0.0;
+            else if (trans_prob == 0.0)      log_trans = 0.0;
             else log_trans = log(trans_prob) + log(alpha->a[j][t - 1]);
 
             for ( int d = 0 ; d < tau ; d ++ )
             {   
-                // calculate emission probability and update the sum
+                // calculate emission probability and update the sum (log space)
                 int index = base4_to_int(info->numerical_sequence, d + FLANK + t - 3);
                 double emission_prob = ( i == 0 ) ? l->B.exon[index] : l->B.intron[index];
                 log_bm_sum += log(emission_prob);
 
-                //  
+                //  get explicit duration probability
+                double ed_prob = ( i == 0 ) ? ed->exon[d] : ed->intron[d];
 
+                /*
+                    calculate final forward component alpha(t)(m, d)
+                    formula: a(t - 1)(m, d + 1)( bm(Ot) ) + sum(n != m) a(t - 1)(n, 1) transition(n , 1) * bm(Ot) * pm(d)
+
+                    for our case: only intron and exon
+                    final formula: bm(Ot) ( a(t - 1)(m, d + 1) + a(t - 1)(n, 1) transition(n , 1) pm(d))
+                */
+
+                double total;
+
+                l->log_values[0] = basis[i][d + 1]
+                l->log_values[1] = (ed_prob != 0) exp(log_trans) + ed_prob : 0.0;
+                total = log_sum_exp(l->log_values, 2);
+                alpha->a[t][i] = exp( log(total) + log_bm_sum );
             }
         }
     }
