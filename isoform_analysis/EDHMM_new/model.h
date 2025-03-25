@@ -64,7 +64,8 @@ typedef struct
 
 typedef struct
 {
-    double *gamma;                      // summation for each alpha d layer ; linear memory
+    double exon;                        
+    double intron;
 } Viterbi_algorithm;
 
 
