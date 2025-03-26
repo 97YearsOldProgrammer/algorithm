@@ -457,9 +457,10 @@ void initial_viterbi_algorithm(Viterbi_algorithm *vit, Observed_events *info)
     printf("\tFinished\n");
 }
 
-void argmax_viterbi(Viterbi_algorithm *vit)
+void argmax_viterbi(Viterbi_algorithm *vit, int t)
 {   
     int argmax;
+
     /*
         for our model: consider following viterbi formula
 
@@ -468,9 +469,16 @@ void argmax_viterbi(Viterbi_algorithm *vit)
         
         deduct from 2006 paper
     */
-   
 
+    vit->gamma[0] += vit->xi[0] - vit->xi[1];
+    vit->gamma[1] += vit->xi[1] - vit->xi[0];
+
+    if ( vit->gamma[0] > vit->gamma[1] )    argmax = 0;
+    else                                    argmax = 1;
+
+    vit->path[t] = argmax;
 }
+
 void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit, Observed_events *info, double backward_sum, int t)
 {
     /*
@@ -508,9 +516,10 @@ void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit,
         vit->xi[i] = total;
     }
 
+    argmax_viterbi(vit, t);
 }
 
-void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed)
+void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed, Viterbi_algorithm *vit, Forward_algorithm *alpha)
 {
     printf("Start Backward Algorithm:");
 
@@ -525,7 +534,7 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
             if ( t > start_bps - ed->min_len_exon + 1 && i == 1) 
             {
                 double backward_sum = 0.0;
-
+                xi_calculation(l, alpha, vit, info, backward_sum, t);
                 continue;
             }
 
@@ -608,4 +617,27 @@ void free_beta(Observed_events *info, Backward_algorithm *beta)
     printf("\tFinish up clearning beta_star memory.\n");
 }
 
-// output //
+/*
+    test and output region
+*/
+
+void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
+{
+    printf("\n");
+    printf("Start Viterbi Check:");
+
+    int state = vit->path[info->T - 1];
+    int len = 1;
+
+    for ( int i = info->T - 2 ; i >= 0 ; i++ )
+    {
+        len ++;
+
+        if  (vit->path[i] == state)
+        {
+            if( state == 0 && len < ed->min)
+            continue;
+        }
+        else   continue;
+    }
+}
