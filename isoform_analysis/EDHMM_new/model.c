@@ -51,6 +51,7 @@ int base4_to_int(int *array, int beg, int length)
 {
     int values = 0;
     int value;
+
     for (int i = 0; i < length; i++)
     {
         value  =  array[beg + i];
@@ -127,16 +128,6 @@ void normalize_transition_prob(Lambda *l, int len, int dons_or_accs)
     }
 
     printf("\t\u2713\n");
-}
-
-double safe_log(double x)                                                                       // handle log 0
-{
-    if ( x == 0.0 )
-    {
-        const double epsilon = 1e-10;                                                           // log 0 gonna crush in C, name a value for it
-        return log(x + epsilon);                                                                // return huge negative log value
-    }
-    else    return log(x);
 }
 
 double log_sum_exp(double *array, int n) 
@@ -259,11 +250,14 @@ void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorith
     }
 
     int tau_intron = info->T - 2 * FLANK - ed->min_len_exon;
+    double log_sum_intron = 0.0;
 
     for ( int d = 0 ; d < tau_intron ; d ++ )
     {
         int index = base4_to_int(info->numerical_sequence, d - 3 + FLANK + ed->min_len_exon);
         double emission_prob = l->B.intron[index];
+
+        log_sum_intron += log(emission_prob);
 
         double total;
         double ed_prob = ed->intron[d];
@@ -308,11 +302,11 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                     all possible transition to current hidden state
             */
 
-            int inital_intron_len = ed->min_len_exon;
+            int initial_intron_len = ed->min_len_exon ;
 
-            if ( t <= initial_intron_len && i = 1)
+            if ( t <= initial_intron_len && i == 1)
             {
-                alpha[t][i] = 0.0;
+                alpha->a[t][i] = 0.0;
                 continue;
             }
 
@@ -342,12 +336,17 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
             if ( i == 1 )   tau -= ed->min_len_exon;
 
+            double log_bm = 0.0;
+
             for ( int d = 0 ; d < tau ; d ++ )
             {   
                 // calculate emission probability and update the sum (log space)
-                int index = base4_to_int(info->numerical_sequence, d + FLANK + t - 3);
+                int index = base4_to_int(info->numerical_sequence, d + t - 3, 4 );
+
                 double emission_prob = ( i == 0 ) ? l->B.exon[index] : l->B.intron[index];
                 
+                log_bm += log(emission_prob);
+
                 //  get explicit duration probability
                 double ed_prob = ( i == 0 ) ? ed->exon[d] : ed->intron[d];
 
@@ -361,13 +360,13 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
                 double total;
 
-                l->log_values[0] = basis[t - 1][d + 1];
+                l->log_values[0] = alpha->basis[t - 1][d + 1];
 
                 if (ed_prob == 0.0)     l->log_values[1] = 0.0;
                 else l->log_values[1]   = exp ( log_trans + log(ed_prob) );
 
                 total = log_sum_exp(l->log_values, 2);
-                alpha->a[t][i] = exp( log(total) + log(emission_prob) );
+                alpha->a[t][i] = exp( log(total) + log_bm );
             }
         }
     }
@@ -380,13 +379,13 @@ void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha)
 {
     double sum = 0.0;
     
-    gamma_exon   = log_sum_exp(alpha->basis[0], 2);
-    gamma_intron = log_sum_exp(alpha->basis[1], 2);
+    gamma.exon   = log_sum_exp(alpha->basis[0], 2);
+    gamma.intron = log_sum_exp(alpha->basis[1], 2);
 }
 
 void free_alpha(Observed_events *info, Forward_algorithm *alpha, Explicit_duration *ed)
 {
-    printf("Clearing up forward algorithm memory.\n");
+    printf("Clearing up forward algorithm memory:");
     
     int array_size = info->T - 2 * FLANK;
     
@@ -395,27 +394,31 @@ void free_alpha(Observed_events *info, Forward_algorithm *alpha, Explicit_durati
     }
 
     free(alpha->a);
-    printf("\tFinish up clearing alpha memory.\n");
     free(alpha->basis[0]);
     free(alpha->basis[1]);
     free(alpha->basis);
-    
-    printf("\tFinish up clearing basis memory.\n");
+
+    print("\tFinished\n");
 }
 
-void allocate_beta(Observed_events *info, Backward_algorithm *beta)                             // assign data structure for backward algorithm
+void allocate_beta(Observed_events *info, Backward_algorithm *beta, Explicit_duration *ed)                             
 {
     printf("Start allocate memory for the backward algorithm:\n");
 
-    int array_size = info->T - 2 * FLANK;
+    int arary_size = info->T - 2 * FLANK;
+                                    
+    /*
+        β->basis[i][d]
+        [i]: [0] for exon ; [1] for intron
+        [d]: max duration for exon or intron ; depends on [i]
 
-    beta->b      = malloc ( ( array_size )    * sizeof(double*) );                                  
-    for (int i = 0 ; i < array_size     ; i++ )   beta->b[i]      = calloc( HS , sizeof(double) );
-    printf("\tFinish beta memory allocation\n"); 
+        each one assign 1D array for each t - 1 layer of all possible D computation
+    */
 
-    beta->b_star = malloc ( ( array_size - 1) * sizeof(double*) );
-    for (int i = 0 ; i < array_size - 1 ; i++ )   beta->b_star[i] = calloc( HS , sizeof(double) );
-    printf("\tFinish beta_star memory allocation\n"); 
+    beta->basis    = malloc( HS * sizeof(double*) );                   
+    beta->basis[0] = calloc( ed->max_len_exon, sizeof(double) );
+    beta->basis[1] = calloc( ed->max_len_intron, sizeof(double));
+
     printf("\tFinished\n");
 }
 
@@ -423,106 +426,171 @@ void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_ev
 {
     printf("Start initialize backward algorithm:");
 
-    int last_t = info->T - 2 * FLANK - 1;                                                       // minus on cus start as 0
-    beta->b[last_t][0] = 1.0;                                                                   // only consider end as an exon
-    beta->b[last_t][1] = 0.0;                                                                   // intron ending is not valid
-
-    // basis for exon
-    for ( int t = last_t - 1 ; t >= 0 ; t --)
+    for ( int i = 0 ; i < HS ; i++ )
     {
-        int log_index = 0; 
-
-        // explicit duration probability
-        int duration_len = last_t - t;                                                          // make sence if plug that back to condition for t
-        double ed_prob = ed->exon[duration_len];                                            
-        l->log_values[log_index++] = safe_log(ed_prob);                                         // send to log space
-        
-        // get emission prob
-        double log_emission_sum = 1.0;
-
-        for ( int s = t ; s <= last_t ; s ++ )
-        {
-            int index = base4_to_int(info->numerical_sequence, s + FLANK - 3, 4);
-            double emission_prob = l->B.exon[index];
-            log_emission_sum += safe_log(emission_prob);
-        }
-        l->log_values[log_index++] = log_emission_sum;
-
-        // calculate up
-        beta->b[t][0] = exp( ( log_sum_exp (l->log_values, log_index) ) );  
+        beta->basis[i][0] = 1.0;
     }
 
-    printf("\t\u2713\n");
+    printf("\tFinished\n");
+}
+
+void initial_viterbi_algorithm(Viterbi_algorithm *vit, Observed_events *info)
+{
+    printf("Start Initialize Viterbi Algorithm");
+
+    /*
+        given recursive viterbi formula: γ(t) = y(t+1)(m) + sum(n != m) ( ξ(t+1)(m, n) - ξ(t+1)(n, n) )
+        for our model: degrade that formula
+        γ(t) = y(t+1)(m) + ξ(t+1)(m, n) - ξ(t+1)(n, n)
+
+        given definition of ξ
+        ξ(t)(m, n) = α(t - 1)(m, 1) * amn * bn(Ot) * sum(d >= 1) (pn(d) β(t)(n, d))
+
+        in terms of t + 1
+        ξ(t+1)(m, n) = α(t)(m, 1) * amn * bn(Ot + 1) * sum(d >= 1) (pn(d) β(t+1)(n, d))
+    */
+
+    vit->xi = malloc( HS * sizeof(double) );
+    vit->gamma = malloc( HS * sizeof(double) );
+    vit->path = malloc( info->T * sizeof(int) );
+
+    printf("\tFinished\n");
+}
+
+void argmax_viterbi(Viterbi_algorithm *vit)
+{   
+    int argmax;
+    /*
+        for our model: consider following viterbi formula
+
+        γ(t)(exon)   = γ(t+1)(exon)   + ξ(exon, intron) - ξ(intron, exon)
+        γ(t)(intron) = γ(t+1)(intron) + ξ(intron, exon) - ξ(exon, intron)
+        
+        deduct from 2006 paper
+    */
+   
+
+}
+void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit, Observed_events *info, double backward_sum, int t)
+{
+    /*
+        [alpha_component]: α(t - 1)(m, 1)
+        [trans_prob]: either donor or acceptor
+    */
+
+    for( int i = 0 ; i < HS ; i++ )
+    {
+        double alpha_component;
+        alpha_component = alpha->a[t][i];
+
+        double trans_prob;
+        if ( i == 0 )
+        {
+            int index = base4_to_int(info->numerical_sequence, t , 5);
+            trans_prob = l->A.dons[index];
+        }
+        else
+        {
+            int index = base4_to_int(info->numerical_sequence, t - 6, 6);
+            trans_prob = l->A.accs[index];
+        }
+        
+        double emission_prob;
+        int index_emission = base4_to_int(info->numerical_sequence, t - 3, 4);
+        emission_prob = (i == 0) ? l->B.intron[index_emission] : l->B.exon[index_emission];
+
+        double total;
+
+        if      (trans_prob == 0.0)         total = 0.0;
+        else if (alpha_component == 0.0)    total = 0.0;
+        else    total = exp( log(trans_prob) + log(alpha_component) + log(emission_prob) );
+
+        vit->xi[i] = total;
+    }
+
 }
 
 void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed)
 {
-    printf("Start backward algorihtm.\n");
-    printf("\tStart working on total Seq len: %d, Flank size: %d, Real bps len without Flank %d\n", info->T, FLANK, info->T - 2 * FLANK);
+    printf("Start Backward Algorithm:");
 
-    for ( int t = info->T - 2* FLANK - 2 ; t >= 0 ; t-- )                                       // -1 cuz array start at 0; -1 again since already set up last one
+    int start_bps = info->T - 2 * FLANK - 2;
+
+    for ( int t = start_bps ; t >= 0 ; t-- )                                      // -1 cuz array start at 0; -1 again since already set up last one
     {
+        int tau = info->T - 2 * FLANK - start_bps;
 
         for ( int i = 0 ; i < HS ; i ++ )                                                       // the before position; 0 for exon, 1 for intron
         {
-            if ( ( t > info->T - 2 * FLANK - 1 - ed->min_len_exon ) && ( i == 1 ) )
+            if ( t > start_bps - ed->min_len_exon + 1 && i == 1) 
             {
-                beta->b[t][i]      = 0.0;
-                beta->b_star[t][i] = 0.0;
+                double backward_sum = 0.0;
+
                 continue;
             }
 
-            int log_index = 0;                                                                  // prepare for log-space calcualtion
-            int max_len = (i == 0) ? ed->max_len_intron : ed->max_len_exon ;                    // we are checking 
+            /*
+                calculate β(t)(m, 1) = sum(n != m) * a(mn) * bn(Ot+1) * sum(d>=1) pn(d) * beta(t+1)(n, d)
+                the sum(d>=1) pn(d) * beta(t+1)(n, d) can be coupled with ξ calculation for viterbi algorithm
 
-            for ( int j = 0 ; j < HS ; j ++ )                                                   // the situation of transition out
+                [total]: β(t)(m, 1)
+            */
+
+            double total;
+
+            double backward_sum;
+
+            for ( int d = 0 ; d < tau ; d++ )
             {
-                if (i == j) continue;                                                           // no self-transition for HSMM
+                double ed_prob = ( i == 0 ) ? ed->exon[d] : ed->intron[d];
                 
-                if (beta->b_star[t][j] == 0.0)                                                  // if that is not pre-calculated
-                {
-                    for ( int d = 1 ; d <= max_len; d ++ )                                          
-                    {
-                        if ( (t + d)  > ( info->T - 2 * FLANK - 1 ) )    break;                     // can not reach further than last beta 
-
-                        double log_emission_sum = 1.0;                                              // what we want to calculate out here
-
-                        for ( int s = t + 1 ; s <= t + d ;  s++ )
-                        {
-                            int index = base4_to_int(info->numerical_sequence, s - 3 + FLANK, 4);   // how we get index value from 4 base pair
-                            double emission_prob = ( j == 0) ? l->B.exon[index] : l->B.intron[index]; 
-                            log_emission_sum += safe_log(emission_prob);                        // update value
-                        }
-
-                        // get explicit duration prob
-                        double ed_prob = ( i == 0) ? ed->intron[d - 1] : ed->exon[d - 1] ;          // different logic as forward
-
-                        // formal computation
-                        double all = safe_log( beta->b[t + d][j] ) + safe_log( ed_prob ) + log_emission_sum;
-                        l->log_values[log_index++] = all;
-                    }
-
-                    beta->b_star[t][j] = exp( log_sum_exp (l->log_values, log_index) );             // update the value         
-                }
+                if (ed_prob == 0.0)     l->log_values[d] = 0.0;
+                else l->log_values[d] = exp( log( beta->basis[t + 1][d] ) + log (ed_prob) );
             }
 
-            // get transition prob
-            double trans_prob;                                                                       // transition prob
+            backward_sum = log_sum_exp(l->log_values, tau);
 
-            if ( i == 0)
-            {
-                int index = base4_to_int(info->numerical_sequence , t + FLANK + 4, 5);               // 5bps motif ; donor site transition prob
+            int j = ( i == 0) ? 1 : 0;
+
+            double trans_prob;
+
+            if ( i == 0 )
+            {   
+                int index = base4_to_int(info->numerical_sequence, t + 1 , 5);
                 trans_prob = l->A.dons[index];
             }
-            else
+            else if ( i == 1 )
             {
-                int index = base4_to_int(info->numerical_sequence , t + FLANK - 5 , 6);              // 6bps motif ; acceptor site transiton prob
+                int index = base4_to_int(info->numerical_sequence, t - 5 , 6);
                 trans_prob = l->A.accs[index];
             }
 
-            l->log_values[log_index ++] = safe_log(trans_prob);
-            beta->b[t][i] += exp( ( log_sum_exp (l->log_values, log_index) ) );   
-        }
+            double emission_prob;
+
+            int index = base4_to_int(info->numerical_sequence, t - 2, 4);
+            emission_prob = (i == 0) ? l->B.intron[index] : l->B.exon[index];
+
+            if   (trans_prob == 0.0)   total = 0.0;
+            else total = exp( log(trans_prob) + log(emission_prob) + log(backward_sum) );
+
+            /*
+                calculate β(t)(m, d) = bm(Ot+1) * β(t+1)(m, d - 1)
+                    for all possible d > 1
+            */
+            
+            int index = base4_to_int(info->numerical_sequence, t - 2, 4);
+            double emission_prob = (i == 0) ? l->B.exon[index] : l->B.intron[index];
+
+            for( int d = 1 ; d < tau ; d++ )
+            {   
+                double previous_node;
+                previous_node = beta->basis[i][d - 1];
+
+                if (previous_node == 0.0)   beta->basis[i][d] = 0.0;
+                else    beta->basis[i][d] = exp( log(emission_prob) + log(previous_node) );
+            }
+
+            beta->basis[i][0] = total;    
     }
     printf("\tComputation for backward algorithm finished.\n");
 }

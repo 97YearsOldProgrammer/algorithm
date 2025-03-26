@@ -58,14 +58,14 @@ typedef struct
 
 typedef struct
 {
-    double **b;                         // beta component for backward algorithm
-    double **b_star;                    // times of transition prob and emission prob
+    double **basis;                     // times of transition prob and emission prob
 } Backward_algorithm;                   
 
 typedef struct
 {
-    double exon;                        
-    double intron;
+    double *xi;
+    double *gamma;
+    int *path;                        
 } Viterbi_algorithm;
 
 
