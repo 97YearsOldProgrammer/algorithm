@@ -83,10 +83,11 @@ int main(int argc, char *argv[])
     // initialize algorihtm //
     basis_forward_algorithm(&l, &ed, &fw, &info);                    // set up alpha 0
     initial_backward_algorithm(&bw);                                 // set up beta t
-    viterbi_basis(&vit, &fw);
 
     // forward and backward algo //
-    forward_algorithm(&l, &fw, &info, &ed);                     
+    forward_algorithm(&l, &fw, &info, &ed);           
+    allocate_viterbi(&vit, &info);
+    viterbi_basis(&vit, &fw);
     backward_algorithm(&l, &bw, &info, &ed, &vit, &fw);
 
     // output section //

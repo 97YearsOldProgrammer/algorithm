@@ -298,7 +298,7 @@ void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorith
 
 void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed)
 {
-    printf("Start computation for forward algorithm:\n");
+    printf("Start computation for forward algorithm:");
 
     /*
         recall
@@ -508,17 +508,17 @@ void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit,
     double trans_prob;
     if (type == 0)
     {
-        int index = base4_to_int(info->numerical_sequence, t + 1, 5);
+        int index = base4_to_int(info->numerical_sequence, t + 1 + FLANK, 5);
         trans_prob = l->A.dons[index];
     }
     else
     {
-        int index = base4_to_int(info->numerical_sequence, t - 6, 6);
+        int index = base4_to_int(info->numerical_sequence, t - 6 + FLANK, 6);
         trans_prob = l->A.accs[index];
     }
         
     double emission_prob;
-    int index_emission = base4_to_int(info->numerical_sequence, t - 3, 4);
+    int index_emission = base4_to_int(info->numerical_sequence, t - 3 + FLANK, 4);
     emission_prob = (type == 0) ? l->B.intron[index_emission] : l->B.exon[index_emission];
 
     double total;
@@ -556,7 +556,7 @@ void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha)
 
 void allocate_beta(Backward_algorithm *beta, Explicit_duration *ed)                             
 {
-    printf("Start allocate memory for the backward algorithm:\n");
+    printf("Start allocate memory for the backward algorithm:");
                                     
     /*
         β->basis[i][d]
@@ -662,16 +662,16 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 
             if ( i == 0 )
             {   
-                int index = base4_to_int(info->numerical_sequence, t + 1 , 5);
+                int index = base4_to_int(info->numerical_sequence, t + 1 + FLANK , 5);
                 trans_prob = l->A.dons[index];
             }
             else
             {
-                int index = base4_to_int(info->numerical_sequence, t - 6 , 6);
+                int index = base4_to_int(info->numerical_sequence, t - 6 + FLANK , 6);
                 trans_prob = l->A.accs[index];
             }
 
-            int index = base4_to_int(info->numerical_sequence, t - 2, 4);
+            int index = base4_to_int(info->numerical_sequence, t - 2 + FLANK, 4);
             double emission_prob = (j == 0) ? l->B.exon[index] : l->B.intron[index];
 
             double total;
@@ -685,7 +685,7 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                     for all possible d > 1
             */
             
-            index = base4_to_int(info->numerical_sequence, t - 2, 4);
+            index = base4_to_int(info->numerical_sequence, t - 2 + FLANK, 4);
             emission_prob = (i == 0) ? l->B.exon[index] : l->B.intron[index];
 
             /*
