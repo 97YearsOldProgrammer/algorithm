@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
     Explicit_duration ed;
     Forward_algorithm fw;
     Backward_algorithm bw;
+    Viterbi_algorithm vit;
 
     // get sequence //
     read_sequence_file(seq_input, &info);
@@ -65,35 +66,35 @@ int main(int argc, char *argv[])
 
     printf("Start calculating transition probability for donor sites:");
     initialize_donor_transition_matrix(&l, &apc, 0);           // setup transition prob for exon to intron
-    printf("\t\u2713\n");
+    printf("\tFinished\n");
 
     printf("Start calculating transition probability for acceptor sites:");
     initialize_acceptor_transition_matrix(&l, &apc, 0);        // setup transition prob for intron to exon
-    printf("\t\u2713\n");
+    printf("\tFinished\n");
 
     // normalization for transition prob //
     normalize_transition_prob(&l, 1024, 0);
     normalize_transition_prob(&l, 4096, 1);
 
     // initialize memory //
-    allocate_alpha(&info, &fw);                                 // allocate forward  algorithm
-    allocate_beta(&info, &bw);                                  // allocate backward algorithm
+    allocate_alpha(&info, &fw, &ed);                                 // allocate forward  algorithm
+    allocate_beta(&info, &bw, &ed);                                  // allocate backward algorithm
 
     // initialize algorihtm //
-    initial_forward_algorithm(&l, &ed, &fw, &info);            // set up alpha 0
+    basis_forward_algorithm(&l, &ed, &fw, &info);            // set up alpha 0
     initial_backward_algorithm(&l, &bw, &info, &ed);                // set up beta t
 
     // forward and backward algo //
     forward_algorithm(&l, &fw, &info, &ed);                     
-    backward_algorithm(&l, &bw, &info, &ed);
+    backward_algorithm(&l, &bw, &info, &ed, &vit, );
 
-    // print out section //
-    int mid_pos = (info.T - 2 * FLANK) / 2;
-    print_posterior_probabilities(&info, &fw, &bw, mid_pos-10, mid_pos+10);
+    // output section //
+    viterbi_path_test(&vit, &info, &ed);
 
     // free memory //
-    free_alpha(&info, &fw);
+    free_alpha(&info, &fw, &ed);
     free_beta(&info, &bw);
+    free_viterbi(&vit, &info);
     free(info.original_sequence);
     free(info.numerical_sequence);
 

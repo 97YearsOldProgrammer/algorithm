@@ -31,7 +31,6 @@ typedef struct
     int position[6];                    // for apc algorithm to get index to store in transition matrix
 } Apc;
 
-
 typedef struct
 {
     Transition_matrix A;                // the transition probability
@@ -73,19 +72,23 @@ typedef struct
 // declared function //
 
 // seq reading //
+
 void read_sequence_file(const char *filename, Observed_events *info);
 void numerical_transcription(Observed_events *info, const char *seq);
 
 // input model //
+
 void donor_parser(Lambda *l, char *filename);
 void acceptor_parser(Lambda *l, char *filename);
 void exon_intron_parser(Lambda *l, char *filename, int digit);
 void explicit_duration_probability(Explicit_duration *ed, char *filename, int digit);
 
 // EDHMM setup // 
+
 void setup_initial_probability(Lambda *l);
 
 // computation function //
+
 void normalize_transition_prob(Lambda *l, int len, int dons_or_accs);
 int power(int base, int exp);
 int base4_to_int(int *array, int beg, int length);
@@ -99,26 +102,27 @@ void initialize_acceptor_transition_matrix(Lambda *l, Apc *a, int depth);
 
 // forward algorithm //
 
-// ---- memory allocation //
-void allocate_alpha(Observed_events *info, Forward_algorithm *alpha);
-// ---- initialize        //
-void initial_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorithm *alpha, Observed_events *info);
-// ---- computation       //
+void allocate_alpha(Observed_events *info, Forward_algorithm *alpha , Explicit_duration *ed);                        
+void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorithm *alpha, Observed_events *info);
 void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed);
-// ---- free memory       // 
-void free_alpha(Observed_events *info, Forward_algorithm *alpha);
+void free_alpha(Observed_events *info, Forward_algorithm *alpha, Explicit_duration *ed);
+
+// viterbi algorithm //
+
+void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha);
+void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info);
+void argmax_viterbi(Viterbi_algorithm *vit, int t);
+void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit, Observed_events *info, double backward_sum, int t, int type);
+void free_viterbi(Viterbi_algorithm *vit, Observed_events *info);
 
 // backward algorithm //
 
-// ---- memory allocation //
-void allocate_beta(Observed_events *info, Backward_algorithm *beta);
-// ---- initialize        //
+void allocate_beta(Observed_events *info, Backward_algorithm *beta, Explicit_duration *ed);                             
 void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed);
-// ---- computation       //
-void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed);
-// ---- free memory       //
+void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed, Viterbi_algorithm *vit, Forward_algorithm *alpha);
 void free_beta(Observed_events *info, Backward_algorithm *beta);
 
 // output section //
+void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 
 #endif
