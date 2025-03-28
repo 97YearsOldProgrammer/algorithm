@@ -5,12 +5,12 @@
 int main(int argc, char *argv[])
 {
     // Default paths for model files
-    char *default_don_emission = "../isoform_analysis/models/don.pwm";
-    char *default_acc_emission = "../isoform_analysis/models/acc.pwm";
-    char *default_exon_emission = "../isoform_analysis/models/exon.mm";
-    char *default_intron_emission = "../isoform_analysis/models/intron.mm";
-    char *default_Ped_exon = "../isoform_analysis/models/exon.len";
-    char *default_Ped_intron = "../isoform_analysis/models/intron.len";
+    char *default_don_emission = "../models/don.pwm";
+    char *default_acc_emission = "../models/acc.pwm";
+    char *default_exon_emission = "../models/exon.mm";
+    char *default_intron_emission = "../models/intron.mm";
+    char *default_Ped_exon = "../models/exon.len";
+    char *default_Ped_intron = "../models/intron.len";
 
     // argv section for command-line inputs
     char *don_emission;
@@ -78,23 +78,24 @@ int main(int argc, char *argv[])
 
     // initialize memory //
     allocate_alpha(&info, &fw, &ed);                                 // allocate forward  algorithm
-    allocate_beta(&info, &bw, &ed);                                  // allocate backward algorithm
+    allocate_beta(&bw, &ed);                                         // allocate backward algorithm
 
     // initialize algorihtm //
-    basis_forward_algorithm(&l, &ed, &fw, &info);            // set up alpha 0
-    initial_backward_algorithm(&l, &bw, &info, &ed);                // set up beta t
+    basis_forward_algorithm(&l, &ed, &fw, &info);                    // set up alpha 0
+    initial_backward_algorithm(&bw);                                 // set up beta t
+    viterbi_basis(&vit, &fw);
 
     // forward and backward algo //
     forward_algorithm(&l, &fw, &info, &ed);                     
-    backward_algorithm(&l, &bw, &info, &ed, &vit, );
+    backward_algorithm(&l, &bw, &info, &ed, &vit, &fw);
 
     // output section //
     viterbi_path_test(&vit, &info, &ed);
 
     // free memory //
-    free_alpha(&info, &fw, &ed);
-    free_beta(&info, &bw);
-    free_viterbi(&vit, &info);
+    free_alpha(&info, &fw);
+    free_beta(&bw);
+    free_viterbi(&vit);
     free(info.original_sequence);
     free(info.numerical_sequence);
 

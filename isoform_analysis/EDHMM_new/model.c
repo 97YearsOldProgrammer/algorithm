@@ -26,7 +26,8 @@ void numerical_transcription(Observed_events *info, const char *seq)
     }
 
     printf("\tWe get numerical sequence with Seq len: %d\n", info->T);
-    printf("\t\u2713\n");
+    printf("\tFinished\n");
+    printf("\n");
 }
 
 void setup_initial_probability(Lambda *l)                               // actually no longer needed
@@ -129,29 +130,27 @@ void normalize_transition_prob(Lambda *l, int len, int dons_or_accs)
     if (dons_or_accs == 0)
     {
         for ( int i = 0 ; i < len ; i ++ )  sum += l->A.dons[i];
+
+        double value;
         for ( int i = 0 ; i < len ; i ++ )
         {
-            double value;
-            if (value == 0.0)   l->A.dons[i] = 0.0;
-            else
-            {
-                value = l->A.dons[i];
-                l->A.dons[i] = exp ( log(value) - log(sum) );
-            }
+            value = l->A.dons[i];
+            if (value == 0.0)       continue;
+            else                    l->A.dons[i] = exp ( log(value) - log(sum) );
+            
         }
     }
     else if (dons_or_accs == 1)
     {
         for ( int i = 0 ; i < len ; i ++ )  sum += l->A.accs[i];
+
+        double value;
         for ( int i = 0 ; i < len ; i ++ )
         {
-            double  value;
-            if (value == 0.0)   l->A.accs[i] = 0.0;
-            else
-            {
-                value = l->A.accs[i];
-                l->A.accs[i] = exp( (log(value) - log(sum) );
-            }
+            value = l->A.accs[i];
+
+            if (value == 0.0)       continue;
+            else                    l->A.accs[i] = exp( (log(value) - log(sum) ) );
         }
     }
 
@@ -232,7 +231,7 @@ void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorith
     int comp_len_exon = info->T - 2 * FLANK;
 
     if  (comp_len_exon > ed->max_len_exon)      tau_exon = ed->max_len_exon;
-    else                                        tau_exon = comp_len;
+    else                                        tau_exon = comp_len_exon;
 
     int    index         = base4_to_int(info->numerical_sequence, FLANK - 3, 4);
     double emission_prob = l->B.exon[index];
@@ -244,10 +243,11 @@ void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorith
     */
 
     double total;
+    double ed_prob;
 
     for( int d = 0 ; d < tau_exon ; d ++)
     {
-        double ed_prob = ed->exon[d];
+        ed_prob = ed->exon[d];
 
         if (ed_prob == 0.0)
         {
@@ -275,13 +275,12 @@ void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorith
     if ( comp_len_intron > ed->max_len_intron)      tau_intron = ed->max_len_intron;
     else                                            tau_intron = comp_len_intron;
 
-    int index = base4_to_int(info->numerical_sequence, FLANK + ed->min_len_exon - 3 , 4);
-    double emission_prob = l->B.intron[index];
+    index = base4_to_int(info->numerical_sequence, FLANK + ed->min_len_exon - 3 , 4);
+    emission_prob = l->B.intron[index];
 
-    double total;
-    for( int d = 0 ; d < tau_intron ; d ++
+    for( int d = 0 ; d < tau_intron ; d ++)
     {
-        double ed_prob = ed->intron[d];
+        ed_prob = ed->intron[d];
 
         if (ed_prob == 0.0)
         {
@@ -368,7 +367,7 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
             double emission_prob;
 
-            int index = base4_to_int(info->numerical_sequence, t + FLANk - 3, 4);
+            int index = base4_to_int(info->numerical_sequence, t + FLANK - 3, 4);
             emission_prob = ( i == 0 ) ? l->B.exon[index] : l->B.intron[index];
 
             double ed_prob;
@@ -379,7 +378,7 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                 α(t)(m, 1) = α(t - 1)(m, 2) * bm(ot)
             */
             
-            previous_node = alpha->basis[i][1]
+            previous_node = alpha->basis[i][1];
 
             if ( previous_node == 0.0 )     total = 0.0;
             else                            total = exp( log( previous_node ) + log(emission_prob) );
@@ -414,7 +413,7 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
     printf("\tFinished\n");
 }
 
-void free_alpha(Observed_events *info, Forward_algorithm *alpha, Explicit_duration *ed)
+void free_alpha(Observed_events *info, Forward_algorithm *alpha)
 {
     printf("Clearing up forward algorithm memory:");
     
@@ -525,7 +524,7 @@ void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit,
     double total;
     if      (trans_prob == 0.0)         total = 0.0;
     else if (alpha_component == 0.0)    total = 0.0;
-    else    total = exp( log(trans_prob) + log(alpha_component) + log(emission_prob) );
+    else    total = exp( log(trans_prob) + log(alpha_component) + log(emission_prob) + log(backward_sum) );
 
     vit->xi[type] = total;
 }
@@ -555,11 +554,9 @@ void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha)
     printf("\tFinished\n");
 }
 
-void allocate_beta(Observed_events *info, Backward_algorithm *beta, Explicit_duration *ed)                             
+void allocate_beta(Backward_algorithm *beta, Explicit_duration *ed)                             
 {
     printf("Start allocate memory for the backward algorithm:\n");
-
-    int arary_size = info->T - 2 * FLANK;
                                     
     /*
         β->basis[i][d]
@@ -576,7 +573,7 @@ void allocate_beta(Observed_events *info, Backward_algorithm *beta, Explicit_dur
     printf("\tFinished\n");
 }
 
-void initial_backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed)
+void initial_backward_algorithm(Backward_algorithm *beta)
 {
     printf("Start initialize backward algorithm:");
 
@@ -608,8 +605,8 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
             if ( i == 0 )   tau_modified = tau;
             else            tau_modified = tau - ed->min_len_exon;
 
-            if      ( i == 0 && tau >= ed->max_len_exon)                        tau_modified = ed->max_len_exon;
-            elseif  ( i == 1 && tau >= ed->max_len_intron - ed->min_len_exon)   tau_modified = ed->max_len_intron;
+            if       ( i == 0 && tau >= ed->max_len_exon)                        tau_modified = ed->max_len_exon;
+            else if  ( i == 1 && tau >= ed->max_len_intron - ed->min_len_exon)   tau_modified = ed->max_len_intron;
     
             /*
                 boundary condition
@@ -668,16 +665,14 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                 int index = base4_to_int(info->numerical_sequence, t + 1 , 5);
                 trans_prob = l->A.dons[index];
             }
-            else if ( i == 1 )
+            else
             {
                 int index = base4_to_int(info->numerical_sequence, t - 6 , 6);
                 trans_prob = l->A.accs[index];
             }
 
-            double emission_prob;
-
             int index = base4_to_int(info->numerical_sequence, t - 2, 4);
-            emission_prob = (j == 0) ? l->B.exon[index] : l->B.intron[index];
+            double emission_prob = (j == 0) ? l->B.exon[index] : l->B.intron[index];
 
             double total;
 
@@ -690,8 +685,8 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                     for all possible d > 1
             */
             
-            int index = base4_to_int(info->numerical_sequence, t - 2, 4);
-            double emission_prob = (i == 0) ? l->B.exon[index] : l->B.intron[index];
+            index = base4_to_int(info->numerical_sequence, t - 2, 4);
+            emission_prob = (i == 0) ? l->B.exon[index] : l->B.intron[index];
 
             /*
                 logic here is linear array for all layer of network
@@ -715,6 +710,7 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                 beta->basis[i][d - 1] = waitlist_node;
                 waitlist_node = update_node;
             } 
+        }
     }
 
     argmax_viterbi(vit, 0);
@@ -722,7 +718,7 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
     printf("\tFinished.\n");
 }
 
-void free_beta(Observed_events *info, Backward_algorithm *beta)
+void free_beta(Backward_algorithm *beta)
 {
     printf("Clearning up backward algorithm memory:");
 
@@ -733,7 +729,7 @@ void free_beta(Observed_events *info, Backward_algorithm *beta)
     printf("\tFinished\n");
 }
 
-void free_viterbi(Viterbi_algorithm *vit, Observed_events *info)
+void free_viterbi(Viterbi_algorithm *vit)
 {
     printf("Clearning up viterbi algorithm memory:");
 

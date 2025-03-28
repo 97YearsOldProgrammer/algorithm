@@ -8,7 +8,7 @@
 
 void read_sequence_file(const char *filename, Observed_events *info)
 {
-    printf("Start reading the sequence data:");
+    printf("Start reading the sequence data:\n");
 
     FILE *file = fopen(filename, "r");
     
@@ -57,6 +57,8 @@ void read_sequence_file(const char *filename, Observed_events *info)
     fclose(file);
 
     printf("\tWe get original sequence with Seq len: %zu\n", seq_index);
+    printf("\tFinished\n");
+    printf("\n");
 }
 
 // emission probability //
