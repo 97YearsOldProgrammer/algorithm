@@ -508,17 +508,17 @@ void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit,
     double trans_prob;
     if (type == 0)
     {
-        int index = base4_to_int(info->numerical_sequence, t + 1 + FLANK, 5);
+        int index = base4_to_int(info->numerical_sequence, t + 2 + FLANK, 5);
         trans_prob = l->A.dons[index];
     }
     else
     {
-        int index = base4_to_int(info->numerical_sequence, t - 6 + FLANK, 6);
+        int index = base4_to_int(info->numerical_sequence, t - 5 + FLANK, 6);
         trans_prob = l->A.accs[index];
     }
         
     double emission_prob;
-    int index_emission = base4_to_int(info->numerical_sequence, t - 3 + FLANK, 4);
+    int index_emission = base4_to_int(info->numerical_sequence, t - 2 + FLANK, 4);
     emission_prob = (type == 0) ? l->B.intron[index_emission] : l->B.exon[index_emission];
 
     double total;
@@ -546,7 +546,7 @@ void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha)
     double gamma_intron;
 
     gamma_exon   = alpha->basis[0][0];
-    gamma_intron = alpha->basis[1][0];
+    gamma_intron = 0.0;
 
     vit->gamma[0] = gamma_exon;
     vit->gamma[1] = gamma_intron;
@@ -589,12 +589,12 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 {
     printf("Start Backward Algorithm:");
 
-    int start_bps = info->T - 2 * FLANK - 2;
+    int start_bps = info->T - 2 * FLANK - 1;
     int tau = 0;
 
     for ( int t = start_bps ; t >= 0 ; t-- )                                      // -1 cuz array start at 0; -1 again since already set up last one
     {
-        argmax_viterbi(vit, t + 1);
+        argmax_viterbi(vit, t);
 
         tau ++;
 
@@ -713,8 +713,6 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
         }
     }
 
-    argmax_viterbi(vit, 0);
-
     printf("\tFinished.\n");
 }
 
@@ -742,35 +740,155 @@ void free_viterbi(Viterbi_algorithm *vit)
 
 void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
 {
-    printf("\n");
-    printf("Start Viterbi Check:");
-
-    int state = vit->path[0];
-
-    if ( state == 0 )   printf("Exon");
-    else                printf("Intron");
-
-    int bps = 1 + FLANK;
-
-    printf("\t%i", bps);
-
-    for ( int i = 1 ; i < info->T - 2 * FLANK ; i++ )
+    printf("\nStart Viterbi Check:\n");
+    
+    int segment = 1;
+    int start_pos = FLANK;
+    int current_state = vit->path[0];
+    int transition_pos;
+    int length;
+    
+    int exon_count = 0;
+    int intron_count = 0;
+    int invalid_exons = 0;
+    int invalid_introns = 0;
+    int canonical_donors = 0;
+    int canonical_acceptors = 0;
+    int total_donors = 0;
+    int total_acceptors = 0;
+    
+    printf("%-8s %-8s %-8s %-8s %-8s %-12s %-25s\n", 
+           "Segment", "Type", "Start", "End", "Length", "Valid", "Splice Site");
+    printf("%-8s %-8s %-8s %-8s %-8s %-12s %-25s\n", 
+           "-------", "----", "-----", "---", "------", "--------", "-----------");
+    
+    if (current_state == 0) 
     {
-        bps ++;
+        exon_count++;
+        printf("%-8d %-8s %-8d ", segment, "Exon", start_pos);
+    } else 
+    {
+        intron_count++;
+        printf("%-8d %-8s %-8d ", segment, "Intron", start_pos);
+    }
+    
+    for (int i = 1; i < info->T - 2 * FLANK; i++)
+    {
+        if (vit->path[i] != current_state)
+        {
+            transition_pos = i + FLANK;
+            length = transition_pos - start_pos;
+            
+            int valid_len = 0;
 
-        if  (vit->path[i] == state)
-        {
-            state = vit->path[i];
-            continue;
-        }
-        else
-        {
-            printf("\t%d\n", bps - 1);
-            state = vit->path[i];
-            if ( state == 0)    printf("Exon\t%i", bps);
-            else                printf("Intron\t%i", bps);
+            if (current_state == 0)
+            { 
+                valid_len = (length >= ed->min_len_exon);
+                if (!valid_len) invalid_exons++;
+            } else 
+            {
+                valid_len = (length >= ed->min_len_intron);
+                if (!valid_len) invalid_introns++;
+            }
+            
+            printf("%-8d %-8d %-12s ", transition_pos - 1, length, valid_len ? "Yes" : "No");
+            
+            if (current_state == 0) 
+            {
+                // Exon to Intron transition (donor site)
+                total_donors++;
+                
+                // The first base of the intron should be at transition_pos
+                // We want to show transition_pos and the next 4 bases (total 5 bases)
+                if (transition_pos + 4 < info->T)
+                {
+                    char donor_site[6];
+                    // FIXED: Start exactly at the intron start (no off-by-one)
+                    strncpy(donor_site, &info->original_sequence[transition_pos], 5);
+                    donor_site[5] = '\0';
+                    printf("Donor: %s ", donor_site);
+                    
+                    // Check for canonical GT at the first two positions of the intron
+                    if (info->original_sequence[transition_pos] == 'G' && 
+                        info->original_sequence[transition_pos + 1] == 'T') {
+                        printf("(Canonical GT)\n");
+                        canonical_donors++;
+                    } else {
+                        printf("(Non-canonical)\n");
+                    }
+                } else {
+                    printf("Donor: (insufficient seq)\n");
+                }
+            } else { 
+                // Intron to Exon transition (acceptor site)
+                total_acceptors++;
+                
+                // We need the last 6 bases of the intron (ending at transition_pos-1)
+                if (transition_pos >= 6) {
+                    char acceptor_site[7];
+                    strncpy(acceptor_site, &info->original_sequence[transition_pos - 6], 6);
+                    acceptor_site[6] = '\0';
+                    printf("Acceptor: %s ", acceptor_site);
+                    
+                    // Check for canonical AG at the last two positions of the intron
+                    if (info->original_sequence[transition_pos - 2] == 'A' && 
+                        info->original_sequence[transition_pos - 1] == 'G') {
+                        printf("(Canonical AG)\n");
+                        canonical_acceptors++;
+                    } else {
+                        printf("(Non-canonical)\n");
+                    }
+                } else {
+                    printf("Acceptor: (insufficient seq)\n");
+                }
+            }
+            
+            // Update for next segment
+            current_state = vit->path[i];
+            start_pos = transition_pos;
+            segment++;
+            
+            // Count new segment
+            if (current_state == 0) {
+                exon_count++;
+                printf("%-8d %-8s %-8d ", segment, "Exon", start_pos);
+            } else {
+                intron_count++;
+                printf("%-8d %-8s %-8d ", segment, "Intron", start_pos);
+            }
         }
     }
-    printf("\t%i\n", bps);
+    
+    // Process final segment
+    int end_pos = info->T - FLANK;
+    length = end_pos - start_pos;
+    
+    // Check segment validity
+    int valid_len = 0;
+    if (current_state == 0) { // Exon
+        valid_len = (length >= ed->min_len_exon);
+        if (!valid_len) invalid_exons++;
+    } else { // Intron
+        valid_len = (length >= ed->min_len_intron);
+        if (!valid_len) invalid_introns++;
+    }
+    
+    printf("%-8d %-8d %-12s (end of sequence)\n", 
+          end_pos - 1, length, valid_len ? "Yes" : "No");
+    
+    // Print summary
+    printf("\nViterbi Path Summary:\n");
+    printf("Total segments: %d\n", segment);
+    printf("Exons: %d (Invalid length: %d)\n", exon_count, invalid_exons);
+    printf("Introns: %d (Invalid length: %d)\n", intron_count, invalid_introns);
+    printf("Canonical donor sites (GT): %d/%d\n", canonical_donors, total_donors);
+    printf("Canonical acceptor sites (AG): %d/%d\n", canonical_acceptors, total_acceptors);
+    
+    // Check gene structure
+    if (vit->path[0] != 0) {
+        printf("\nWARNING: Prediction starts with an intron (biologically unusual)!\n");
+    }
+    if (current_state != 0) {
+        printf("\nWARNING: Prediction ends with an intron (biologically unusual)!\n");
+    }
 }
-

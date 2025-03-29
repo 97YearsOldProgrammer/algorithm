@@ -110,7 +110,6 @@ void free_alpha(Observed_events *info, Forward_algorithm *alpha);
 // viterbi algorithm //
 
 void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info);
-void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha);
 void argmax_viterbi(Viterbi_algorithm *vit, int t);
 void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit, Observed_events *info, double backward_sum, int t, int type);
 void free_viterbi(Viterbi_algorithm *vit);
