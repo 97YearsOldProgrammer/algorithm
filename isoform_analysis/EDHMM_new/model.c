@@ -407,6 +407,8 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
                 α(t)(m, 1) = α(t - 1)(m, 2) * bm(ot)
                     since mostly explicit duration when d = 0 is 0 ; the rest terms canceled
                     and α(t)(m, 1) for both intron and exon is stored in alpha->basis[t][hidden state]
+
+                [node_continue]: α(t - 1)(m, 2)     reused variable here
             */
 
             node_continue = alpha->basis[i][1];
@@ -416,11 +418,9 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
             alpha->a[t][i]     = total;
             alpha->basis[i][0] = total;
-
             }
         }
     }
-
     printf("\tFinished\n");
 }
 
@@ -430,10 +430,8 @@ void free_alpha(Observed_events *info, Forward_algorithm *alpha)
     
     int array_size = info->T - 2 * FLANK;
     
-    for (int i = 0; i < array_size; i++) {
-        free(alpha->a[i]);
-    }
-
+    for (int i = 0; i < array_size; i++)        free(alpha->a[i]);
+    
     free(alpha->a);
     free(alpha->basis[0]);
     free(alpha->basis[1]);
@@ -483,13 +481,9 @@ void argmax_viterbi(Viterbi_algorithm *vit, int t)
     vit->gamma[0] += vit->xi[0] - vit->xi[1];
     vit->gamma[1] += vit->xi[1] - vit->xi[0];
 
-    /*
-        not set for equal conditon here; i don't believe that would happen
-        or maybe it would happen; lets see
-    */
-
-    if ( vit->gamma[0] > vit->gamma[1] )    argmax = 0;
-    else                                    argmax = 1;
+    if      ( vit->gamma[0] > vit->gamma[1] )    argmax = 0;
+    else if ( vit->gamma[0] < vit->gamma[1] )    argmax = 1;
+    else printf("Does this really gonna happen? At %d", t + FLANK);
 
     vit->path[t] = argmax;
 }
@@ -501,45 +495,58 @@ void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit,
     /*
         input parameter
 
-        [backward_sum]: sum(d >= 1) pn(d)*β(n, d)
-            that was compute for ξ(m, n)
-        [t]: time when it computed
-            which means which t - 1 gamma we wanna compute
-        [type]: either 0 or 1
+        [backward_sum]: (sum d>= 1)[ pn(d) * β(n, d)]
+            compute inside each layer of backward algorithm
+
+        [type]: exon 0 or intron 1
             so we know which ξ(m, n) we shall update in vit
-
-        computation notation
-
-        [alpha_component]: α(t - 1)(m, 1)
-        [trans_prob]: either donor or acceptor
+        
     */
 
-
     double alpha_component;
-    alpha_component = alpha->a[t][type];
-
+    
     double trans_prob;
+    int    index_trans_prob;
+
+    double emission_prob;
+    int    index_emission_prob;
+
+    double xi;
+
+    /*
+        formula
+        ξ(t)(m, n) = α(t - 1)(m, 1) * a(mn) * bn(ot) * (sum d>= 1)[ pn(d) * β(n, d)]   
+
+        update formula
+        ξ(t+1)(m, n) = α(t)(m, 1) * a(mn) * bn(o t+1) * (sum d>= 1)[ pn(d) * β(n, d)] 
+
+        [alpha_component]: α(t)(m, 1)
+        [trans_prob]: a(mn)
+        [emission_prob]: bn(o t+1)
+    */
+
+    alpha_component = alpha->a[t - 1][type];
+
     if (type == 0)
     {
-        int index = base4_to_int(info->numerical_sequence, t + 2 + FLANK, 5);
-        trans_prob = l->A.dons[index];
+        index_trans_prob = base4_to_int(info->numerical_sequence, t + FLANK, 5);
+        trans_prob = l->A.dons[index_trans_prob];
     }
     else
     {
-        int index = base4_to_int(info->numerical_sequence, t - 5 + FLANK, 6);
-        trans_prob = l->A.accs[index];
+        index_trans_prob = base4_to_int(info->numerical_sequence, t + FLANK - 6, 6);
+        trans_prob = l->A.accs[index_trans_prob];
     }
         
-    double emission_prob;
-    int index_emission = base4_to_int(info->numerical_sequence, t - 2 + FLANK, 4);
-    emission_prob = (type == 0) ? l->B.intron[index_emission] : l->B.exon[index_emission];
+    index_emission_prob = base4_to_int(info->numerical_sequence, t + FLANK - 3, 4);
+    emission_prob = (type == 0) ? l->B.intron[index_emission_prob] : l->B.exon[index_emission_prob];
 
-    double total;
-    if      (trans_prob == 0.0)         total = 0.0;
-    else if (alpha_component == 0.0)    total = 0.0;
-    else    total = exp( log(trans_prob) + log(alpha_component) + log(emission_prob) + log(backward_sum) );
+    if      (trans_prob == 0.0)         xi = 0.0;
+    else if (alpha_component == 0.0)    xi = 0.0;
+    else if (backward_sum == 0.0)       xi = 0.0;
+    else    xi = exp( log(trans_prob) + log(alpha_component) + log(emission_prob) + log(backward_sum) );
 
-    vit->xi[type] = total;
+    vit->xi[type] = xi;
 }
 
 void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha)
@@ -608,6 +615,8 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
     for ( int t = start_bps ; t >= 0 ; t-- )                                      // -1 cuz array start at 0; -1 again since already set up last one
     {
         argmax_viterbi(vit, t);
+        
+        if (t == 0)     break;
 
         tau ++;
 
@@ -633,96 +642,111 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                 with in those boundary; directly assign such calculation to 0; represent they are inreasonable nodes for network
             */
 
-            if ( tau_modified <= 0 && i == 1) 
+            double backward_sum;
+
+            if ( ( tau_modified <= 0 || t < FLANK + ed->min_len_exon ) && i == 1) 
             {
-                double backward_sum = 0.0;
-                xi_calculation(l, alpha, vit, info, backward_sum, t, 0);
+                backward_sum = 0.0;
+                xi_calculation(l, alpha, vit, info, backward_sum, t, 1);
                 continue;
             }
 
-            else if ( t < FLANK + ed->min_len_exon && i == 1)
-            {
-                double backward_sum = 0.0;
-                xi_calculation(l, alpha, vit, info, backward_sum, t, 0);
-                continue;
-            }
+            double ed_prob;
+            double possible_node;
+
+            double trans_prob;
+            int    index_trans_prob;
+
+            double emission_prob;
+            int    index_emission_prob;
+
+            double total;
 
             /*
-                calculate β(t)(m, 1) = sum(n != m) * a(mn) * bn(Ot+1) * sum(d>=1) pn(d) * beta(t+1)(n, d)
-                the sum(d>=1) pn(d) * beta(t+1)(n, d) can be coupled with ξ calculation for viterbi algorithm
+                formula
+                β(t)(m, 1) = sum(n != m) * a(mn) * bn(Ot+1) * sum(d>=1) pn(d) * β(t+1)(n, d)
 
-                [total]: β(t)(m, 1)
-                [j]: conjudated hidden state
+                [backward_sum]: sum(d>=1) pn(d) * β(t + 1)(n , d)
+                    can be coupled with ξ calculation for viterbi algorithm
+
+                [ed_prob]: pn(d)
+                [possible_node]: β(t + 1)(n , d)
+                [trans_prob]: a(mn)
+                [emission_prob]: bn(ot+1)
+                [j]: conjugated hidden state
                     if exon(0) it's intron(1); vice versa
             */
 
             int j = ( i == 0) ? 1 : 0;
 
-            double backward_sum;
-
             for ( int d = 0 ; d < tau_modified ; d++ )
             {
-                double ed_prob = ( j == 0 ) ? ed->exon[d] : ed->intron[d];
-                
+                ed_prob = ( j == 0 ) ? ed->exon[d] : ed->intron[d];
+                possible_node = beta->basis[j][d];
+
                 if (ed_prob == 0.0)     l->log_values[d] = 0.0;
-                else l->log_values[d] = exp( log( beta->basis[j][d] ) + log (ed_prob) );
+                else                    l->log_values[d] = exp( log( possible_node ) + log (ed_prob) );
             }
 
             backward_sum = log_sum_exp(l->log_values, tau_modified);
             xi_calculation(l, alpha, vit, info, backward_sum, t, j);
 
-            double trans_prob;
-
             if ( i == 0 )
             {   
-                int index = base4_to_int(info->numerical_sequence, t + 1 + FLANK , 5);
-                trans_prob = l->A.dons[index];
+                index_trans_prob = base4_to_int(info->numerical_sequence, t + 1 + FLANK , 5);
+                trans_prob = l->A.dons[index_trans_prob];
             }
             else
             {
-                int index = base4_to_int(info->numerical_sequence, t - 6 + FLANK , 6);
-                trans_prob = l->A.accs[index];
+                index_trans_prob = base4_to_int(info->numerical_sequence, t - 5 + FLANK , 6);
+                trans_prob = l->A.accs[index_trans_prob];
             }
 
-            int index = base4_to_int(info->numerical_sequence, t - 2 + FLANK, 4);
-            double emission_prob = (j == 0) ? l->B.exon[index] : l->B.intron[index];
-
-            double total;
+            index_emission_prob = base4_to_int(info->numerical_sequence, t - 2 + FLANK, 4);
+            emission_prob = (j == 0) ? l->B.exon[index_emission_prob] : l->B.intron[index_emission_prob];
 
             if   (trans_prob == 0.0)   total = 0.0;
             if   (backward_sum == 0.0) total = 0.0;
-            else total = exp( log(trans_prob) + log(emission_prob) + log(backward_sum) );
+            else                       total = exp( log(trans_prob) + log(emission_prob) + log(backward_sum) );
 
             /*
-                calculate β(t)(m, d) = bm(Ot+1) * β(t+1)(m, d - 1)
+                β(t)(m, d) = bm(Ot+1) * β(t+1)(m, d - 1)
                     for all possible d > 1
+
+                [emission_prob]: bm(Ot+1)       notice: this is not conjugated state right here
             */
             
-            index = base4_to_int(info->numerical_sequence, t - 2 + FLANK, 4);
-            emission_prob = (i == 0) ? l->B.exon[index] : l->B.intron[index];
+            index_emission_prob = base4_to_int(info->numerical_sequence, t - 2 + FLANK, 4);
+            emission_prob = (i == 0) ? l->B.exon[index_emission_prob] : l->B.intron[index_emission_prob];
 
             /*
                 logic here is linear array for all layer of network
                 and each time passed there would be one node lost for each layer
                 every computation based on the previous node
                 so we cannot directly update that after calculation
+
+                [first_node]: β(t)(m, 1)
+                    it is always the first node calculated
+                [previous_node]: record β(t)(m, d - 1) for next β(t)(m, d) calculation before update them
             */
 
-            double waitlist_node;
-            waitlist_node = total;
+            double first_node;
+            double previous_node;
+
+            first_node = total;
+            previous_node = total;
 
             for( int d = 1 ; d < tau_modified ; d++ )
             {   
-                double previous_node;
-                previous_node = beta->basis[i][d - 1];
 
-                double  update_node;
-                if      (previous_node == 0.0)  update_node = 0.0;
-                else    update_node = exp( log(emission_prob) + log(previous_node) );
+                if      (previous_node == 0.0)  total = 0.0;
+                else                            total = exp( log(emission_prob) + log(previous_node) );
 
-                beta->basis[i][d - 1] = waitlist_node;
-                waitlist_node = update_node;
+                previous_node = beta->basis[i][d];
+                beta->basis[i][d] = total;
             } 
+
+            beta->basis[i][0] = first_node;
         }
     }
 
