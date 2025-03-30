@@ -10,3 +10,9 @@
 
 # Ignore all precompiled files
 **/*.o
+
+# Ignore all FASTA files
+**/*.fa
+
+# Ignore all GFF3 annotation files
+**/*.gff3
