@@ -86,7 +86,8 @@ int main(int argc, char *argv[])
     allocate_viterbi(&vit, &info);
 
     // forward and backward algo //
-    forward_algorithm(&l, &fw, &info, &ed);           
+    forward_algorithm(&l, &fw, &info, &ed);
+    viterbi_basis(&vit, &fw);
     backward_algorithm(&l, &bw, &info, &ed, &vit, &fw);
 
     // output section //

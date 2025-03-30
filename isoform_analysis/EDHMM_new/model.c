@@ -418,7 +418,6 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 
             alpha->a[t][i]     = total;
             alpha->basis[i][0] = total;
-            }
         }
     }
     printf("\tFinished\n");
@@ -462,6 +461,13 @@ void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info)
     vit->gamma = malloc( HS * sizeof(double) );
     vit->path  = malloc( (info->T - 2 * FLANK) * sizeof(int) );
 
+    int array_size = info->T - 2 * FLANK;
+
+    vit->xi_sum= malloc ( HS * sizeof(double*) ); 
+
+    for (int i = 0 ; i < HS; i++ )     
+        vit->xi_sum[i] = calloc( array_size , sizeof(double) );      
+
     printf("\tFinished\n");
 }
 
@@ -481,9 +487,12 @@ void argmax_viterbi(Viterbi_algorithm *vit, int t)
     vit->gamma[0] += vit->xi[0] - vit->xi[1];
     vit->gamma[1] += vit->xi[1] - vit->xi[0];
 
+    vit->xi_sum[0][t] = vit->xi[0];
+    vit->xi_sum[1][t] = vit->xi[1];
+
     if      ( vit->gamma[0] > vit->gamma[1] )    argmax = 0;
     else if ( vit->gamma[0] < vit->gamma[1] )    argmax = 1;
-    else printf("Does this really gonna happen? At %d", t + FLANK);
+    else printf("\nDoes this really gonna happen? At %d. γ[0]: %f γ[1]: %f", t , vit->gamma[0], vit->gamma[1]);
 
     vit->path[t] = argmax;
 }
@@ -611,6 +620,8 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 
     int start_bps = info->T - 2 * FLANK - 1;
     int tau = 0;
+
+    printf("\n\tStart at first base pair location: %d\n", start_bps);
 
     for ( int t = start_bps ; t >= 0 ; t-- )                                      // -1 cuz array start at 0; -1 again since already set up last one
     {
@@ -750,6 +761,11 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
         }
     }
 
+    vit->xi_sum_exon   = log_sum_exp(vit->xi_sum[0], info->T - 2 * FLANK);
+    vit->xi_sum_intron = log_sum_exp(vit->xi_sum[1], info->T - 2 * FLANK);
+
+    printf("\tThis is xi sum for exon throughout the time %f\n",   vit->xi_sum_exon);
+    printf("\tThis is xi sum for intron throughout the time %f\n", vit->xi_sum_intron);
     printf("\tFinished.\n");
 }
 
@@ -771,6 +787,9 @@ void free_viterbi(Viterbi_algorithm *vit)
     free(vit->path);
     free(vit->gamma);
     free(vit->xi);
+    free(vit->xi_sum[0]);
+    free(vit->xi_sum[1]);
+    free(vit->xi_sum);
 
     printf("\tFinished\n");
 }
