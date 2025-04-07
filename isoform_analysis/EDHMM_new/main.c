@@ -64,13 +64,13 @@ int main(int argc, char *argv[])
     // transition matrix computation //
     setup_initial_probability(&l);                             // setup pi 
 
-    printf("Start calculating transition probability for donor sites:");
+    if (DEBUG == 1)     printf("Start calculating transition probability for donor sites:");
     initialize_donor_transition_matrix(&l, &apc, 0);           // setup transition prob for exon to intron
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 
-    printf("Start calculating transition probability for acceptor sites:");
+    if (DEBUG == 1)     printf("Start calculating transition probability for acceptor sites:");
     initialize_acceptor_transition_matrix(&l, &apc, 0);        // setup transition prob for intron to exon
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 
     // normalization for transition prob //
     normalize_transition_prob(&l, 1024, 0);
@@ -91,7 +91,8 @@ int main(int argc, char *argv[])
     backward_algorithm(&l, &bw, &info, &ed, &vit, &fw);
 
     // output section //
-    viterbi_path_test(&vit, &info, &ed);
+    if (DEBUG == 1)     viterbi_path_test(&vit, &info, &ed);
+    if (DEBUG == 0)     output_gene_segments(&vit, &info);
 
     // free memory //
     free_alpha(&info, &fw);

@@ -8,13 +8,13 @@
 
 void read_sequence_file(const char *filename, Observed_events *info)
 {
-    printf("Start reading the sequence data:\n");
+    if (DEBUG == 1)     printf("Start reading the sequence data:\n");
 
     FILE *file = fopen(filename, "r");
     
     if (file == NULL)
     {
-        printf("Error: Cannot open sequence file %s\n", filename);
+        if (DEBUG == 1)     printf("Error: Cannot open sequence file %s\n", filename);
         return;
     }
     
@@ -56,16 +56,16 @@ void read_sequence_file(const char *filename, Observed_events *info)
     free(buffer);
     fclose(file);
 
-    printf("\tWe get original sequence with Seq len: %zu\n", seq_index);
-    printf("\tFinished\n");
-    printf("\n");
+    if (DEBUG == 1)     printf("\tWe get original sequence with Seq len: %zu\n", seq_index);
+    if (DEBUG == 1)     printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\n");
 }
 
 // emission probability //
 
 void donor_parser(Lambda *l, char *filename)            // get emission probability for donor site
 {
-    printf("Start getting donor site emission Probability:");
+    if (DEBUG == 1)     printf("Start getting donor site emission Probability:");
     FILE *file = fopen(filename, "r");
 
     char line[256];
@@ -74,7 +74,7 @@ void donor_parser(Lambda *l, char *filename)            // get emission probabil
 
     if (file == NULL)
     {
-        printf("Can't find file for donor site emission probability!\n");
+        if (DEBUG == 1)     printf("Can't find file for donor site emission probability!\n");
         return;
     }
     
@@ -99,12 +99,12 @@ void donor_parser(Lambda *l, char *filename)            // get emission probabil
         }
     }
     fclose(file);
-    printf("\t\u2713\n");
+    if (DEBUG == 1)     printf("\t\u2713\n");
 }
 
 void acceptor_parser(Lambda *l, char *filename)         // get emission probability for acceptor site
 {
-    printf("Start getting acceptor site emission Probability:");
+    if (DEBUG == 1)     printf("Start getting acceptor site emission Probability:");
 
     FILE *file = fopen(filename, "r");
 
@@ -114,7 +114,7 @@ void acceptor_parser(Lambda *l, char *filename)         // get emission probabil
 
     if (file == NULL)
     { 
-        printf("Can't find file for donor site emission probability!\n");
+        if (DEBUG == 1)     printf("Can't find file for donor site emission probability!\n");
         return;
     }
     
@@ -139,15 +139,15 @@ void acceptor_parser(Lambda *l, char *filename)         // get emission probabil
     }
     fclose(file);
 
-    printf("\t\u2713\n");
+    if (DEBUG == 1)     printf("\t\u2713\n");
 }
 
 void exon_intron_parser(Lambda *l, char *filename, int digit)
 {
     assert(digit == 0 || digit == 1);                   // 0 for exon, 1 for intron
 
-    if      ( digit == 0 )    printf("Start getting exon   emission  Probability:");
-    else if ( digit == 1 )    printf("Start getting intron emission  Probability:");
+    if      ( digit == 0 )    if (DEBUG == 1)   printf("Start getting exon   emission  Probability:");
+    else if ( digit == 1 )    if (DEBUG == 1)   printf("Start getting intron emission  Probability:");
 
     FILE *file = fopen(filename, "r");
 
@@ -157,7 +157,7 @@ void exon_intron_parser(Lambda *l, char *filename, int digit)
 
     if (file == NULL)
     {
-        printf("Error: Cannot open file %s\n", filename);
+        if (DEBUG == 1)     printf("Error: Cannot open file %s\n", filename);
         return;
     }
     
@@ -171,10 +171,10 @@ void exon_intron_parser(Lambda *l, char *filename, int digit)
     }
 
     // Skip header line
-    if (fgets(line, sizeof(line), file) != NULL && line[0] == '%')      printf("\t\u2713");
+    if (fgets(line, sizeof(line), file) != NULL && line[0] == '%')      if (DEBUG == 1)     printf("\t\u2713");
     else 
     {
-        printf("Warning: No header found in %s\n", filename);
+        if (DEBUG == 1)     printf("Warning: No header found in %s\n", filename);
         rewind(file); // Go back to start if no header
     }
 
@@ -207,7 +207,7 @@ void exon_intron_parser(Lambda *l, char *filename, int digit)
     }
     
     fclose(file);
-    printf("\t\u2713\n");
+    if (DEBUG == 1)     printf("\t\u2713\n");
 }
 
 // eplicit_duration //
@@ -216,15 +216,15 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
 {
     assert(digit == 0 || digit == 1);                   // 0 for exon, 1 for intron
 
-    if      ( digit == 0 ) printf("Starting getting exon explicit duration probability");
-    else if ( digit == 1 ) printf("Starting getting intron explicit duration probability");
+    if      ( digit == 0 ) if (DEBUG == 1)  printf("Starting getting exon explicit duration probability");
+    else if ( digit == 1 ) if (DEBUG == 1)  printf("Starting getting intron explicit duration probability");
     
     FILE *file = fopen(filename, "r");
 
 
     if (file == NULL)
     {
-        printf("Error opening explicit duration file: %s\n", filename);
+        if (DEBUG == 1)     printf("Error opening explicit duration file: %s\n", filename);
         perror("Error details");
         return;
     }
@@ -276,18 +276,18 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
     }
 
     fclose(file);
-    printf("\t\u2713\n");
+    if (DEBUG == 1)     printf("\t\u2713\n");
 
     // Set max length
     if (digit == 0) 
     {
         ed->max_len_exon = c_line;
-        printf("\tExon duration: min=%d, max=%d, found %d non-zero values\n\n", 
+        if (DEBUG == 1)     printf("\tExon duration: min=%d, max=%d, found %d non-zero values\n\n", 
                ed->min_len_exon, ed->max_len_exon, nonzero_values);
     } else 
     {
         ed->max_len_intron = c_line;
-        printf("\tIntron duration: min=%d, max=%d, found %d non-zero values\n\n", 
+        if (DEBUG == 1)     printf("\tIntron duration: min=%d, max=%d, found %d non-zero values\n\n", 
                ed->min_len_intron, ed->max_len_intron, nonzero_values);
     }
 

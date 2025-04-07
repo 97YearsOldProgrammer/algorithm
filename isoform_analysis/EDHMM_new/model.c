@@ -7,7 +7,7 @@
 
 void numerical_transcription(Observed_events *info, const char *seq)
 {
-    printf("Start transforming original sequence into base4:\n");
+    if (DEBUG == 1)     printf("Start transforming original sequence into base4:\n");
 
     // turns original sequence into int 
     size_t len = strlen(seq);
@@ -25,17 +25,17 @@ void numerical_transcription(Observed_events *info, const char *seq)
         else if (seq[i] == 'T')     info->numerical_sequence[i] = 3;
     }
 
-    printf("\tWe get numerical sequence with Seq len: %d\n", info->T);
-    printf("\tFinished\n");
-    printf("\n");
+    if (DEBUG == 1)     printf("\tWe get numerical sequence with Seq len: %d\n", info->T);
+    if (DEBUG == 1)     printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\n");
 }
 
 void setup_initial_probability(Lambda *l)                               // actually no longer needed
 {
-    printf("Start getting initial probability down:");
+    if (DEBUG == 1)     printf("Start getting initial probability down:");
     l->pi = calloc(HS, sizeof(double) );                                // left-right HMM; only exon are 1
     l->pi[0] = 1;                                                       // initial probability of exon are 1
-    printf("\t\u2713\n");
+    if (DEBUG == 1)     printf("\t\u2713\n");
 }
 
 int power(int base, int exp)                                            // wtf, C don't have power for int
@@ -123,7 +123,7 @@ void initialize_acceptor_transition_matrix(Lambda *l, Apc *a, int depth)// set t
 
 void normalize_transition_prob(Lambda *l, int len, int dons_or_accs)
 {
-    printf("Start normalizing transition prob:");
+    if (DEBUG == 1)     printf("Start normalizing transition prob:");
 
     double sum = 0.0;
 
@@ -154,7 +154,7 @@ void normalize_transition_prob(Lambda *l, int len, int dons_or_accs)
         }
     }
 
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 double log_sum_exp(double *array, int n) 
@@ -178,7 +178,7 @@ double log_sum_exp(double *array, int n)
 
 void allocate_alpha(Observed_events *info, Forward_algorithm *alpha , Explicit_duration *ed)                            
 {
-    printf("Start allocate memory for the forward algorithm:");
+    if (DEBUG == 1)     printf("Start allocate memory for the forward algorithm:");
 
     int arary_size = info->T - 2 * FLANK;
 
@@ -209,12 +209,12 @@ void allocate_alpha(Observed_events *info, Forward_algorithm *alpha , Explicit_d
     alpha->basis[0] = calloc( ed->max_len_exon, sizeof(double) );
     alpha->basis[1] = calloc( ed->max_len_intron, sizeof(double));
 
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorithm *alpha, Observed_events *info)
 {
-    printf("Start forward algorithm basis calculation:");
+    if (DEBUG == 1)     printf("Start forward algorithm basis calculation:");
 
     /*
         first loop: updating all possible a(1)(m, d)
@@ -294,12 +294,12 @@ void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorith
         }
     }
 
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed)
 {
-    printf("Start computation for forward algorithm:");
+    if (DEBUG == 1)     printf("Start computation for forward algorithm:");
 
     /*
         recall
@@ -420,12 +420,12 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
             alpha->basis[i][0] = total;
         }
     }
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void free_alpha(Observed_events *info, Forward_algorithm *alpha)
 {
-    printf("Clearing up forward algorithm memory:");
+    if (DEBUG == 1)     printf("Clearing up forward algorithm memory:");
     
     int array_size = info->T - 2 * FLANK;
     
@@ -436,12 +436,12 @@ void free_alpha(Observed_events *info, Forward_algorithm *alpha)
     free(alpha->basis[1]);
     free(alpha->basis);
 
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info)
 {
-    printf("Start Initialize Viterbi Algorithm");
+    if (DEBUG == 1)     printf("Start Initialize Viterbi Algorithm");
 
     /*
         recursive viterbi formula
@@ -468,7 +468,7 @@ void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info)
     for (int i = 0 ; i < HS; i++ )     
         vit->xi_sum[i] = calloc( array_size , sizeof(double) );      
 
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void argmax_viterbi(Viterbi_algorithm *vit, int t)
@@ -492,7 +492,7 @@ void argmax_viterbi(Viterbi_algorithm *vit, int t)
 
     if      ( vit->gamma[0] > vit->gamma[1] )    argmax = 0;
     else if ( vit->gamma[0] < vit->gamma[1] )    argmax = 1;
-    else printf("\nDoes this really gonna happen? At %d. γ[0]: %f γ[1]: %f", t , vit->gamma[0], vit->gamma[1]);
+    else if (DEBUG == 1)    printf("\nDoes this really gonna happen? At %d. γ[0]: %f γ[1]: %f", t , vit->gamma[0], vit->gamma[1]);
 
     vit->path[t] = argmax;
 }
@@ -560,7 +560,7 @@ void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit,
 
 void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha)
 {
-    printf("Start assign basis for Viterbi Algorithm:");
+    if (DEBUG == 1)     printf("Start assign basis for Viterbi Algorithm:");
 
     /*
         γ(t)(m) = sum(d>=1) α(t)(m, d)
@@ -580,12 +580,12 @@ void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha)
     vit->gamma[0] = gamma_exon;
     vit->gamma[1] = gamma_intron;
     
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void allocate_beta(Backward_algorithm *beta, Explicit_duration *ed)                             
 {
-    printf("Start allocate memory for the backward algorithm:");
+    if (DEBUG == 1)     printf("Start allocate memory for the backward algorithm:");
                                     
     /*
         β->basis[i][d]
@@ -599,29 +599,29 @@ void allocate_beta(Backward_algorithm *beta, Explicit_duration *ed)
     beta->basis[0] = calloc( ed->max_len_exon, sizeof(double) );
     beta->basis[1] = calloc( ed->max_len_intron, sizeof(double));
 
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void initial_backward_algorithm(Backward_algorithm *beta)
 {
-    printf("Start initialize backward algorithm:");
+    if (DEBUG == 1)     printf("Start initialize backward algorithm:");
 
     for ( int i = 0 ; i < HS ; i++ )
     {
         beta->basis[i][0] = 1.0;
     }
 
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *info, Explicit_duration *ed, Viterbi_algorithm *vit, Forward_algorithm *alpha)
 {
-    printf("Start Backward Algorithm:");
+    if (DEBUG == 1)     printf("Start Backward Algorithm:");
 
     int start_bps = info->T - 2 * FLANK - 1;
     int tau = 0;
 
-    printf("\n\tStart at first base pair location: %d\n", start_bps);
+    if (DEBUG == 1)     printf("\n\tStart at first base pair location: %d\n", start_bps);
 
     for ( int t = start_bps ; t >= 0 ; t-- )                                      // -1 cuz array start at 0; -1 again since already set up last one
     {
@@ -764,25 +764,25 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
     vit->xi_sum_exon   = log_sum_exp(vit->xi_sum[0], info->T - 2 * FLANK);
     vit->xi_sum_intron = log_sum_exp(vit->xi_sum[1], info->T - 2 * FLANK);
 
-    printf("\tThis is xi sum for exon throughout the time %f\n",   vit->xi_sum_exon);
-    printf("\tThis is xi sum for intron throughout the time %f\n", vit->xi_sum_intron);
-    printf("\tFinished.\n");
+    if (DEBUG == 1)     printf("\tThis is xi sum for exon throughout the time %f\n",   vit->xi_sum_exon);
+    if (DEBUG == 1)     printf("\tThis is xi sum for intron throughout the time %f\n", vit->xi_sum_intron);
+    if (DEBUG == 1)     printf("\tFinished.\n");
 }
 
 void free_beta(Backward_algorithm *beta)
 {
-    printf("Clearning up backward algorithm memory:");
+    if (DEBUG == 1)     printf("Clearning up backward algorithm memory:");
 
     free(beta->basis[0]);
     free(beta->basis[1]);
     free(beta->basis);
 
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void free_viterbi(Viterbi_algorithm *vit)
 {
-    printf("Clearning up viterbi algorithm memory:");
+    if (DEBUG == 1)     printf("Clearning up viterbi algorithm memory:");
 
     free(vit->path);
     free(vit->gamma);
@@ -791,12 +791,12 @@ void free_viterbi(Viterbi_algorithm *vit)
     free(vit->xi_sum[1]);
     free(vit->xi_sum);
 
-    printf("\tFinished\n");
+    if (DEBUG == 1)     printf("\tFinished\n");
 }
 
 void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
 {
-    printf("\nStart Viterbi Check:\n");
+    if (DEBUG == 1)     printf("\nStart Viterbi Check:\n");
     
     int segment = 1;
     int start_pos = FLANK;
@@ -813,19 +813,19 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
     int total_donors = 0;
     int total_acceptors = 0;
     
-    printf("%-8s %-8s %-8s %-8s %-8s %-12s %-25s\n", 
+    if (DEBUG == 1)     printf("%-8s %-8s %-8s %-8s %-8s %-12s %-25s\n", 
            "Segment", "Type", "Start", "End", "Length", "Valid", "Splice Site");
-    printf("%-8s %-8s %-8s %-8s %-8s %-12s %-25s\n", 
+    if (DEBUG == 1)     printf("%-8s %-8s %-8s %-8s %-8s %-12s %-25s\n", 
            "-------", "----", "-----", "---", "------", "--------", "-----------");
     
     if (current_state == 0) 
     {
         exon_count++;
-        printf("%-8d %-8s %-8d ", segment, "Exon", start_pos);
+        if (DEBUG == 1)     printf("%-8d %-8s %-8d ", segment, "Exon", start_pos);
     } else 
     {
         intron_count++;
-        printf("%-8d %-8s %-8d ", segment, "Intron", start_pos);
+        if (DEBUG == 1)     printf("%-8d %-8s %-8d ", segment, "Intron", start_pos);
     }
     
     for (int i = 1; i < info->T - 2 * FLANK; i++)
@@ -847,7 +847,7 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
                 if (!valid_len) invalid_introns++;
             }
             
-            printf("%-8d %-8d %-12s ", transition_pos - 1, length, valid_len ? "Yes" : "No");
+            if (DEBUG == 1)     printf("%-8d %-8d %-12s ", transition_pos - 1, length, valid_len ? "Yes" : "No");
             
             if (current_state == 0) 
             {
@@ -862,18 +862,18 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
                     // FIXED: Start exactly at the intron start (no off-by-one)
                     strncpy(donor_site, &info->original_sequence[transition_pos], 5);
                     donor_site[5] = '\0';
-                    printf("Donor: %s ", donor_site);
+                    if (DEBUG == 1)     printf("Donor: %s ", donor_site);
                     
                     // Check for canonical GT at the first two positions of the intron
                     if (info->original_sequence[transition_pos] == 'G' && 
                         info->original_sequence[transition_pos + 1] == 'T') {
-                        printf("(Canonical GT)\n");
+                        if (DEBUG == 1)     printf("(Canonical GT)\n");
                         canonical_donors++;
                     } else {
-                        printf("(Non-canonical)\n");
+                        if (DEBUG == 1)     printf("(Non-canonical)\n");
                     }
                 } else {
-                    printf("Donor: (insufficient seq)\n");
+                    if (DEBUG == 1)     printf("Donor: (insufficient seq)\n");
                 }
             } else { 
                 // Intron to Exon transition (acceptor site)
@@ -884,18 +884,18 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
                     char acceptor_site[7];
                     strncpy(acceptor_site, &info->original_sequence[transition_pos - 6], 6);
                     acceptor_site[6] = '\0';
-                    printf("Acceptor: %s ", acceptor_site);
+                    if (DEBUG == 1)     printf("Acceptor: %s ", acceptor_site);
                     
                     // Check for canonical AG at the last two positions of the intron
                     if (info->original_sequence[transition_pos - 2] == 'A' && 
                         info->original_sequence[transition_pos - 1] == 'G') {
-                        printf("(Canonical AG)\n");
+                        if (DEBUG == 1)     printf("(Canonical AG)\n");
                         canonical_acceptors++;
                     } else {
-                        printf("(Non-canonical)\n");
+                        if (DEBUG == 1)     printf("(Non-canonical)\n");
                     }
                 } else {
-                    printf("Acceptor: (insufficient seq)\n");
+                    if (DEBUG == 1)     printf("Acceptor: (insufficient seq)\n");
                 }
             }
             
@@ -907,10 +907,10 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
             // Count new segment
             if (current_state == 0) {
                 exon_count++;
-                printf("%-8d %-8s %-8d ", segment, "Exon", start_pos);
+                if (DEBUG == 1)     printf("%-8d %-8s %-8d ", segment, "Exon", start_pos);
             } else {
                 intron_count++;
-                printf("%-8d %-8s %-8d ", segment, "Intron", start_pos);
+                if (DEBUG == 1)     printf("%-8d %-8s %-8d ", segment, "Intron", start_pos);
             }
         }
     }
@@ -929,22 +929,91 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
         if (!valid_len) invalid_introns++;
     }
     
-    printf("%-8d %-8d %-12s (end of sequence)\n", 
+    if (DEBUG == 1)     printf("%-8d %-8d %-12s (end of sequence)\n", 
           end_pos - 1, length, valid_len ? "Yes" : "No");
     
     // Print summary
-    printf("\nViterbi Path Summary:\n");
-    printf("Total segments: %d\n", segment);
-    printf("Exons: %d (Invalid length: %d)\n", exon_count, invalid_exons);
-    printf("Introns: %d (Invalid length: %d)\n", intron_count, invalid_introns);
-    printf("Canonical donor sites (GT): %d/%d\n", canonical_donors, total_donors);
-    printf("Canonical acceptor sites (AG): %d/%d\n", canonical_acceptors, total_acceptors);
+    if (DEBUG == 1)     printf("\nViterbi Path Summary:\n");
+    if (DEBUG == 1)     printf("Total segments: %d\n", segment);
+    if (DEBUG == 1)     printf("Exons: %d (Invalid length: %d)\n", exon_count, invalid_exons);
+    if (DEBUG == 1)     printf("Introns: %d (Invalid length: %d)\n", intron_count, invalid_introns);
+    if (DEBUG == 1)     printf("Canonical donor sites (GT): %d/%d\n", canonical_donors, total_donors);
+    if (DEBUG == 1)     printf("Canonical acceptor sites (AG): %d/%d\n", canonical_acceptors, total_acceptors);
     
     // Check gene structure
     if (vit->path[0] != 0) {
-        printf("\nWARNING: Prediction starts with an intron (biologically unusual)!\n");
+        if (DEBUG == 1)     printf("\nWARNING: Prediction starts with an intron (biologically unusual)!\n");
     }
     if (current_state != 0) {
-        printf("\nWARNING: Prediction ends with an intron (biologically unusual)!\n");
+        if (DEBUG == 1)     printf("\nWARNING: Prediction ends with an intron (biologically unusual)!\n");
+    }
+}
+
+/**
+ * Outputs gene segments in a simple format for Python processing
+ * Format:
+ * <segment_type> <start_pos> <end_pos> <splice_site>
+ * Where:
+ * - segment_type: "EXON" or "INTRON"
+ * - start_pos: base pair start position
+ * - end_pos: base pair end position
+ * - splice_site: ATCG representation of donor/acceptor site (if applicable)
+ */
+
+void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info)
+{    
+    // Initial state
+    int start_pos = FLANK;
+    int current_state = vit->path[0];
+    
+    // Process transitions
+    for (int i = 1; i < info->T - 2 * FLANK; i++) {
+        if (vit->path[i] != current_state) {
+            // End of segment
+            int transition_pos = i + FLANK;
+            int end_pos = transition_pos - 1;
+            
+            // Output current segment
+            if (current_state == 0) {
+                // Exon with donor site
+                printf("EXON %d %d ", start_pos, end_pos);
+                
+                // Add donor site (if there's enough sequence)
+                if (transition_pos + 4 < info->T) {
+                    char donor_site[6];
+                    strncpy(donor_site, &info->original_sequence[transition_pos], 5);
+                    donor_site[5] = '\0';
+                    printf("%s\n", donor_site);
+                } else {
+                    printf("NNNNN\n");
+                }
+            } else {
+                // Intron with acceptor site
+                printf("INTRON %d %d ", start_pos, end_pos);
+                
+                // Add acceptor site (if there's enough sequence)
+                if (transition_pos >= 6) {
+                    char acceptor_site[7];
+                    strncpy(acceptor_site, &info->original_sequence[transition_pos - 6], 6);
+                    acceptor_site[6] = '\0';
+                    printf("%s\n", acceptor_site);
+                } else {
+                    printf("NNNNNN\n");
+                }
+            }
+            
+            // Start new segment
+            current_state = vit->path[i];
+            start_pos = transition_pos;
+        }
+    }
+    
+    // Process the final segment
+    int end_pos = info->T - FLANK - 1;
+    
+    if (current_state == 0) {
+        printf("EXON %d %d\n", start_pos, end_pos);
+    } else {
+        printf("INTRON %d %d\n", start_pos, end_pos);
     }
 }
