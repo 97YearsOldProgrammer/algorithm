@@ -27,6 +27,13 @@ def main():
     limit = args.trail
     foutput = args.fop
 
+    don_emission = "../isoform_analysis/models/don.pwm";
+    acc_emission = "../isoform_analysis/models/acc.pwm";
+    exon_emission = "../isoform_analysis/models/exon.mm";
+    intron_emission = "../isoform_analysis/models/intron.mm";
+    Ped_exon = "../isoform_analysis/models/exon.len";
+    Ped_intron = "../isoform_analysis/models/intron.len";
+
     open(foutput, "w").close()
             
     with tarfile.open(tar_gz_file, 'r:gz') as tar:
@@ -50,7 +57,7 @@ def main():
                 tar.extract(member, path=file_tmpdir)
                 tmpf = os.path.join(file_tmpdir, member.name)
                 
-                cmd = [model_path, tmpf]
+                cmd = [model_path, tmpf, don_emission, acc_emission, exon_emission, intron_emission, Ped_exon, Ped_intron]
                 collect_output(cmd, gene_name, foutput)
                 
     print(f"Results saved to {foutput}")

@@ -2,7 +2,7 @@
 #define HMM_MODEL
 
 #define HS 2                            // 1 (exon) + 1 (intron) ; 5 (donor site) + 6(acceptor site) degraded
-#define FLANK 25                        // define the global flank size
+#define FLANK 100                       // define the global flank size
 #define DEBUG 0                         // if this is 1, it would print out everything
 
 typedef struct                          // observed events with length T

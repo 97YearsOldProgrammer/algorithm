@@ -146,8 +146,8 @@ void exon_intron_parser(Lambda *l, char *filename, int digit)
 {
     assert(digit == 0 || digit == 1);                   // 0 for exon, 1 for intron
 
-    if      ( digit == 0 )    if (DEBUG == 1)   printf("Start getting exon   emission  Probability:");
-    else if ( digit == 1 )    if (DEBUG == 1)   printf("Start getting intron emission  Probability:");
+    if      ( digit == 0 && DEBUG == 1 )    printf("Start getting exon   emission  Probability:");
+    else if ( digit == 1 && DEBUG == 1 )    printf("Start getting intron emission  Probability:");
 
     FILE *file = fopen(filename, "r");
 
