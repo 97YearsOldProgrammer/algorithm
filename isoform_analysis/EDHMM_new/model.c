@@ -429,8 +429,6 @@ void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info, Explicit_du
 {
     if (DEBUG == 1)     printf("Start Initialize Viterbi Algorithm");
 
-    int array_size = info->T - 2 * FLANK - 2 * ed->min_len_exon;
-
     /*
         recursive viterbi formula
         γ(t) = y(t+1)(m) + sum(n != m) ( ξ(t+1)(m, n) - ξ(t+1)(n, n) )
@@ -445,18 +443,14 @@ void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info, Explicit_du
         ξ(t+1)(m, n) = α(t)(m, 1) * a(mn) * bn(Ot + 1) * sum(d >= 1) (pn(d) β(t+1)(n, d))
     */
 
-    int array_size = info->T - 2 * FLANK - 2 * ed->min_len_exon;
-
     vit->xi    = calloc( HS , sizeof(double) );
     vit->gamma = malloc( HS * sizeof(double) );
-    vit->path  = malloc( array_size * sizeof(int) );
-
+    vit->path  = malloc( (info->T - 2 * FLANK) * sizeof(int) );
     vit->xi_sum= malloc ( HS * sizeof(double*) ); 
 
-    for (int i = 0 ; i < HS; i++ )     
-        vit->xi_sum[i] = calloc( array_size , sizeof(double) );    
+    int array_size = info->T - 2 * FLANK - 2 * ed->min_len_exon;
+    for (int i = 0 ; i < HS; i++ )                                      vit->xi_sum[i] = calloc( array_size , sizeof(double) );    
     
-
     if (DEBUG == 1)     printf("\tFinished\n");
 }
 
@@ -487,7 +481,7 @@ void argmax_viterbi(Viterbi_algorithm *vit, int t)
     vit->path[t] = argmax;
 }
 
-void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed, backward_sum, int t, int type)
+void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed, double backward_sum, int t, int type)
 {
     assert(type == 0 || type == 1);
 
@@ -758,17 +752,27 @@ void free_viterbi(Viterbi_algorithm *vit)
     if (DEBUG == 1)     printf("\tFinished\n");
 }
 
+void initial_output(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
+{    
+    for (int i = 0; i < ed->min_len_exon; i++)                      vit->path[i] = 0;
+ 
+    int initial_bps = info->T - FLANK - ed->min_len_exon;
+    int last_bps    = info->T - FLANK;
+
+    for (int i = initial_bps ; i > last_bps ; i++)                  vit->path[i] = 0;
+}
+
 void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
 {
     if (DEBUG == 1)     printf("\nStart Viterbi Check:\n");
     
     int segment = 1;
     int start_pos = FLANK;
-    int current_state = vit->path[0];
+    int current_state = 0; 
     int transition_pos;
     int length;
     
-    int exon_count = 0;
+    int exon_count = 1; 
     int intron_count = 0;
     int invalid_exons = 0;
     int invalid_introns = 0;
@@ -781,6 +785,19 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
            "Segment", "Type", "Start", "End", "Length", "Valid", "Splice Site");
     if (DEBUG == 1)     printf("%-8s %-8s %-8s %-8s %-8s %-12s %-25s\n", 
            "-------", "----", "-----", "---", "------", "--------", "-----------");
+    
+    // Output the initial exon segment (forced by model)
+    int end_pos = start_pos + ed->min_len_exon - 1;
+    length = ed->min_len_exon;
+    int valid_len = (length >= ed->min_len_exon);
+    
+    if (DEBUG == 1)     printf("%-8d %-8s %-8d %-8d %-8d %-12s %-25s\n", 
+           segment, "Exon", start_pos, end_pos, length, valid_len ? "Yes" : "No", "(forced initial exon)");
+    
+    // Start processing from after the initial exon
+    segment++;
+    start_pos = FLANK + ed->min_len_exon;
+    current_state = vit->path[0];
     
     if (current_state == 0) 
     {
@@ -796,10 +813,10 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
     {
         if (vit->path[i] != current_state)
         {
-            transition_pos = i + FLANK;
+            transition_pos = i + FLANK + ed->min_len_exon;
             length = transition_pos - start_pos;
             
-            int valid_len = 0;
+            valid_len = 0;
 
             if (current_state == 0)
             { 
@@ -879,12 +896,12 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
         }
     }
     
-    // Process final segment
-    int end_pos = info->T - FLANK;
-    length = end_pos - start_pos;
+    // Process final segment from vit->path
+    end_pos = info->T - FLANK - ed->min_len_exon - 1;
+    length = end_pos - start_pos + 1;
     
     // Check segment validity
-    int valid_len = 0;
+    valid_len = 0;
     if (current_state == 0) { // Exon
         valid_len = (length >= ed->min_len_exon);
         if (!valid_len) invalid_exons++;
@@ -893,8 +910,19 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
         if (!valid_len) invalid_introns++;
     }
     
-    if (DEBUG == 1)     printf("%-8d %-8d %-12s (end of sequence)\n", 
-          end_pos - 1, length, valid_len ? "Yes" : "No");
+    if (DEBUG == 1)     printf("%-8d %-8d %-12s\n", 
+          end_pos, length, valid_len ? "Yes" : "No");
+    
+    // Output the final exon segment (forced by model)
+    segment++;
+    start_pos = info->T - FLANK - ed->min_len_exon;
+    end_pos = info->T - FLANK - 1;
+    length = end_pos - start_pos + 1;
+    valid_len = (length >= ed->min_len_exon);
+    exon_count++;
+    
+    if (DEBUG == 1)     printf("%-8d %-8s %-8d %-8d %-8d %-12s %-25s\n", 
+           segment, "Exon", start_pos, end_pos, length, valid_len ? "Yes" : "No", "(forced final exon)");
     
     // Print summary
     if (DEBUG == 1)     printf("\nViterbi Path Summary:\n");
@@ -905,11 +933,8 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
     if (DEBUG == 1)     printf("Canonical acceptor sites (AG): %d/%d\n", canonical_acceptors, total_acceptors);
     
     // Check gene structure
-    if (vit->path[0] != 0) {
-        if (DEBUG == 1)     printf("\nWARNING: Prediction starts with an intron (biologically unusual)!\n");
-    }
     if (current_state != 0) {
-        if (DEBUG == 1)     printf("\nWARNING: Prediction ends with an intron (biologically unusual)!\n");
+        if (DEBUG == 1)     printf("\nWARNING: Last segment before the forced final exon is an intron (potential splice site issue).\n");
     }
 }
 
@@ -924,68 +949,78 @@ void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
  * - splice_site: ATCG representation of donor/acceptor site (if applicable)
  */
 
-void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
-{    
-    // Initial state
-    int start_pos = FLANK;
-    int current_state = vit->path[0];
-    
-    // Process transitions
-    for (int i = 1; i < info->T - 2 * FLANK - 2 * ed->min_len_exon; i++)
-    {
-        if (vit->path[i] != current_state)
-        {
-            // End of segment
-            int transition_pos = i + FLANK;
-            int end_pos = transition_pos - 1;
-            
-            // Output current segment
-            if (current_state == 0)
-            {
-                // Exon with donor site
-                printf("EXON %d %d ", start_pos, end_pos);
-                
-                // Add donor site (if there's enough sequence)
-                if (transition_pos + 4 < info->T)
-                {
-                    char donor_site[6];
-                    strncpy(donor_site, &info->original_sequence[transition_pos], 5);
-                    donor_site[5] = '\0';
-                    printf("%s\n", donor_site);
-                } 
-                else 
-                {
-                    printf("NNNNN\n");
-                }
-                
-            } else 
-            {
-                // Intron with acceptor site
-                printf("INTRON %d %d ", start_pos, end_pos);
-                
-                // Add acceptor site (if there's enough sequence)
-                if (transition_pos >= 6) {
-                    char acceptor_site[7];
-                    strncpy(acceptor_site, &info->original_sequence[transition_pos - 6], 6);
-                    acceptor_site[6] = '\0';
-                    printf("%s\n", acceptor_site);
-                } else {
-                    printf("NNNNNN\n");
-                }
-            }
-            
-            // Start new segment
-            current_state = vit->path[i];
-            start_pos = transition_pos;
-        }
-    }
-    
-    // Process the final segment
-    int end_pos = info->T - FLANK - 1;
-    
-    if (current_state == 0) {
-        printf("EXON %d %d\n", start_pos, end_pos);
-    } else {
-        printf("INTRON %d %d\n", start_pos, end_pos);
-    }
-}
+ void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
+ {    
+     // Output the initial exon segment (forced by model)
+     int start_pos = FLANK;
+     int end_pos = start_pos + ed->min_len_exon - 1;
+     printf("EXON %d %d NNNNN\n", start_pos, end_pos);
+     
+     // Start processing from after the initial exon
+     start_pos = FLANK + ed->min_len_exon;
+     int current_state = vit->path[0];
+     
+     // Process transitions
+     for (int i = 1; i < info->T - 2 * FLANK - 2 * ed->min_len_exon; i++)
+     {
+         if (vit->path[i] != current_state)
+         {
+             // End of segment
+             int transition_pos = i + FLANK + ed->min_len_exon;
+             end_pos = transition_pos - 1;
+             
+             // Output current segment
+             if (current_state == 0)
+             {
+                 // Exon with donor site
+                 printf("EXON %d %d ", start_pos, end_pos);
+                 
+                 // Add donor site (if there's enough sequence)
+                 if (transition_pos + 4 < info->T)
+                 {
+                     char donor_site[6];
+                     strncpy(donor_site, &info->original_sequence[transition_pos], 5);
+                     donor_site[5] = '\0';
+                     printf("%s\n", donor_site);
+                 } 
+                 else 
+                 {
+                     printf("NNNNN\n");
+                 }
+                 
+             } else 
+             {
+                 // Intron with acceptor site
+                 printf("INTRON %d %d ", start_pos, end_pos);
+                 
+                 // Add acceptor site (if there's enough sequence)
+                 if (transition_pos >= 6) {
+                     char acceptor_site[7];
+                     strncpy(acceptor_site, &info->original_sequence[transition_pos - 6], 6);
+                     acceptor_site[6] = '\0';
+                     printf("%s\n", acceptor_site);
+                 } else {
+                     printf("NNNNNN\n");
+                 }
+             }
+             
+             // Start new segment
+             current_state = vit->path[i];
+             start_pos = transition_pos;
+         }
+     }
+     
+     // Process the final segment from vit->path
+     end_pos = info->T - FLANK - ed->min_len_exon - 1;
+     
+     if (current_state == 0) {
+         printf("EXON %d %d NNNNN\n", start_pos, end_pos);
+     } else {
+         printf("INTRON %d %d NNNNNN\n", start_pos, end_pos);
+     }
+     
+     // Output the final exon segment (forced by model)
+     start_pos = info->T - FLANK - ed->min_len_exon;
+     end_pos = info->T - FLANK - 1;
+     printf("EXON %d %d\n", start_pos, end_pos);
+ }
