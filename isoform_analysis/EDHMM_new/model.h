@@ -113,10 +113,10 @@ void free_alpha(Observed_events *info, Forward_algorithm *alpha);
 
 // viterbi algorithm //
 
-void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info);
+void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha);
 void argmax_viterbi(Viterbi_algorithm *vit, int t);
-void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit, Observed_events *info, double backward_sum, int t, int type);
+void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed, backward_sum, int t, int type);
 void free_viterbi(Viterbi_algorithm *vit);
 
 // backward algorithm //
@@ -128,6 +128,6 @@ void free_beta(Backward_algorithm *beta);
 
 // output section //
 void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
-void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info);
+void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 
 #endif

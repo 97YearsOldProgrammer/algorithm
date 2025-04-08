@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     // initialize algorihtm //
     basis_forward_algorithm(&l, &ed, &fw, &info);                    // set up alpha 0
     initial_backward_algorithm(&bw);                                 // set up beta t
-    allocate_viterbi(&vit, &info);
+    allocate_viterbi(&vit, &info, &ed);
 
     // forward and backward algo //
     forward_algorithm(&l, &fw, &info, &ed);
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 
     // output section //
     if (DEBUG == 1)     viterbi_path_test(&vit, &info, &ed);
-    if (DEBUG == 0)     output_gene_segments(&vit, &info);
+    if (DEBUG == 0)     output_gene_segments(&vit, &info, &ed);
 
     // free memory //
     free_alpha(&info, &fw);
