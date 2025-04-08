@@ -15,7 +15,7 @@ def collect_output(cmd, gene_name, foutput):
 
 def main():        
     
-    parser = argparse.ArgumentParser(description='EDHMM model test on small gene set of C.elegans')
+    parser = argparse.ArgumentParser(description='EDHMM model test on small gene set')
     parser.add_argument('-i', '--input', required=True, help='Path for tar.gz file')
     parser.add_argument('--model', type=str, default="EDHMM_new/EDHMM", help='Path to EDHMM model')
     parser.add_argument('--fop', type=str, default="result.txt", help='The output file')
