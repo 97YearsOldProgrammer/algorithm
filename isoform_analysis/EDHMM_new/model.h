@@ -109,7 +109,7 @@ void initialize_acceptor_transition_matrix(Lambda *l, Apc *a, int depth);
 void allocate_alpha(Observed_events *info, Forward_algorithm *alpha , Explicit_duration *ed);                        
 void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorithm *alpha, Observed_events *info);
 void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *info, Explicit_duration *ed);
-void free_alpha(Observed_events *info, Forward_algorithm *alpha);
+void free_alpha(Observed_events *info, Forward_algorithm *alpha, Explicit_duration *ed);
 
 // viterbi algorithm //
 
@@ -127,7 +127,6 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 void free_beta(Backward_algorithm *beta);
 
 // output section //
-void initial_output(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 

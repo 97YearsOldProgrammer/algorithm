@@ -429,6 +429,8 @@ void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info, Explicit_du
 {
     if (DEBUG == 1)     printf("Start Initialize Viterbi Algorithm");
 
+    int array_size = info->T - 2 * FLANK - 2 * ed->min_len_exon;
+
     /*
         recursive viterbi formula
         γ(t) = y(t+1)(m) + sum(n != m) ( ξ(t+1)(m, n) - ξ(t+1)(n, n) )
@@ -445,10 +447,9 @@ void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info, Explicit_du
 
     vit->xi    = calloc( HS , sizeof(double) );
     vit->gamma = malloc( HS * sizeof(double) );
-    vit->path  = malloc( (info->T - 2 * FLANK) * sizeof(int) );
+    vit->path  = malloc( array_size * sizeof(int) );
     vit->xi_sum= malloc ( HS * sizeof(double*) ); 
 
-    int array_size = info->T - 2 * FLANK - 2 * ed->min_len_exon;
     for (int i = 0 ; i < HS; i++ )                                      vit->xi_sum[i] = calloc( array_size , sizeof(double) );    
     
     if (DEBUG == 1)     printf("\tFinished\n");
@@ -474,9 +475,9 @@ void argmax_viterbi(Viterbi_algorithm *vit, int t)
     vit->xi_sum[0][t] = vit->xi[0];
     vit->xi_sum[1][t] = vit->xi[1];
 
-    if      ( vit->gamma[0] > vit->gamma[1] )    argmax = 0;
-    else if ( vit->gamma[0] < vit->gamma[1] )    argmax = 1;
-    else if (DEBUG == 1)    printf("\nDoes this really gonna happen? At %d. γ[0]: %f γ[1]: %f", t , vit->gamma[0], vit->gamma[1]);
+    if      ( vit->gamma[0] > vit->gamma[1] )                       argmax = 0;
+    else if ( vit->gamma[0] < vit->gamma[1] )                       argmax = 1;
+    else if ( ( vit->gamma[0] == vit->gamma[1] ) && DEBUG == 1)     printf("\nDoes this really gonna happen? At %d. γ[0]: %f γ[1]: %f", t , vit->gamma[0], vit->gamma[1]);
 
     vit->path[t] = argmax;
 }
@@ -520,20 +521,20 @@ void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit,
 
     alpha_component = alpha->a[t - 1][type];
 
-    int ini_bps = FLANK + ed->min_len_exon;
+    int bps = t + FLANK + ed->min_len_exon;
 
     if (type == 0)
     {
-        index_trans_prob = base4_to_int(info->numerical_sequence, t , 5);
+        index_trans_prob = base4_to_int(info->numerical_sequence, bps , 5);
         trans_prob = l->A.dons[index_trans_prob];
     }
     else
     {
-        index_trans_prob = base4_to_int(info->numerical_sequence, t- 6, 6);
+        index_trans_prob = base4_to_int(info->numerical_sequence, bps - 6, 6);
         trans_prob = l->A.accs[index_trans_prob];
     }
         
-    index_emission_prob = base4_to_int(info->numerical_sequence, t - 3, 4);
+    index_emission_prob = base4_to_int(info->numerical_sequence, bps - 3, 4);
     emission_prob = (type == 0) ? l->B.intron[index_emission_prob] : l->B.exon[index_emission_prob];
 
     if      (trans_prob == 0.0)         xi = 0.0;
@@ -604,20 +605,22 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
 {
     if (DEBUG == 1)     printf("Start Backward Algorithm:");
 
-    int start_bps = info->T - FLANK - ed->min_len_exon - 1;
-    int last_bps  = FLANK + ed->min_len_exon;
+    int len = info->T - 2 * FLANK - 2 * ed->min_len_exon;
+    int start_bps = FLANK + ed->min_len_exon;
     int tau = 0;
+    int bps;
 
-    if (DEBUG == 1)     printf("\n\tStart at first base pair location: %d and last base pair location: %d\n", start_bps, last_bps);
-
-    for ( int t = start_bps ; t >= last_bps ; t-- )
+    for ( int t = len - 1; t >= 0 ; t-- )
     {
+        bps = FLANK + ed->min_len_exon + t;
         argmax_viterbi(vit, t);
+
+        if ( t == 0 )    break;                                                                 // don't remove this; it have a reason to be here
+
         tau ++;
 
         for ( int i = 0 ; i < HS ; i ++ )                                                       // the before position; 0 for exon, 1 for intron
         {
-
             double backward_sum;
 
             double ed_prob;
@@ -658,20 +661,20 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
             }
 
             backward_sum = log_sum_exp(l->log_values, tau);
-            xi_calculation(l, alpha, vit, info, backward_sum, t, j);
+            xi_calculation(l, alpha, vit, info, ed, backward_sum, t, j);
 
             if ( i == 0 )
             {   
-                index_trans_prob = base4_to_int(info->numerical_sequence, t + 1, 5);
+                index_trans_prob = base4_to_int(info->numerical_sequence, bps + 1, 5);
                 trans_prob = l->A.dons[index_trans_prob];
             }
             else
             {
-                index_trans_prob = base4_to_int(info->numerical_sequence, t - 5, 6);
+                index_trans_prob = base4_to_int(info->numerical_sequence, bps - 5, 6);
                 trans_prob = l->A.accs[index_trans_prob];
             }
 
-            index_emission_prob = base4_to_int(info->numerical_sequence, t - 2, 4);
+            index_emission_prob = base4_to_int(info->numerical_sequence, bps - 2, 4);
             emission_prob = (i == 0) ? l->B.intron[index_emission_prob] : l->B.exon[index_emission_prob];
 
             if   (trans_prob == 0.0)   total = 0.0;
@@ -685,7 +688,7 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
                 [emission_prob]: bm(Ot+1)       notice: this is not conjugated state right here
             */
             
-            index_emission_prob = base4_to_int(info->numerical_sequence, t - 2, 4);
+            index_emission_prob = base4_to_int(info->numerical_sequence, bps - 2, 4);
             emission_prob = (i == 0) ? l->B.exon[index_emission_prob] : l->B.intron[index_emission_prob];
 
             /*
@@ -719,8 +722,8 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
         }
     }
 
-    vit->xi_sum_exon   = log_sum_exp(vit->xi_sum[0], info->T - 2 * FLANK - ed->min_len_exon);
-    vit->xi_sum_intron = log_sum_exp(vit->xi_sum[1], info->T - 2 * FLANK - ed->min_len_exon);
+    vit->xi_sum_exon   = log_sum_exp(vit->xi_sum[0], info->T - 2 * FLANK - 2 * ed->min_len_exon);
+    vit->xi_sum_intron = log_sum_exp(vit->xi_sum[1], info->T - 2 * FLANK - 2 * ed->min_len_exon);
 
     if (DEBUG == 1)     printf("\tThis is xi sum for exon throughout the time %f\n",   vit->xi_sum_exon);
     if (DEBUG == 1)     printf("\tThis is xi sum for intron throughout the time %f\n", vit->xi_sum_intron);
@@ -751,276 +754,170 @@ void free_viterbi(Viterbi_algorithm *vit)
 
     if (DEBUG == 1)     printf("\tFinished\n");
 }
-
-void initial_output(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
+void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
 {    
-    for (int i = 0; i < ed->min_len_exon; i++)                      vit->path[i] = 0;
- 
-    int initial_bps = info->T - FLANK - ed->min_len_exon;
-    int last_bps    = info->T - FLANK;
-
-    for (int i = initial_bps ; i > last_bps ; i++)                  vit->path[i] = 0;
-}
-
-void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
-{
-    if (DEBUG == 1)     printf("\nStart Viterbi Check:\n");
-    
-    int segment = 1;
     int start_pos = FLANK;
-    int current_state = 0; 
-    int transition_pos;
-    int length;
+    int current_state = vit->path[0];
     
-    int exon_count = 1; 
-    int intron_count = 0;
-    int invalid_exons = 0;
-    int invalid_introns = 0;
-    int canonical_donors = 0;
-    int canonical_acceptors = 0;
-    int total_donors = 0;
-    int total_acceptors = 0;
-    
-    if (DEBUG == 1)     printf("%-8s %-8s %-8s %-8s %-8s %-12s %-25s\n", 
-           "Segment", "Type", "Start", "End", "Length", "Valid", "Splice Site");
-    if (DEBUG == 1)     printf("%-8s %-8s %-8s %-8s %-8s %-12s %-25s\n", 
-           "-------", "----", "-----", "---", "------", "--------", "-----------");
-    
-    // Output the initial exon segment (forced by model)
-    int end_pos = start_pos + ed->min_len_exon - 1;
-    length = ed->min_len_exon;
-    int valid_len = (length >= ed->min_len_exon);
-    
-    if (DEBUG == 1)     printf("%-8d %-8s %-8d %-8d %-8d %-12s %-25s\n", 
-           segment, "Exon", start_pos, end_pos, length, valid_len ? "Yes" : "No", "(forced initial exon)");
-    
-    // Start processing from after the initial exon
-    segment++;
-    start_pos = FLANK + ed->min_len_exon;
-    current_state = vit->path[0];
-    
-    if (current_state == 0) 
-    {
-        exon_count++;
-        if (DEBUG == 1)     printf("%-8d %-8s %-8d ", segment, "Exon", start_pos);
-    } else 
-    {
-        intron_count++;
-        if (DEBUG == 1)     printf("%-8d %-8s %-8d ", segment, "Intron", start_pos);
+    // Check if first state is exon - if so, we'll merge with forced initial exon
+    if (current_state != 0) {  // If first state is not exon
+        int end_pos = FLANK + ed->min_len_exon - 1;
+        printf("EXON %d %d NNNNN\n", start_pos, end_pos);
+        start_pos = FLANK + ed->min_len_exon;
     }
+    // If first state is exon, we don't output anything yet - we'll merge
     
+    // Process transitions
     for (int i = 1; i < info->T - 2 * FLANK - 2 * ed->min_len_exon; i++)
     {
         if (vit->path[i] != current_state)
         {
-            transition_pos = i + FLANK + ed->min_len_exon;
-            length = transition_pos - start_pos;
+            // End of segment
+            int transition_pos = i + FLANK + ed->min_len_exon;
+            int end_pos = transition_pos - 1;
             
-            valid_len = 0;
-
+            // Output current segment
             if (current_state == 0)
-            { 
-                valid_len = (length >= ed->min_len_exon);
-                if (!valid_len) invalid_exons++;
-            } else 
             {
-                valid_len = (length >= ed->min_len_intron);
-                if (!valid_len) invalid_introns++;
-            }
-            
-            if (DEBUG == 1)     printf("%-8d %-8d %-12s ", transition_pos - 1, length, valid_len ? "Yes" : "No");
-            
-            if (current_state == 0) 
-            {
-                // Exon to Intron transition (donor site)
-                total_donors++;
+                // Exon with donor site
+                printf("EXON %d %d ", start_pos, end_pos);
                 
-                // The first base of the intron should be at transition_pos
-                // We want to show transition_pos and the next 4 bases (total 5 bases)
+                // Add donor site (if there's enough sequence)
                 if (transition_pos + 4 < info->T)
                 {
                     char donor_site[6];
-                    // FIXED: Start exactly at the intron start (no off-by-one)
                     strncpy(donor_site, &info->original_sequence[transition_pos], 5);
                     donor_site[5] = '\0';
-                    if (DEBUG == 1)     printf("Donor: %s ", donor_site);
-                    
-                    // Check for canonical GT at the first two positions of the intron
-                    if (info->original_sequence[transition_pos] == 'G' && 
-                        info->original_sequence[transition_pos + 1] == 'T') {
-                        if (DEBUG == 1)     printf("(Canonical GT)\n");
-                        canonical_donors++;
-                    } else {
-                        if (DEBUG == 1)     printf("(Non-canonical)\n");
-                    }
-                } else {
-                    if (DEBUG == 1)     printf("Donor: (insufficient seq)\n");
+                    printf("%s\n", donor_site);
+                } 
+                else 
+                {
+                    printf("NNNNN\n");
                 }
-            } else { 
-                // Intron to Exon transition (acceptor site)
-                total_acceptors++;
                 
-                // We need the last 6 bases of the intron (ending at transition_pos-1)
+            } else 
+            {
+                // Intron with acceptor site
+                printf("INTRON %d %d ", start_pos, end_pos);
+                
+                // Add acceptor site (if there's enough sequence)
                 if (transition_pos >= 6) {
                     char acceptor_site[7];
                     strncpy(acceptor_site, &info->original_sequence[transition_pos - 6], 6);
                     acceptor_site[6] = '\0';
-                    if (DEBUG == 1)     printf("Acceptor: %s ", acceptor_site);
-                    
-                    // Check for canonical AG at the last two positions of the intron
-                    if (info->original_sequence[transition_pos - 2] == 'A' && 
-                        info->original_sequence[transition_pos - 1] == 'G') {
-                        if (DEBUG == 1)     printf("(Canonical AG)\n");
-                        canonical_acceptors++;
-                    } else {
-                        if (DEBUG == 1)     printf("(Non-canonical)\n");
-                    }
+                    printf("%s\n", acceptor_site);
                 } else {
-                    if (DEBUG == 1)     printf("Acceptor: (insufficient seq)\n");
+                    printf("NNNNNN\n");
                 }
             }
             
-            // Update for next segment
+            // Start new segment
             current_state = vit->path[i];
             start_pos = transition_pos;
-            segment++;
-            
-            // Count new segment
-            if (current_state == 0) {
-                exon_count++;
-                if (DEBUG == 1)     printf("%-8d %-8s %-8d ", segment, "Exon", start_pos);
-            } else {
-                intron_count++;
-                if (DEBUG == 1)     printf("%-8d %-8s %-8d ", segment, "Intron", start_pos);
-            }
         }
     }
     
-    // Process final segment from vit->path
-    end_pos = info->T - FLANK - ed->min_len_exon - 1;
-    length = end_pos - start_pos + 1;
+    // Get the state of the last segment before the forced final exon
+    int final_state = current_state;
     
-    // Check segment validity
-    valid_len = 0;
-    if (current_state == 0) { // Exon
-        valid_len = (length >= ed->min_len_exon);
-        if (!valid_len) invalid_exons++;
-    } else { // Intron
-        valid_len = (length >= ed->min_len_intron);
-        if (!valid_len) invalid_introns++;
-    }
+    // Calculate the end position of the last computed segment
+    int end_pos = info->T - FLANK - ed->min_len_exon - 1;
     
-    if (DEBUG == 1)     printf("%-8d %-8d %-12s\n", 
-          end_pos, length, valid_len ? "Yes" : "No");
-    
-    // Output the final exon segment (forced by model)
-    segment++;
-    start_pos = info->T - FLANK - ed->min_len_exon;
-    end_pos = info->T - FLANK - 1;
-    length = end_pos - start_pos + 1;
-    valid_len = (length >= ed->min_len_exon);
-    exon_count++;
-    
-    if (DEBUG == 1)     printf("%-8d %-8s %-8d %-8d %-8d %-12s %-25s\n", 
-           segment, "Exon", start_pos, end_pos, length, valid_len ? "Yes" : "No", "(forced final exon)");
-    
-    // Print summary
-    if (DEBUG == 1)     printf("\nViterbi Path Summary:\n");
-    if (DEBUG == 1)     printf("Total segments: %d\n", segment);
-    if (DEBUG == 1)     printf("Exons: %d (Invalid length: %d)\n", exon_count, invalid_exons);
-    if (DEBUG == 1)     printf("Introns: %d (Invalid length: %d)\n", intron_count, invalid_introns);
-    if (DEBUG == 1)     printf("Canonical donor sites (GT): %d/%d\n", canonical_donors, total_donors);
-    if (DEBUG == 1)     printf("Canonical acceptor sites (AG): %d/%d\n", canonical_acceptors, total_acceptors);
-    
-    // Check gene structure
-    if (current_state != 0) {
-        if (DEBUG == 1)     printf("\nWARNING: Last segment before the forced final exon is an intron (potential splice site issue).\n");
+    // If the last segment is not an exon, output it normally
+    if (final_state != 0) {
+        printf("INTRON %d %d NNNNNN\n", start_pos, end_pos);
+        
+        // Then output the forced final exon as separate
+        start_pos = info->T - FLANK - ed->min_len_exon;
+        end_pos = info->T - FLANK - 1;
+        printf("EXON %d %d NNNNN\n", start_pos, end_pos);
+    } else {
+        // If the last segment is an exon, merge it with the forced final exon
+        end_pos = info->T - FLANK - 1; // End of the forced final exon
+        printf("EXON %d %d NNNNN\n", start_pos, end_pos);
     }
 }
 
-/**
- * Outputs gene segments in a simple format for Python processing
- * Format:
- * <segment_type> <start_pos> <end_pos> <splice_site>
- * Where:
- * - segment_type: "EXON" or "INTRON"
- * - start_pos: base pair start position
- * - end_pos: base pair end position
- * - splice_site: ATCG representation of donor/acceptor site (if applicable)
- */
-
- void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
- {    
-     // Output the initial exon segment (forced by model)
-     int start_pos = FLANK;
-     int end_pos = start_pos + ed->min_len_exon - 1;
-     printf("EXON %d %d NNNNN\n", start_pos, end_pos);
-     
-     // Start processing from after the initial exon
-     start_pos = FLANK + ed->min_len_exon;
-     int current_state = vit->path[0];
-     
-     // Process transitions
-     for (int i = 1; i < info->T - 2 * FLANK - 2 * ed->min_len_exon; i++)
-     {
-         if (vit->path[i] != current_state)
-         {
-             // End of segment
-             int transition_pos = i + FLANK + ed->min_len_exon;
-             end_pos = transition_pos - 1;
-             
-             // Output current segment
-             if (current_state == 0)
-             {
-                 // Exon with donor site
-                 printf("EXON %d %d ", start_pos, end_pos);
-                 
-                 // Add donor site (if there's enough sequence)
-                 if (transition_pos + 4 < info->T)
-                 {
-                     char donor_site[6];
-                     strncpy(donor_site, &info->original_sequence[transition_pos], 5);
-                     donor_site[5] = '\0';
-                     printf("%s\n", donor_site);
-                 } 
-                 else 
-                 {
-                     printf("NNNNN\n");
-                 }
-                 
-             } else 
-             {
-                 // Intron with acceptor site
-                 printf("INTRON %d %d ", start_pos, end_pos);
-                 
-                 // Add acceptor site (if there's enough sequence)
-                 if (transition_pos >= 6) {
-                     char acceptor_site[7];
-                     strncpy(acceptor_site, &info->original_sequence[transition_pos - 6], 6);
-                     acceptor_site[6] = '\0';
-                     printf("%s\n", acceptor_site);
-                 } else {
-                     printf("NNNNNN\n");
-                 }
-             }
-             
-             // Start new segment
-             current_state = vit->path[i];
-             start_pos = transition_pos;
-         }
-     }
-     
-     // Process the final segment from vit->path
-     end_pos = info->T - FLANK - ed->min_len_exon - 1;
-     
-     if (current_state == 0) {
-         printf("EXON %d %d NNNNN\n", start_pos, end_pos);
-     } else {
-         printf("INTRON %d %d NNNNNN\n", start_pos, end_pos);
-     }
-     
-     // Output the final exon segment (forced by model)
-     start_pos = info->T - FLANK - ed->min_len_exon;
-     end_pos = info->T - FLANK - 1;
-     printf("EXON %d %d\n", start_pos, end_pos);
- }
+void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
+{    
+    int start_pos = FLANK;
+    int current_state = vit->path[0];
+    
+    // Check if first state is exon - if so, we'll merge with forced initial exon
+    if (current_state != 0) {  // If first state is not exon
+        int end_pos = FLANK + ed->min_len_exon - 1;
+        printf("EXON %d %d NNNNN\n", start_pos, end_pos);
+        start_pos = FLANK + ed->min_len_exon;
+    }
+    // If first state is exon, we don't output anything yet - we'll merge
+    
+    // Process transitions
+    for (int i = 1; i < info->T - 2 * FLANK - 2 * ed->min_len_exon; i++)
+    {
+        if (vit->path[i] != current_state)
+        {
+            // End of segment
+            int transition_pos = i + FLANK + ed->min_len_exon;
+            int end_pos = transition_pos - 1;
+            
+            // Output current segment
+            if (current_state == 0)
+            {
+                // Exon with donor site
+                printf("EXON %d %d ", start_pos, end_pos);
+                
+                // Add donor site (if there's enough sequence)
+                if (transition_pos + 4 < info->T)
+                {
+                    char donor_site[6];
+                    strncpy(donor_site, &info->original_sequence[transition_pos], 5);
+                    donor_site[5] = '\0';
+                    printf("%s\n", donor_site);
+                } 
+                else 
+                {
+                    printf("NNNNN\n");
+                }
+                
+            } else 
+            {
+                // Intron with acceptor site
+                printf("INTRON %d %d ", start_pos, end_pos);
+                
+                // Add acceptor site (if there's enough sequence)
+                if (transition_pos >= 6) {
+                    char acceptor_site[7];
+                    strncpy(acceptor_site, &info->original_sequence[transition_pos - 6], 6);
+                    acceptor_site[6] = '\0';
+                    printf("%s\n", acceptor_site);
+                } else {
+                    printf("NNNNNN\n");
+                }
+            }
+            
+            // Start new segment
+            current_state = vit->path[i];
+            start_pos = transition_pos;
+        }
+    }
+    
+    // Get the state of the last segment before the forced final exon
+    int final_state = current_state;
+    
+    // Calculate the end position of the last computed segment
+    int end_pos = info->T - FLANK - ed->min_len_exon - 1;
+    
+    // If the last segment is not an exon, output it normally
+    if (final_state != 0) {
+        printf("INTRON %d %d NNNNNN\n", start_pos, end_pos);
+        
+        // Then output the forced final exon as separate
+        start_pos = info->T - FLANK - ed->min_len_exon;
+        end_pos = info->T - FLANK - 1;
+        printf("EXON %d %d NNNNN\n", start_pos, end_pos);
+    } else {
+        // If the last segment is an exon, merge it with the forced final exon
+        end_pos = info->T - FLANK - 1; // End of the forced final exon
+        printf("EXON %d %d NNNNN\n", start_pos, end_pos);
+    }
+}

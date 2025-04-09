@@ -170,12 +170,14 @@ void exon_intron_parser(Lambda *l, char *filename, int digit)
         memset(l->B.intron, 0, 256 * sizeof(double));
     }
 
-    // Skip header line
-    if (fgets(line, sizeof(line), file) != NULL && line[0] == '%')      if (DEBUG == 1)     printf("\t\u2713");
+    if ( ( fgets(line, sizeof(line), file) != NULL && line[0] == '%' ) && DEBUG == 1)
+    {
+        printf("\t\u2713");
+    }
     else 
     {
         if (DEBUG == 1)     printf("Warning: No header found in %s\n", filename);
-        rewind(file); // Go back to start if no header
+        rewind(file); 
     }
 
     // Process each line
@@ -216,8 +218,8 @@ void explicit_duration_probability(Explicit_duration *ed, char *filename, int di
 {
     assert(digit == 0 || digit == 1);                   // 0 for exon, 1 for intron
 
-    if      ( digit == 0 ) if (DEBUG == 1)  printf("Starting getting exon explicit duration probability");
-    else if ( digit == 1 ) if (DEBUG == 1)  printf("Starting getting intron explicit duration probability");
+    if      ( digit == 0 && DEBUG == 1)  printf("Starting getting exon explicit duration probability");
+    else if ( digit == 1 && DEBUG == 1)  printf("Starting getting intron explicit duration probability");
     
     FILE *file = fopen(filename, "r");
 

@@ -91,12 +91,11 @@ int main(int argc, char *argv[])
     backward_algorithm(&l, &bw, &info, &ed, &vit, &fw);
 
     // output section //
-    initial_output(&vit, &info, &ed);
     if (DEBUG == 1)     viterbi_path_test(&vit, &info, &ed);
     if (DEBUG == 0)     output_gene_segments(&vit, &info, &ed);
 
     // free memory //
-    free_alpha(&info, &fw);
+    free_alpha(&info, &fw, &ed);
     free_beta(&bw);
     free_viterbi(&vit);
     free(info.original_sequence);
