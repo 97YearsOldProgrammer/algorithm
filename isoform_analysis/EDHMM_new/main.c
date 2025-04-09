@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
     // output section //
     if (DEBUG == 1)     viterbi_path_test(&vit, &info, &ed);
     if (DEBUG == 0)     output_gene_segments(&vit, &info, &ed);
+    plot_splice_sites(&vit, &info, &ed);
 
     // free memory //
     free_alpha(&info, &fw, &ed);

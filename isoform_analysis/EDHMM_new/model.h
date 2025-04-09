@@ -129,5 +129,6 @@ void free_beta(Backward_algorithm *beta);
 // output section //
 void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
+void plot_splice_sites(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 
 #endif
