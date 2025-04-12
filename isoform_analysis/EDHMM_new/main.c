@@ -91,9 +91,13 @@ int main(int argc, char *argv[])
     backward_algorithm(&l, &bw, &info, &ed, &vit, &fw);
 
     // output section //
-    if (DEBUG == 1)     viterbi_path_test(&vit, &info, &ed);
-    if (DEBUG == 0)     output_gene_segments(&vit, &info, &ed);
+    if (DEBUG == 1)
+    {  
+    viterbi_path_test(&vit, &info, &ed);
+    output_gene_segments(&vit, &info, &ed);
     plot_splice_sites(&vit, &info, &ed);
+    }
+    print_splice_sites(&vit, &info, &ed);
 
     // free memory //
     free_alpha(&info, &fw, &ed);
@@ -103,5 +107,4 @@ int main(int argc, char *argv[])
     free(info.numerical_sequence);
 
     return 0;
-
 }

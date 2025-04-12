@@ -71,7 +71,10 @@ typedef struct
     double xi_sum_intron;
 } Viterbi_algorithm;
 
-
+typedef struct
+{
+    /* data */
+};
 
 // declared function //
 
@@ -130,5 +133,6 @@ void free_beta(Backward_algorithm *beta);
 void viterbi_path_test(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 void output_gene_segments(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 void plot_splice_sites(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
+void print_splice_sites(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed);
 
 #endif
