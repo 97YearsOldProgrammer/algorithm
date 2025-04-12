@@ -1,0 +1,147 @@
+import argparse
+import hints
+import korflab
+import sys
+
+## Command Line Interface ##
+
+parser = argparse.ArgumentParser(
+    description='Alternative isoform generator by hints from EDHMM model')
+parser.add_argument('model', type=str, metavar='<edhmm exe>',
+    help='edhmm model executable')
+parser.add_argument('fasta', type=str, metavar='<fasta file>',
+	help='input fasta file (reads only the first sequence if multi-fasta)')
+parser.add_argument('--min_intron', required=False, type=int, default=35,
+	metavar='<int>', help='minimum length of intron [%(default)i]')
+parser.add_argument('--min_exon', required=False, type=int, default=25,
+	metavar='<int>', help='minimum length exon [%(default)i]')
+parser.add_argument('--max_splice', required=False, type=int, default=3,
+	metavar='<int>', help='maximum number of introns [%(default)i]')
+parser.add_argument('--flank', required=False, type=int, default=99,
+	metavar='<int>', help='genomic flank on each side [%(default)i]')
+parser.add_argument('--dpwm', required=False, type=str, metavar='<file>',
+	help='position weight matrix for donor site [%(default)s]')
+parser.add_argument('--apwm', required=False, type=str, metavar='<file>',
+	help='position weight matrix for acceptor site [%(default)s]')
+parser.add_argument('--emm', required=False, type=str, metavar='<file>',
+	help='markov model for exon sequence [%(default)s]')
+parser.add_argument('--imm', required=False, type=str, metavar='<file>',
+	help='markov model for intron sequence [%(default)s]')
+parser.add_argument('--elen', required=False, type=str, metavar='<file>',
+	help='length model for exons [%(default)s]')
+parser.add_argument('--ilen', required=False, type=str, metavar='<file>',
+	help='length model for introns [%(default)s]')
+parser.add_argument('--introns', required=False, type=str, metavar='<file>',
+	help='use introns in gff for source of splice sites [%(default)s]')
+parser.add_argument('--limit', required=False, type=int, default=100,
+	metavar='<int>', help='limit number of transcripts [%(default)i]')
+parser.add_argument('--wdpwm', required=False, type=float, default=1.0,
+	metavar='<float>', help='dpwm weight [%(default).2f]')
+parser.add_argument('--wapwm', required=False, type=float, default=1.0,
+	metavar='<float>', help='apwm weight [%(default).2f]')
+parser.add_argument('--wemm', required=False, type=float, default=1.0,
+	metavar='<float>', help='emm weight [%(default).2f]')
+parser.add_argument('--wimm', required=False, type=float, default=1.0,
+	metavar='<float>', help='imm weight [%(default).2f]')
+parser.add_argument('--welen', required=False, type=float, default=1.0,
+	metavar='<float>', help='elen weight [%(default).2f]')
+parser.add_argument('--wilen', required=False, type=float, default=1.0,
+	metavar='<float>', help='ilen weight [%(default).2f]')
+parser.add_argument('--icost', required=False, type=float, default=0.001,
+	metavar='<float>', help='prob cost for each intron [%(default).2f]')
+args = parser.parse_arg()
+
+output          =   hints.run_edhmm(args.model, args.fasta)
+dons, accs      =   hints.parse_edhmm_output(output)
+name, seqs      =   korflab.readfasta(args.sequence)
+donor, acceptor =   hints.gtag_sites(args.sequence, args.flank, args.min_exon )
+
+assert(len(dons) == len(donor) and len(accs) == len(acceptor))
+
+assert(arg.icost >= 0 and arg.icost <= 1)
+icost = isoform.prob2score(arg.icost)
+dpwm = isoform.read_pwm(arg.dpwm)   if arg.dpwm else None
+apwm = isoform.read_pwm(arg.apwm)   if arg.apwm else None
+elen = isoform.read_len(arg.elen)   if arg.elen else None
+ilen = isoform.read_len(arg.ilen)   if arg.ilen else None
+emm  = isoform.read_markov(arg.emm) if arg.emm  else None
+imm  = isoform.read_markov(arg.imm) if arg.imm  else None
+name, seq = next(isoform.read_fasta(arg.fasta))
+
+# generate isoforms
+
+txs, info = isoform.all_possible(seq, arg.min_intron, arg.min_exon,
+		arg.max_splice, arg.flank, gff=arg.introns)
+
+# score isoforms
+
+for tx in txs:
+	score = 0
+	if apwm: score += isoform.score_apwm(apwm, tx) * arg.wapwm
+	if dpwm: score += isoform.score_dpwm(dpwm, tx) * arg.wdpwm
+	if elen: score += isoform.score_elen(elen, tx) * arg.welen
+	if ilen: score += isoform.score_ilen(ilen, tx) * arg.wilen
+	if emm:  score += isoform.score_emm(emm, tx) * arg.wemm
+	if imm:  score += isoform.score_imm(imm, tx, dpwm, apwm) * arg.wimm
+	score += len(tx['introns']) * icost
+	tx['score'] = score
+
+# summary output
+
+print('# name:', name)
+print('# length:', len(seq))
+print('# donors:', info['donors'])
+print('# acceptors:', info['acceptors'])
+print('# trials:', info['trials'])
+print('# isoforms:', len(txs))
+print(f'# complexity: {isoform.complexity(txs):.4f}')
+
+
+if arg.limit:
+	limit = arg.limit
+	if limit > len(txs): limit = len(txs)
+else:
+	limit = len(txs)
+
+txs = sorted(txs, key=lambda item: item['score'], reverse=True)
+
+# calculate probability of each isoform
+
+weight = []
+total = 0
+for i in range(limit):
+	tx = txs[i]
+	w = 2 ** tx['score']
+	weight.append(w)
+	total += w
+prob = []
+for w in weight: prob.append(w / total)
+
+# create gff
+
+chrom = name.split()[0]
+src = 'asg'
+cs = f'{chrom}\t{src}\t'
+b = txs[0]['beg'] + 1
+e = txs[0]['end'] + 1
+gene = f'Gene-{chrom}'
+print(f'{cs}gene\t{b}\t{e}\t.\t+\t.\tID={gene}\n')
+for i in range(limit):
+	tx = txs[i]
+	b = tx['beg'] + 1
+	e = tx['end'] + 1
+	s = prob[i]
+	tid = f'tx-{chrom}-{i+1}'
+	print(f'{cs}mRNA\t{b}\t{e}\t{s:.4g}\t+\t.\tID={tid};Parent={gene}')
+
+	for exon in tx['exons']:
+		b = exon[0] + 1
+		e = exon[1] + 1
+		print(f'{cs}exon\t{b}\t{e}\t{s:.4g}\t+\t.\tParent={tid}')
+
+	for intron in tx['introns']:
+		b = intron[0] + 1
+		e = intron[1] + 1
+		print(f'{cs}intron\t{b}\t{e}\t{s:.4g}\t+\t.\tParent={tid}')
+
+	print()

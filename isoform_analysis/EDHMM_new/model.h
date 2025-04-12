@@ -71,11 +71,6 @@ typedef struct
     double xi_sum_intron;
 } Viterbi_algorithm;
 
-typedef struct
-{
-    /* data */
-};
-
 // declared function //
 
 // seq reading //

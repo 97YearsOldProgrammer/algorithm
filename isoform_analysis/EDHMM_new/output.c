@@ -524,44 +524,19 @@ void plot_splice_sites(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
 void print_splice_sites(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
 {
     int array_size = info->T - 2 * FLANK - 2 * ed->min_len_exon;
-    const double THRESHOLD = 1e-10; // Minimum threshold to consider a site
+    const double THRESHOLD = 1e-10; 
     
-    // Print header for donor sites
-    printf("=== Donor Sites (Exon → Intron) ===\n");
-    printf("Position,Value\n");
+    printf("DONS\n");
     
-    // Print all significant donor sites
-    for (int i = 0; i < array_size; i++) {
-        int seq_pos = i + FLANK + ed->min_len_exon;
-        
-        if (vit->xi_sum[0][i] > THRESHOLD) {
-            printf("%d,%.10f\n", seq_pos, vit->xi_sum[0][i]);
-        }
+    for (int i = 0; i < array_size; i++)
+    {
+        if (vit->xi_sum[0][i] > THRESHOLD)      printf("%.10f\n", vit->xi_sum[0][i]);
     }
     
-    // Print header for acceptor sites
-    printf("\n=== Acceptor Sites (Intron → Exon) ===\n");
-    printf("Position,Value\n");
+    printf("ACCS\n");
     
-    // Print all significant acceptor sites
-    for (int i = 0; i < array_size; i++) {
-        int seq_pos = i + FLANK + ed->min_len_exon;
-        
-        if (vit->xi_sum[1][i] > THRESHOLD) {
-            printf("%d,%.10f\n", seq_pos, vit->xi_sum[1][i]);
-        }
+    for (int i = 0; i < array_size; i++)
+    {
+        if (vit->xi_sum[1][i] > THRESHOLD)      printf("%.10f\n", vit->xi_sum[1][i]);
     }
-    
-    // Print summary
-    int donor_count = 0;
-    int acceptor_count = 0;
-    
-    for (int i = 0; i < array_size; i++) {
-        if (vit->xi_sum[0][i] > THRESHOLD) donor_count++;
-        if (vit->xi_sum[1][i] > THRESHOLD) acceptor_count++;
-    }
-    
-    printf("\nSummary:\n");
-    printf("Total donor sites: %d\n", donor_count);
-    printf("Total acceptor sites: %d\n", acceptor_count);
 }

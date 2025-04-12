@@ -1,3 +1,9 @@
+"""
+do this only with the debug set to 1 in the EDHMM
+the DEBUG value is inside the header file
+yeah maybe i should set a argv value for the EDHMM
+"""
+
 import os
 import argparse
 import tarfile
