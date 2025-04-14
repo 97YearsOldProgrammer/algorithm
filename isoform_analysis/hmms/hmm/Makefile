@@ -3,11 +3,11 @@ CFLAGS = -Wall -Wextra -g
 
 OBJS = main.o HMM_algo.o
 
-all: conventional_HMM
+all: hmm
 
-conventional_HMM: $(OBJS)
-	$(CC) $(CFLAGS) -o conventional_HMM $(OBJS) -lm
-	@chmod +x conventional_HMM
+hmm: $(OBJS)
+	$(CC) $(CFLAGS) -o hmm $(OBJS) -lm
+	@chmod +x hmm
 
 main.o: main.c HMM_algo.c HMM_model.h
 	@echo "Compling main"
@@ -19,6 +19,6 @@ HMM_sample.o: HMM_algo.c
 
 clean: 
 	@echo "Removing everything but the source file"
-	rm -f conventional_HMM *.o
+	rm -f hmm *.o
 
 .PHONY: all clean

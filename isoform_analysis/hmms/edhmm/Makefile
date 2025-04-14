@@ -5,11 +5,11 @@ CFLAGS = -g -Wall -Wextra	# normal with default debug; mostly useless for runtim
 
 OBJS = main.o parser.o model.o
 
-all: EDHMM
+all: edhmm
 
-EDHMM: $(OBJS)
-	$(CC) $(CFLAGS) -o EDHMM $(OBJS) -lm
-	@chmod +x EDHMM
+edhmm: $(OBJS)
+	$(CC) $(CFLAGS) -o edhmm $(OBJS) -lm
+	@chmod +x edhmm
 
 main.o: main.c parser.c model.c model.h
 	@echo "Compiling main"
@@ -25,14 +25,14 @@ model.o: model.c model.h
 
 clean:
 	@echo "Removing everything but the source file"
-	rm -f EDHMM *.o
+	rm -f edhmm *.o
 
 # with default debug 
-debug: EDHMM
-	lldb ./EDHMM seq
+debug: edhmm
+	lldb ./edhmm seq
 
 # with default seq input
-test: EDHMM
-	./EDHMM seq
+test: edhmm
+	./edhmm seq
 	
 .PHONY: all clean debug

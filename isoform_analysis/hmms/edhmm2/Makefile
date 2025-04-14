@@ -5,11 +5,11 @@ CFLAGS = -fsanitize=address -g
 
 OBJS = main.o parser.o model.o output.o
 
-all: EDHMM
+all: edhmm2
 
-EDHMM: $(OBJS)
-	$(CC) $(CFLAGS) -o EDHMM $(OBJS) -lm
-	@chmod +x EDHMM
+edhmm2: $(OBJS)
+	$(CC) $(CFLAGS) -o edhmm2 $(OBJS) -lm
+	@chmod +x edhmm2
 
 main.o: main.c parser.c model.c model.h output.c
 	@echo "Compiling main"
@@ -29,14 +29,14 @@ output.o: output.c model.h
 
 clean:
 	@echo "Removing everything but the source file"
-	rm -f EDHMM *.o
+	rm -f edhmm2 *.o
 
 # with default debug 
-debug: EDHMM
-	lldb ./EDHMM seq
+debug: edhmm2
+	lldb ./edhmm2 seq
 
 # with default seq input
-test: EDHMM
-	./EDHMM seq
+test: edhmm2
+	./edhmm2 seq
 	
 .PHONY: all clean debug
