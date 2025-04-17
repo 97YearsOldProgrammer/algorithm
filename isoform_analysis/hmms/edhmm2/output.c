@@ -524,19 +524,28 @@ void plot_splice_sites(Viterbi_algorithm *vit, Observed_events *info, Explicit_d
 void print_splice_sites(Viterbi_algorithm *vit, Observed_events *info, Explicit_duration *ed)
 {
     int array_size = info->T - 2 * FLANK - 2 * ed->min_len_exon;
-    const double THRESHOLD = 1e-10; 
+
+    const double epsilon = 1e-10;
     
     printf("DONS\n");
-    
+
     for (int i = 0; i < array_size; i++)
     {
-        if (vit->xi_sum[0][i] > THRESHOLD)      printf("%.10f\n", vit->xi_sum[0][i]);
+        if (vit->xi_sum[0][i] > epsilon)
+        {
+            int pos = i + FLANK + ed->min_len_exon;
+            printf("%d %.10f\n", pos - 1, vit->xi_sum[0][i]);
+        }
     }
     
     printf("ACCS\n");
-    
+
     for (int i = 0; i < array_size; i++)
     {
-        if (vit->xi_sum[1][i] > THRESHOLD)      printf("%.10f\n", vit->xi_sum[1][i]);
+        if (vit->xi_sum[1][i] > epsilon)
+        {
+            int pos = i + FLANK + ed->min_len_exon;
+            printf("%d %.10f\n", pos - 2, vit->xi_sum[1][i]);
+        }
     }
 }

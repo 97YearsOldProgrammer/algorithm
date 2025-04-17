@@ -3,7 +3,8 @@ import subprocess
 import argparse
 import korflab
 
-def run_edhmm(model_path, seq_file):
+def run(model, fasta):
+
     '''
     Run EDHMM model on a single sequence file and return the output
     '''
@@ -17,15 +18,16 @@ def run_edhmm(model_path, seq_file):
         "../isoform_analysis/models/intron.len"
     ]
     
-    cmd = [model_path, seq_file] + model_files
+    cmd = [model, fasta] + model_files
     result = subprocess.run(cmd, check=True, text=True, capture_output=True)
     
     return result.stdout
 
-def parse_edhmm_output(output):
-    """
+def parse(output):
+
+    '''
     Parse EDHMM output to extract donor and acceptor site probabilities
-    """
+    '''
     
     dons = []
     accs = []
@@ -65,18 +67,11 @@ def analyze_splice_sites(dons, accs):
     
     return significant_dons, significant_accs
 
-def find_significant_sites(sites_dict):
-    """
+def gstats(sites):
+    '''
     Implement gap statistic to find significant splice sites
-    
-    Args:
-        sites_dict: Dictionary with site indices as keys and probabilities as values
-    
-    Returns:
-        Dictionary containing only the significant sites
-    """
-    # Sort sites by probability value (descending)
-    sorted_sites = sorted(sites_dict.items(), key=lambda x: x[1], reverse=True)
+    '''
+    sorted_sites = sorted(sites.items(), key=lambda x: x[1], reverse=True)
     
     # If we have fewer than 2 sites, return all of them
     if len(sorted_sites) < 2:

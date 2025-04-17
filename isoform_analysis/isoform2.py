@@ -6,6 +6,9 @@ import json
 import math
 import random
 import sys
+import subprocess
+
+import hints
 
 GCODE = {
 	'AAA' : 'K',	'AAC' : 'N',	'AAG' : 'K',	'AAT' : 'N',
@@ -360,6 +363,11 @@ def gff_sites(seq, gff, gtag=True):
 
 	return dons, accs
 
+def hints_sites(fasta, hmodel):
+
+	
+	return
+
 class Isoform:
 	"""Class to represent a single isoform"""
 
@@ -548,7 +556,7 @@ class Locus:
 	"""Class to represent an alternatively spliced locus"""
 
 	def __init__(self, desc, seq, model, constraints=None, weights=None,
-			gff=None, limit=None, countonly=False, memoize=False):
+			gff=None, limit=None, countonly=False, memoize=False, hints=False):
 
 		# sequence stuff
 		self.desc = desc
@@ -572,8 +580,9 @@ class Locus:
 			self.flank = constraints['flank']
 
 		# algorithm init
-		if gff: self.dons, self.accs = gff_sites(seq, gff)
-		else:   self.dons, self.accs = gtag_sites(seq, self.flank, self.emin)
+		if gff: 	self.dons, self.accs = gff_sites(seq, gff)
+		if hints:	self.dons, self.accs = pass
+		else:   	self.dons, self.accs = gtag_sites(seq, self.flank, self.emin)
 		self.isoforms = []
 		self.worst = None
 		self.rejected = 0
