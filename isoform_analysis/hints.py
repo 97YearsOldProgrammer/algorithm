@@ -1,12 +1,8 @@
-import os
 import subprocess
-import argparse
-import korflab
 
 def run(model, fasta):
-
     '''
-    Run EDHMM model on a single sequence file and return the output
+    i know it's stupid, hardcode path, maybe better plan later on
     '''
 
     model_files = [
@@ -24,85 +20,79 @@ def run(model, fasta):
     return result.stdout
 
 def parse(output):
-
     '''
     Parse EDHMM output to extract donor and acceptor site probabilities
     '''
     
     dons = []
     accs = []
-    swtich = 0
+    switch = 0
     
-    for line in output.strip().split('\n'):
-        
+    lines = output.strip().split('\n')
+
+    for line in lines:
+        # this switch logic is odd, lit can turn into anything better
         if      line == "DONS": 
             switch = 0
             continue
-        
+
         elif    line == "ACCS":
-            swtich = 1
+            switch = 1
             continue
         
-        if   swtich == 0: dons.append[float(line)]
-        elif swtich == 1: accs.append[float(line)]
+        line = line.strip().split('\t')
+        pos = int  (line[0])
+        val = float(line[1])
+
+        if   switch == 0: dons.append( (pos, val) )
+        elif switch == 1: accs.append( (pos, val) )
     
     return dons, accs
 
-def analyze_splice_sites(dons, accs):
-    """
-    Analyze splice sites using gap statistic to identify significant sites
-    
-    Args:
-        dons: Dictionary of donor site probabilities
-        accs: Dictionary of acceptor site probabilities
-    
-    Returns:
-        Tuple of (significant_dons, significant_accs) dictionaries
-    """
-    # Find significant donor sites using gap statistic
-    significant_dons = find_significant_sites(dons)
-    
-    # Find significant acceptor sites using gap statistic
-    significant_accs = find_significant_sites(accs)
-    
-    return significant_dons, significant_accs
-
-def gstats(sites):
+def gapstats(sites):
     '''
-    Implement gap statistic to find significant splice sites
+    Gap statistic to find significant splice sites
     '''
-    sorted_sites = sorted(sites.items(), key=lambda x: x[1], reverse=True)
+    sites = sorted(sites, key=lambda x: x[1], reverse=True)
+    max = 0
+    idx = 0
     
-    # If we have fewer than 2 sites, return all of them
-    if len(sorted_sites) < 2:
-        return dict(sorted_sites)
-    
-    max_gap_ratio = 0
-    cutoff_idx = 0
-    
-    # Find the largest gap between consecutive values
-    for i in range(len(sorted_sites) - 1):
-        if sorted_sites[i][1] <= 0:
-            continue
-            
-        gap_ratio = sorted_sites[i][1] / sorted_sites[i+1][1]
-        if gap_ratio > max_gap_ratio:
-            max_gap_ratio = gap_ratio
-            cutoff_idx = i
-    
-    # Return only sites before the significant gap
-    return dict(sorted_sites[:cutoff_idx + 1])
+    for i in range( len(sites) - 1 ):
+        val  = sites[i][1]
+        val2 = sites[i+1][1]
+        gap  = val / val2
 
-def gtag_sites(seq, flank, minex):
+        if gap > max:
+            max = gap
+            idx = i
     
-    dons = []
-    accs = []
-    for i in range(flank + minex, len(seq) - flank - minex - 1):
-        if seq[i:i+2] == 'GT': dons.append(i)
-        if seq[i-1:i+1] == 'AG': accs.append(i)
-    return dons, accs
+    return sorted( [site[0] for site in sites[:idx+1]] )
 
+def smoothed_gapstats(sites, k:int = 5):
+    '''
+    smoothed gap statistics 
+    '''
+    sites= sorted(sites, key=lambda x: x[1], reverse=True)
+    max = 0
+    idx = 0
 
+    for i in range( len(sites) - k ):
+        avg  = sum(site[1] for site in sites[i:i+k])     / k
+        avg2 = sum(site[1] for site in sites[i+1:i+k+1]) / k
+        gap  = avg/avg2 
 
-if __name__ == "__main__":
-    main()
+        if gap > max:
+            max = gap
+            idx = i + k // 2
+    
+    return sorted( [site[0] for site in sites[:idx+1]] )
+
+def percentile(sites, percentile:int = 25):
+    '''
+    filter splice sites by percentile
+    '''
+
+    sites  = sorted(sites, key=lambda x:[1], reverse=True)
+    cutoff = sites[int ( len(sites) * (1 - percentile/100) )][1]
+    sites  = [site for site in sites if site[1] >= cutoff]
+    return sorted([site[0] for site in sites])

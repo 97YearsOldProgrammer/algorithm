@@ -534,7 +534,7 @@ void print_splice_sites(Viterbi_algorithm *vit, Observed_events *info, Explicit_
         if (vit->xi_sum[0][i] > epsilon)
         {
             int pos = i + FLANK + ed->min_len_exon;
-            printf("%d %.10f\n", pos - 1, vit->xi_sum[0][i]);
+            printf("%d\t%.10f\n", pos - 1, vit->xi_sum[0][i]);
         }
     }
     
@@ -545,7 +545,7 @@ void print_splice_sites(Viterbi_algorithm *vit, Observed_events *info, Explicit_
         if (vit->xi_sum[1][i] > epsilon)
         {
             int pos = i + FLANK + ed->min_len_exon;
-            printf("%d %.10f\n", pos - 2, vit->xi_sum[1][i]);
+            printf("%d\t%.10f\n", pos - 2, vit->xi_sum[1][i]);
         }
     }
 }

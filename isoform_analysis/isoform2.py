@@ -1,12 +1,10 @@
 
 import copy
 import gzip
-import itertools
 import json
 import math
 import random
 import sys
-import subprocess
 
 import hints
 
@@ -363,10 +361,18 @@ def gff_sites(seq, gff, gtag=True):
 
 	return dons, accs
 
-def hints_sites(fasta, hmodel):
+def hmm_sites(hmodel, fasta):
+	result 	     = hints.run(hmodel, fasta)
+	dons, accs   = hints.parse(result)
 
+	return dons, accs
+
+def hints_sites(dons, accs):
+	# this shall be more user friendly later on
+	dons = hints.gapstats(dons)
+	accs = hints.gapstats(accs)
 	
-	return
+	return dons, accs
 
 class Isoform:
 	"""Class to represent a single isoform"""
@@ -556,7 +562,7 @@ class Locus:
 	"""Class to represent an alternatively spliced locus"""
 
 	def __init__(self, desc, seq, model, constraints=None, weights=None,
-			gff=None, limit=None, countonly=False, memoize=False, hints=False):
+			gff=None, limit=None, countonly=False, memoize=False, dons=None, accs=None):
 
 		# sequence stuff
 		self.desc = desc
@@ -580,9 +586,9 @@ class Locus:
 			self.flank = constraints['flank']
 
 		# algorithm init
-		if gff: 	self.dons, self.accs = gff_sites(seq, gff)
-		if hints:	self.dons, self.accs = pass
-		else:   	self.dons, self.accs = gtag_sites(seq, self.flank, self.emin)
+		if gff: 			self.dons, self.accs = gff_sites(seq, gff)
+		if dons and accs:	self.dons, self.accs = dons, accs
+		else:   			self.dons, self.accs = gtag_sites(seq, self.flank, self.emin)
 		self.isoforms = []
 		self.worst = None
 		self.rejected = 0

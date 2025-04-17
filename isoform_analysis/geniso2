@@ -3,6 +3,7 @@
 import argparse
 import sys
 
+import hints
 import isoform2
 from isoform2 import Locus
 
@@ -39,6 +40,8 @@ parser.add_argument('--winf', required=False, type=float, default=1.0,
 	metavar='<float>', help='intron frequency weight [%(default).2f]')
 parser.add_argument('--countonly', action='store_true',
 	help='report the total number of isoforms')
+parser.add_argument('--hmodel', type=str, metavar='<hmm path>',
+	help='input hmm exe path')
 arg = parser.parse_args()
 
 name, seq = next(isoform2.read_fasta(arg.fasta))
@@ -67,6 +70,23 @@ if arg.countonly:
 	locus = Locus(name, seq, model, constraints=constraints, weights=weights,
 		gff=arg.introns, limit=arg.limit, countonly=True)
 	print(locus.name, locus.isocount, sep='\t')
+
+if arg.hmodel:
+	dons, accs = isoform2.hmm_sites(arg.hmodel, arg.fasta)
+	
+	# sanity check
+	dons1 = [don[0] for don in dons]
+	accs1 = [acc[0] for acc in accs]
+	dons2, accs2 = isoform2.gtag_sites(seq, arg.flank, arg.min_exon)
+	assert(len(dons1) == len(dons2) and len(accs1) == len(accs1))
+	assert( (dons1 == dons2) and (accs1 == accs2) )
+	
+	dons = hints.percentile(dons)
+	accs = hints.percentile(accs)
+	locus = Locus(name, seq, model, constraints=constraints, weights=weights,
+		limit=arg.limit, gff=arg.introns, dons = dons, accs = accs)
+	locus.write_gff(fp)
+
 else:
 	locus = Locus(name, seq, model, constraints=constraints, weights=weights,
 		limit=arg.limit, gff=arg.introns)
