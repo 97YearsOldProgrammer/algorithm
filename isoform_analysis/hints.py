@@ -57,7 +57,7 @@ def gapstats(sites):
         gap  = val / val2
 
         if gap > max:
-            max = gap
+            max = gap 
             idx = i
     
     return sorted( [site[0] for site in sites[:idx+1]] )
@@ -88,7 +88,7 @@ def percentile(sites, percentile:int = 25):
     sites  = [site for site in sites if site[1] >= cutoff]
     return sorted([site[0] for site in sites])
 
-def countiso(dons, accs, min_intron, min_exon):
+def countiso(dons, accs, min_intron, min_exon, limit=False):
     ''' count all possible isoform '''
     
     count   = 0
@@ -96,6 +96,9 @@ def countiso(dons, accs, min_intron, min_exon):
         ''' recursion '''
         nonlocal count
         
+        if limit:
+            if count > limit: return
+            
         test  = ipos == 0
         start = dpos      if test else apos
         end   = len(dons) if test else len(accs)
