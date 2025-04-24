@@ -1,10 +1,9 @@
 import subprocess
+import isoform2
 
 def run(model, fasta):
-    '''
-    i know it's stupid, hardcode path, maybe better plan later on
-    '''
-
+    ''' i know it's stupid, hardcode path, maybe better plan later on '''
+    
     model_files = [
         "../isoform_analysis/models/don.pwm",
         "../isoform_analysis/models/acc.pwm",
@@ -20,22 +19,18 @@ def run(model, fasta):
     return result.stdout
 
 def parse(output):
-    '''
-    Parse EDHMM output to extract donor and acceptor site probabilities
-    '''
+    ''' Parse HMM output to extract donor and acceptor site probabilities '''
     
     dons = []
     accs = []
     switch = 0
     
     lines = output.strip().split('\n')
-
     for line in lines:
         # this switch logic is odd, lit can turn into anything better
         if      line == "DONS": 
             switch = 0
             continue
-
         elif    line == "ACCS":
             switch = 1
             continue
@@ -50,9 +45,8 @@ def parse(output):
     return dons, accs
 
 def gapstats(sites):
-    '''
-    Gap statistic to find significant splice sites
-    '''
+    ''' Gap statistic to find significant splice sites '''
+    
     sites = sorted(sites, key=lambda x: x[1], reverse=True)
     max = 0
     idx = 0
@@ -69,9 +63,8 @@ def gapstats(sites):
     return sorted( [site[0] for site in sites[:idx+1]] )
 
 def smoothed_gapstats(sites, k:int = 5):
-    '''
-    smoothed gap statistics 
-    '''
+    ''' smoothed gap statistics '''
+    
     sites= sorted(sites, key=lambda x: x[1], reverse=True)
     max = 0
     idx = 0
@@ -88,11 +81,34 @@ def smoothed_gapstats(sites, k:int = 5):
     return sorted( [site[0] for site in sites[:idx+1]] )
 
 def percentile(sites, percentile:int = 25):
-    '''
-    filter splice sites by percentile
-    '''
-
+    ''' filter splice sites by percentile '''
+    
     sites  = sorted(sites, key=lambda x:[1], reverse=True)
     cutoff = sites[int ( len(sites) * (1 - percentile/100) )][1]
     sites  = [site for site in sites if site[1] >= cutoff]
     return sorted([site[0] for site in sites])
+
+def countiso(dons, accs, min_intron, min_exon):
+    ''' count all possible isoform '''
+    
+    count   = 0
+    def all_possible(dpos, apos, ipos, old):
+        ''' recursion '''
+        nonlocal count
+        
+        test  = ipos == 0
+        start = dpos      if test else apos
+        end   = len(dons) if test else len(accs)
+        
+        for i in range(start, end):
+            new = dons[i] if test else accs[i]
+            if old != 0 and test:      
+                if new - old - 1 < min_exon: continue
+            else:                       
+                if new - old + 1 < min_intron: continue
+            if not test: count += 1
+            if test:    all_possible(i + 1, apos, 1, dons[i])
+            else:       all_possible(dpos, i + 1, 0, accs[i])
+                
+    all_possible(0, 0, 0, 0)
+    return count

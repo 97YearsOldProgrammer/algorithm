@@ -17,7 +17,6 @@ void numerical_transcription(Observed_events *info, const char *seq)
 
     for( size_t i = 0; i < len; i++)
     {
-
         // A == 0 , C == 1, G == 2, T == 3  
         if      (seq[i] == 'A')     info->numerical_sequence[i] = 0;
         else if (seq[i] == 'C')     info->numerical_sequence[i] = 1;
@@ -160,14 +159,12 @@ void normalize_transition_prob(Lambda *l, int len, int dons_or_accs)
 double log_sum_exp(double *array, int n) 
 {
     double max = array[0];
-
-    for (int i = 1; i < n ; i++)
+    for ( int i = 1 ; i < n ; i++ )
     {
         if( array[i] > max )     max = array[i];                  
     }
 
     double sum = 0.0;
-
     for( int i = 0 ; i < n ; i++)
     {
         sum += exp(array[i] - max);
@@ -218,81 +215,59 @@ void basis_forward_algorithm(Lambda *l, Explicit_duration *ed,  Forward_algorith
     if (DEBUG == 1)     printf("Start forward algorithm basis calculation:");
 
     /*
-        first loop: updating all possible a(1)(m, d)
-
-        a(1)(m, d) = pi(m) * bm(o1) * pm(d)
-        pi(m):  initial probability
-        bm(o1): emission probability
-        pm(d): explicit duration probability
-        [tau]: used for stimulate different duration
-
-        well we don't need initial prob for us; since uh, exon = 1.0; intron = 0.0;
+        [emprob]: bm(o1)                    aka: emission probability
+        [edprob]: pm(d)                     aka: explicit duration probability
+        [tau]   : residential time          aka: possible explicit duration
+        [sbps]  : bps where t=0             aka: start base pair
     */
-
-    int tau_exon;
-    int comp_len = info->T - 2 * FLANK - 2 * ed->min_len_exon;
-
-    if  (comp_len > ed->max_len_exon)      tau_exon = ed->max_len_exon;
-    else                                   tau_exon = comp_len;
-
-    int start_bps = FLANK + ed->min_len_exon;
-
-    int    index         = base4_to_int(info->numerical_sequence, start_bps - 3, 4);
-    double emission_prob = l->B.exon[index];
-
+    int     tau;
+    int     tau_exon;
+    int     tau_intron;
+    double  emprob;
+    int     idx_emprob;
+    int     sbps;
+    double  edprob;
+    double  total;
     /*
-        explicit duration is the only term that gonna be 0.0
-        if it's 0; means it's invalid length for exon
-        directly assign it as 0.0
+        first part
+            a(1)(m, d) = pi(m) * bm(o1) * pm(d)
+    in our case        = bm(o1) * pm(d)
+    aka:      total    = emprob * edprob
     */
+    tau = info->T - 2*FLANK - 2*ed->min_len_exon;
+    if      (tau > ed->max_len_exon)     tau_exon = ed->max_len_exon;
+    else                                 tau_exon = tau;
 
-    double total;
-    double ed_prob;
+    sbps        = FLANK + ed->min_len_exon;
+    idx_emprob  = base4_to_int(info->numerical_sequence, sbps - 3, 4);
+    emprob     = l->B.exon[idx_emprob];
 
     for( int d = 0 ; d < tau_exon ; d ++)
     {
-        ed_prob = ed->exon[d];
-
-        if (ed_prob == 0.0)
-        {
-            alpha->basis[0][d] = 0.0;
-        }
+        edprob = ed->exon[d];
+        if  (edprob == 0.0)     alpha->basis[0][d] = 0.0;
         else
         {
-            total = exp( log(ed_prob) + log(emission_prob) );
+            total = exp( log(emprob)+log(edprob) );
             alpha->basis[0][d] = total;
         }
     }
-
     /*
-        this part is assign prob for intron
-        since for this model; it;s kinda different
-        we don't have initial intron probability
-        btw the real intron initial probability comes after min len of exon
-        which make sense
-        so we make our first layer of calculation at point where passes min exon len
+        for intron
     */
+    if      (tau > ed->max_len_intron)   tau_intron = ed->max_len_intron;
+    else                                 tau_intron = tau;
 
-    int tau_intron;
-
-    if ( comp_len > ed->max_len_intron)      tau_intron = ed->max_len_intron;
-    else                                     tau_intron = comp_len;
-
-
-    index = base4_to_int(info->numerical_sequence, start_bps - 3 , 4);
-    emission_prob = l->B.intron[index];
+    emprob = l->B.intron[idx_emprob];
 
     for( int d = 0 ; d < tau_intron ; d ++)
     {
-        ed_prob = ed->intron[d];
+        edprob = ed->intron[d];
 
-        if (ed_prob == 0.0)
-        {
-            alpha->basis[1][d] = 0.0;
-        }
+        if (edprob == 0.0)     alpha->basis[1][d] = 0.0;
         else
         {
-            total = exp( log(ed_prob) + log(emission_prob) );
+            total = exp( log(emprob)+log(edprob) );
             alpha->basis[1][d] = total;
         }
     }
@@ -304,15 +279,12 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
 {
     if (DEBUG == 1)     printf("Start computation for forward algorithm:");
 
-    /*
-        recall
-        [tau]: the residual/remaining time for explicit duration
-    */
-
     int len = info->T - 2 * FLANK - 2 * ed->min_len_exon;
     int start_bps = FLANK + ed->min_len_exon;
     int tau = len;
     int bps;
+    int mtau;
+    int bound;
 
     for ( int t = 1 ; t < len ; t ++ )
     {
@@ -320,92 +292,102 @@ void forward_algorithm(Lambda *l, Forward_algorithm *alpha, Observed_events *inf
         tau --;
 
         for ( int i = 0 ; i < HS ; i ++ )
-        {
+        {   
+            /*
+                [bound] : for case that tau is restricted by the max_len of exon or intron
+                [tau]   : the residual/remaining time for explicit duration
+
+                [mtau]  : result from boundary check         aka: modified tau
+                [tprob] : a(nm)                              aka: transition_prob
+                [tnode] : α(t - 1)(n , 1)                    aka: transition_node
+                [atrans]: α(t - 1)(n , 1) * a(nm)            aka: alpha_trans == trans_prob * node_trans
+                [edprob]:  pm(d)                             aka: explicit duration prob
+                [cnode] : α(t - 1)(m, d + 1)                 aka: continue_node
+                [emprob]: bm(ot)                             aka: emission_prob
+                [j]     : conjudated hidden state            aka: i = exon; j = intron | i = intron; j = exon
+                [total] : everything without bm(ot)          aka: α(t - 1)(m, d + 1) + α(t - 1)(n, 1) * a(nm) * pm(d)
+            */
+            bound = (i == 0) ? ed->max_len_exon : ed->max_len_intron;
+            if      (tau >= bound)  mtau = bound - 1;
+            else                    mtau = tau;
+            
+            double tprob;
+            int    idx_tprob;
+            double tnode;
+            double atrans;
+            double edprob;
+            double cnode;
+            double emprob;
+            int    idx_emprob;
+            int    j = (i == 0) ? 1 : 0;
+            double total;
             /*
                 first part
-                α(t)(m, d) = bm(ot) * ( α(t - 1)(m, d + 1) + α(t - 1)(n, 1) * a(nm) * pm(d))
-                    for d > 1
+                    α(t)(m, 1) = α(t - 1)(m, 2) * bm(ot)
+            aka:    total      = cnode * emprob
             */
-            
-            double trans_prob;
-            int index_trans_prob;
+            idx_emprob = base4_to_int(info->numerical_sequence, bps - 3, 4);
+            emprob     = (i == 0) ? l->B.exon[idx_emprob] : l->B.intron[idx_emprob];
+            cnode      = alpha->basis[i][1];
 
-            double node_trans;
-            double alpha_trans;
-            double ed_prob;
-            double node_continue;
-
-            double emission_prob;
-            int index_emission_prob;
-
-            /*
-                [trans_prob]: a(nm)
-                [node_trans]: α(t - 1)(n , 1)
-                [alpha_trans]: α(t - 1)(n , 1) * a(nm)      aka: trans_prob * node_trans
-                [ed_prob]:  pm(d)
-                [node_continue]: α(t - 1)(m, d + 1)
-                [emission_prob]: bm(ot)
-                [j]: conjudated hidden state                aka: i = exon; j = intron | i = intron; j = exon
-                [total]: everything without bm(ot)          aka: α(t - 1)(m, d + 1) + α(t - 1)(n, 1) * a(nm) * pm(d)
-            */
-
-            int j = (i == 0) ? 1 : 0;
-            double total;
-
-            if ( i == 0 )
-            {
-               index_trans_prob = base4_to_int(info->numerical_sequence , bps - 6, 6);
-               trans_prob = l->A.accs[index_trans_prob];
-            }
-            else
-            {
-               index_trans_prob = base4_to_int(info->numerical_sequence , bps , 5);
-               trans_prob = l->A.dons[index_trans_prob];
-            }
-
-            node_trans = alpha->a[t - 1][j];
-
-            if      (node_trans == 0.0)           alpha_trans = 0.0;
-            else if (trans_prob == 0.0)           alpha_trans = 0.0;
-            else                                  alpha_trans = exp( log(trans_prob) + log(node_trans) );
-            
-            index_emission_prob = base4_to_int(info->numerical_sequence, bps - 3, 4);
-            emission_prob = ( i == 0 ) ? l->B.exon[index_emission_prob] : l->B.intron[index_emission_prob];
-
-            for ( int d = 1 ; d < tau ; d ++ )
-            {   
-                node_continue = alpha->basis[i][d + 1];
-
-                if ( node_continue == 0.0 )     l->log_values[0] = 0.0;
-                else                            l->log_values[0] = node_continue;
-
-                ed_prob = ( i == 0 ) ? ed->exon[d] : ed->intron[d];
-
-                if   (ed_prob == 0.0)           l->log_values[1] = 0.0;
-                else                            l->log_values[1] = exp ( log(alpha_trans) + log(ed_prob) );
-
-                total = log_sum_exp(l->log_values, 2);
-                alpha->basis[i][d] = exp( log(total) + log(emission_prob) );
-            }
-
-            /*
-                second part
-                α(t)(m, 1) = α(t - 1)(m, 2) * bm(ot)
-                    since mostly explicit duration when d = 0 is 0 ; the rest terms canceled
-                    and α(t)(m, 1) for both intron and exon is stored in alpha->basis[t][hidden state]
-
-                [node_continue]: α(t - 1)(m, 2)     reused variable here
-            */
-
-            node_continue = alpha->basis[i][1];
-
-            if ( node_continue  == 0.0 )    total = 0.0;
-            else                            total = exp( log( node_continue ) + log(emission_prob) );
+            if      (cnode  == 0.0)     total = 0.0;
+            else                        total = exp( log(cnode)+log(emprob) );
 
             alpha->a[t][i]     = total;
             alpha->basis[i][0] = total;
+            /*
+                second part
+                    α(t)(m, d) = bm(ot) * ( α(t - 1)(m, d + 1) + α(t - 1)(n, 1) * a(nm) * pm(d) )
+            aka:    total      = emprob * ( cnode + acount )   for d=1 < mtau
+                        atrans = ( tnode * tprob * edprob )
+            */
+            if (i == 0)
+            {
+               idx_tprob = base4_to_int(info->numerical_sequence , bps - 6, 6);
+               tprob = l->A.accs[idx_tprob];
+            }
+            else
+            {
+               idx_tprob = base4_to_int(info->numerical_sequence , bps , 5);
+               tprob = l->A.dons[idx_tprob];
+            }
+            tnode = alpha->a[t - 1][j];
+
+            for ( int d = 1 ; d < mtau ; d ++ )
+            {   
+                cnode = alpha->basis[i][d + 1];
+                l->log_values[0] = cnode;
+
+                edprob = (i == 0) ? ed->exon[d] : ed->intron[d];
+                if      (edprob == 0.0)     atrans = 0.0;
+                else if (tprob  == 0.0)     atrans = 0.0;
+                else if (tnode  == 0.0)     atrans = 0.0;
+                else                        atrans = exp( log(tnode) + log(tprob) + log(edprob) );
+                l->log_values[1] = atrans;
+
+                total = log_sum_exp(l->log_values, 2);
+                alpha->basis[i][d] = exp( log(total) + log(emprob) );
+            }
+            /*
+                third part
+                    α(t)(m, d) = bm(ot) * ( α(t - 1)(n, 1) * a(nm) * pm(d) )
+            aka:    total      = emprob * atrans
+                    atrans     = ( tnode * tprob * edprob )     at d = 
+                    whenever for longer sequence
+            */
+            if (mtau != tau)
+            {
+                edprob = (i == 0) ? ed->exon[bound - 1] : ed->intron[bound - 1];
+                if      (edprob == 0.0)     atrans = 0.0;
+                else if (tprob  == 0.0)     atrans = 0.0;
+                else if (tnode  == 0.0)     atrans = 0.0;
+                else                        atrans = exp( log(tnode) + log(tprob) + log(edprob) );
+                total = exp( log(atrans) + log(emprob) );
+                alpha->basis[i][bound - 1]  = total;
+            }
         }
     }
+
     if (DEBUG == 1)     printf("\tFinished\n");
 }
 
@@ -414,9 +396,7 @@ void free_alpha(Observed_events *info, Forward_algorithm *alpha, Explicit_durati
     if (DEBUG == 1)     printf("Clearing up forward algorithm memory:");
     
     int array_size = info->T - 2 * FLANK - 2 * ed->min_len_exon;
-    
     for (int i = 0; i < array_size; i++)        free(alpha->a[i]);
-    
     free(alpha->a);
     free(alpha->basis[0]);
     free(alpha->basis[1]);
@@ -448,7 +428,7 @@ void allocate_viterbi(Viterbi_algorithm *vit, Observed_events *info, Explicit_du
     vit->xi    = calloc( HS , sizeof(double) );
     vit->gamma = malloc( HS * sizeof(double) );
     vit->path  = malloc( array_size * sizeof(int) );
-    vit->xi_sum= malloc ( HS * sizeof(double*) ); 
+    vit->xi_sum= malloc( HS * sizeof(double*) ); 
 
     for (int i = 0 ; i < HS; i++ )                                      vit->xi_sum[i] = calloc( array_size , sizeof(double) );    
     
@@ -487,8 +467,6 @@ void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit,
     assert(type == 0 || type == 1);
 
     /*
-        input parameter
-
         [backward_sum]: (sum d>= 1)[ pn(d) * β(n, d)]
             compute inside each layer of backward algorithm
 
@@ -501,28 +479,22 @@ void xi_calculation(Lambda *l, Forward_algorithm *alpha, Viterbi_algorithm *vit,
         update formula
         ξ(t+1)(m, n) = α(t)(m, 1) * a(mn) * bn(o t+1) * (sum d>= 1)[ pn(d) * β(n, d)] 
     */
-
     double alpha_component;
-    
     double trans_prob;
     int    index_trans_prob;
-
     double emission_prob;
     int    index_emission_prob;
-
     double xi;
-
+    int    bps;
     /*
         [alpha_component]: α(t)(m, 1)
         [trans_prob]: a(mn)
         [emission_prob]: bn(o t+1)
         [xi]: ξ
     */
-
     alpha_component = alpha->a[t - 1][type];
 
-    int bps = t + FLANK + ed->min_len_exon;
-
+    bps = t + FLANK + ed->min_len_exon;
     if (type == 0)
     {
         index_trans_prob = base4_to_int(info->numerical_sequence, bps , 5);
@@ -552,10 +524,6 @@ void viterbi_basis(Viterbi_algorithm *vit, Forward_algorithm *alpha)
     /*
         γ(t)(m) = sum(d>=1) α(t)(m, d)
         at final t; there is only one α(t)(m, 1) existed
-        based on definition for d
-        (if forward algorithm is compute without boundary issue)
-
-        γ(t)(1) = shall be 0; intron uh is invalid in that position
     */
 
     double gamma_exon;
@@ -593,10 +561,7 @@ void initial_backward_algorithm(Backward_algorithm *beta)
 {
     if (DEBUG == 1)     printf("Start initialize backward algorithm:");
 
-    for ( int i = 0 ; i < HS ; i++ )
-    {
-        beta->basis[i][0] = 1.0;
-    }
+    for ( int i = 0 ; i < HS ; i++ )    beta->basis[i][0] = 1.0;
 
     if (DEBUG == 1)     printf("\tFinished\n");
 }
@@ -615,109 +580,109 @@ void backward_algorithm(Lambda *l, Backward_algorithm *beta, Observed_events *in
         argmax_viterbi(vit, t);
 
         if ( t == 0 )    break;                                                                 // don't remove this; it have a reason to be here
-
         tau ++;
 
         for ( int i = 0 ; i < HS ; i ++ )                                                       // the before position; 0 for exon, 1 for intron
         {
-            double backward_sum;
-
-            double ed_prob;
-            double possible_node;
-
-            double trans_prob;
-            int    index_trans_prob;
-
-            double emission_prob;
-            int    index_emission_prob;
-
-            double total;
-
             /*
-                formula
-                β(t)(m, 1) = sum(n != m) * a(mn) * bn(Ot+1) * sum(d>=1) pn(d) * β(t+1)(n, d)
-
-                [backward_sum]: sum(d>=1) pn(d) * β(t + 1)(n , d)
-                    can be coupled with ξ calculation for viterbi algorithm
-
-                [ed_prob]: pn(d)
-                [possible_node]: β(t + 1)(n , d)
-                [trans_prob]: a(mn)
-                [emission_prob]: bn(ot+1)
-                [j]: conjugated hidden state
-                    if exon(0) it's intron(1); vice versa
+                [bwsum] : see note in first part                aka: backward sum
+                [edprob]: pn(d)                                 aka: explicit duration probability
+                [pnode] : β(t + 1)(n , d)                       aka: possible node
+                [tprob] : a(mn)                                 aka: transition probability
+                [emprob]: bn(ot+1)                              aka: emission probability
+                [mtau]  : modified residential time             aka: modified tau
+                [j]     : conjugated hidden state
+                [bcheck]: boundary check                        
             */
+            double bwsum;
+            double edprob;
+            double pnode;
+            double tprob;
+            int    idx_tprob;
+            double emprob;
+            int    idx_emprob;
+            double total;
+            int    j;
+            int    mtau;
+            int    bcheck;
+            /*
+                first part
+                    backwardsum = Σ(d>=1) pn(d) * β(t + 1)(n , d)
+            aka:    bwsum       = Σ(d>=1) edprob * pnode
 
-            int j = ( i == 0) ? 1 : 0;
+            note:   this can be coupled with ξ calculation for viterbi algorithm
+            */
+            bcheck = (i == 0) ? ed->max_len_exon : ed->max_len_intron;
+            if      (tau > bcheck)   mtau = bcheck;
+            else                     mtau = tau;
 
-            for ( int d = 0 ; d < tau ; d++ )
+            j = (i == 0) ? 1 : 0;
+
+            for ( int d = 0 ; d < mtau ; d++ )
             {
-                ed_prob = ( i == 0 ) ? ed->intron[d] : ed->exon[d];
-                possible_node = beta->basis[j][d];
+                edprob = (i == 0) ? ed->intron[d] : ed->exon[d];
+                pnode  = beta->basis[j][d];
 
-                if (ed_prob == 0.0)     l->log_values[d] = 0.0;
-                else                    l->log_values[d] = exp( log( possible_node ) + log (ed_prob) );
+                if      (edprob == 0.0)     l->log_values[d] = 0.0;
+                else                        l->log_values[d] = exp( log(pnode)+log(edprob) );
             }
 
-            backward_sum = log_sum_exp(l->log_values, tau);
-            xi_calculation(l, alpha, vit, info, ed, backward_sum, t, j);
-
-            if ( i == 0 )
+            bwsum = log_sum_exp(l->log_values, mtau);
+            xi_calculation(l, alpha, vit, info, ed, bwsum, t, j);
+            /*
+                second part
+                    β(t)(m, 1) = amn * bn(Ot + 1) * Σ(d>=1) pn(d) * β(t + 1)(n , d)
+            aka:    total      = tprob * emprob * bwsum        
+            */
+            if (i == 0)
             {   
-                index_trans_prob = base4_to_int(info->numerical_sequence, bps + 1, 5);
-                trans_prob = l->A.dons[index_trans_prob];
+                idx_tprob = base4_to_int(info->numerical_sequence, bps + 1, 5);
+                tprob     = l->A.dons[idx_tprob];
             }
             else
             {
-                index_trans_prob = base4_to_int(info->numerical_sequence, bps - 5, 6);
-                trans_prob = l->A.accs[index_trans_prob];
+                idx_tprob = base4_to_int(info->numerical_sequence, bps - 5, 6);
+                tprob     = l->A.accs[idx_tprob];
             }
 
-            index_emission_prob = base4_to_int(info->numerical_sequence, bps - 2, 4);
-            emission_prob = (i == 0) ? l->B.intron[index_emission_prob] : l->B.exon[index_emission_prob];
+            idx_emprob = base4_to_int(info->numerical_sequence, bps - 2, 4);
+            emprob     = (j == 0) ? l->B.exon[idx_emprob] : l->B.intron[idx_emprob];
 
-            if   (trans_prob == 0.0)   total = 0.0;
-            if   (backward_sum == 0.0) total = 0.0;
-            else                       total = exp( log(trans_prob) + log(emission_prob) + log(backward_sum) );
-
+            if        (tprob == 0.0)    total = 0.0;
+            else if   (bwsum == 0.0)    total = 0.0;
+            else                        total = exp( log(tprob)+log(emprob)+log(bwsum) );
             /*
-                β(t)(m, d) = bm(Ot+1) * β(t+1)(m, d - 1)
-                    for all possible d > 1
-
-                [emission_prob]: bm(Ot+1)       notice: this is not conjugated state right here
+                third part
+                    β(t)(m, d) = bm(Ot+1) * β(t+1)(m, d - 1)    for all possible d > 1
+            aka:       
             */
-            
-            index_emission_prob = base4_to_int(info->numerical_sequence, bps - 2, 4);
-            emission_prob = (i == 0) ? l->B.exon[index_emission_prob] : l->B.intron[index_emission_prob];
-
+            idx_emprob = base4_to_int(info->numerical_sequence, bps - 2, 4);
+            emprob     = (i == 0) ? l->B.exon[idx_emprob] : l->B.intron[idx_emprob];
             /*
+                [fnode]: β(t)(m, 1)         aka: first node
+                [pnode]: β(t)(m, d - 1)     aka: previous node  
+                                            note: record β(t)(m, d - 1) for next β(t)(m, d) calculation before update them
+
                 logic here is linear array for all layer of network
                 and each time passed there would be one node lost for each layer
                 every computation based on the previous node
                 so we cannot directly update that after calculation
-
-                [first_node]: β(t)(m, 1)
-                    it is always the first node calculated
-                [previous_node]: record β(t)(m, d - 1) for next β(t)(m, d) calculation before update them
             */
+            double fnode;
 
-            double first_node;
-            double previous_node;
-
-            first_node = total;
-            previous_node = total;
+            fnode = total;
+            pnode = total;
 
             for( int d = 1 ; d <= tau ; d++ )
             {   
+                if      (pnode == 0.0)  total = 0.0;
+                else                    total = exp( log(emprob) + log(pnode) );
 
-                if      (previous_node == 0.0)  total = 0.0;
-                else                            total = exp( log(emission_prob) + log(previous_node) );
-
-                previous_node = beta->basis[i][d];
+                pnode = beta->basis[i][d];
                 beta->basis[i][d] = total;
             } 
-
-            beta->basis[i][0] = first_node;
+            
+            beta->basis[i][0] = fnode;
         }
     }
 
